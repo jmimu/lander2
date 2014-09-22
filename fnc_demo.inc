@@ -7,6 +7,11 @@ InitializeDemo:
     ld hl,demo_music_ch3_start;data3 start in hl
     call InitMusic3
 
+    ;disable scrolling
+    ld a,0
+    out ($bf),a
+    ld a,%10001000
+    out ($bf),a
 
     ;========================== TITLE ==============================
     ;==============================================================
@@ -458,7 +463,7 @@ Demo_PSGMOD_Play:
     ;+:
     call PlayMusic1
     call PlayMusic2
-    call PlayMusic3
+    ;call PlayMusic3
 
     ret
 

@@ -1,11 +1,32 @@
 RunGame:
+    ; setup screen (VDP register 0)
+    ld a,%11000110
+;         |||||||`- External Sync.
+;         ||||||`-- 1
+;         |||||`--- 1
+;         ||||`---- Sprite Shift
+;         |||`----- Line Interrupt Enable
+;         ||`------ Left Column Blank
+;         |`------- Horizontal Scroll Inhibit (top 2 char rows)
+;         `-------- Vertical Scroll Inhibit (right 8 char columns).
 
+    out ($bf),a
+    ld a,$80
+    out ($bf),a
+
+    ;init music
     ld hl,brahms1_start
     call InitMusic1
     ld hl,brahms2_start
     call InitMusic2
     ld hl,brahms3_start
     call InitMusic3
+
+    ;disable scrolling
+    ld a,0
+    out ($bf),a
+    ld a,%10001000
+    out ($bf),a
 
     ;game init
     ld a,1
@@ -644,7 +665,7 @@ DoGameLogic:
     ld hl,(speedY)
     inc hl
     inc hl
-    ;ld (speedY),hl    
+    ld (speedY),hl    
     
     ;update x pos
     ld bc,(posX)
