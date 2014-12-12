@@ -16,6 +16,7 @@ RunGame:
 
     ;init music
     ld hl,brahms1_start
+    ld hl,demo_music_4_start
     call InitMusic1
     ld hl,brahms2_start
     call InitMusic2
@@ -598,8 +599,8 @@ PSGMOD_Play:
     ;ret
     ;+:
     call PlayMusic1
-    call PlayMusic2
-    call PlayMusic3
+    ;call PlayMusic2
+    ;call PlayMusic3
 
     ret
     

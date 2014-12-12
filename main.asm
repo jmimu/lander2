@@ -184,6 +184,8 @@ main:
     ;==============================================================
     call initVDP
 
+    call InitializeJmimu
+    
     ;run demo
     call InitializeDemo
     call RunDemo
@@ -225,6 +227,7 @@ IsButtonPressed:
 ;==============================================================
 ; Data
 ;==============================================================
+.include "data_jmimu.inc"
 .include "data_demo.inc"
 .include "data_game.inc"
 
