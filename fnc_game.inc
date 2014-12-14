@@ -720,7 +720,7 @@ DoGameLogic:
     ;call PrintInt
     
     call drawWarning
-    call TestAllCollisions
+    ;call TestAllCollisions
         
     pop hl
     pop de

@@ -58,14 +58,14 @@
 ;game
 .define number_of_empty_tiles 13;tile 13 and more make collisions
 .define last_full_tile 34;tile 35 and more make no collisions
-.define digits_tile_number $49
-.define fire_tile_number $23
-.define explosion_tile_number $28
-.define fuel_tile_number $26
-.define rocket_tile_number $2E
-.define landing_tile_number $27
-.define guy_tile_number $34
-.define diff_tile_ascii $19 ;difference between index in tiles and in ascii
+.define digits_tile_number $A7 ;position of "0" in vram
+.define fire_tile_number $81
+.define explosion_tile_number $86
+.define fuel_tile_number $84
+.define rocket_tile_number $8C
+.define landing_tile_number $27;TODO: remove, use collision data
+.define guy_tile_number $92
+.define diff_tile_ascii 119 ;difference between index in tiles and in ascii ("A" tile number -65)
 .define fuel_use $-70 ;$-80
 .define speedX_tolerance $40 ;must be < $80 !
 .define speedY_tolerance $40
@@ -184,7 +184,7 @@ main:
     ;==============================================================
     call initVDP
 
-    call InitializeJmimu
+    ;call InitializeJmimu
     
     ;run demo
     call InitializeDemo
