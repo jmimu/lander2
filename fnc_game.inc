@@ -202,12 +202,12 @@ VScrollManager:
     
     ;update YScrollVDP
     ld a,(YScrollVDP)
-    dec a
+    cp 0
+    jr nz,+
     ;check if YScrollVDP <0
-    jr nc,+
-    ld a,223
-
+    ld a,224
   +:
+    dec a
     ld (YScrollVDP),a
     ;VDP vertical scrolling
     out ($bf),a
@@ -220,6 +220,64 @@ VScrollManager:
     jp nz,VScrollManager_end
     ;new line to load
 
+    ;compute where the new data is in rom
+    ;(LevelMapStart)+((YScrollTotal-8)/8)*64
+    ld hl,(YScrollTotal)
+    ld bc,-$8
+    add hl,bc
+    srl h
+    rr l
+    srl h
+    rr l
+    srl h
+    rr l ;hl=(YScrollTotal)/8
+    add hl, hl
+    add hl, hl
+    add hl, hl
+    add hl, hl
+    add hl, hl
+    add hl, hl;hl=((YScrollTotal-8)/8+24)*64
+    ld bc, (LevelMapStart)
+    add hl,bc    
+    ld (NextMapDataStart),hl;(NextMapDataStart)=(LevelMapStart)+((YScrollTotal-8)/8)*32
+    
+    ;compute where to add it in vram : ((YScrollVDP-8)/8)*64
+    ld a,(YScrollVDP)
+    ld b,-$8
+    add a,b
+    ;test if a>223
+    cp 224
+    jr nc,+
+    jr VScrollManager_up_no_carry
+  +:
+    sub 32 ;make a 32 line jump to compensate vram_h=224 instead of 256
+  VScrollManager_up_no_carry:
+    ld h,0
+    ld l,a
+    add hl,hl
+    add hl,hl
+    add hl,hl
+    
+    ; Set VRAM write address to name table index 0
+    ; by outputting $4000 ORed with $3800+hl
+    ld a,l
+    out ($bf),a
+    ld a,$38|$40
+    add a,h
+    out ($bf),a
+    ; 2. Output tilemap data
+    ld hl,(NextMapDataStart)
+    ld bc,64  ; Counter for number of bytes to write
+    -:
+        ld a,(hl)    ; Get data byte
+        out ($be),a
+        inc hl       ; Point to next tile
+        dec bc
+        ld a,b
+        or c
+        jr nz,-
+    ;end of VScrollManager_down
+    jp VScrollManager_end
   VScrollManager_end:
   pop hl
   pop bc
