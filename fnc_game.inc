@@ -1,9 +1,10 @@
 
 .ramsection "Game variables" slot 2
-  YScrollTotal             dw    ; total Y scroll in level
-  YScrollVDP               db    ; VDP YScroll
-  LevelMapStart            dw    ; pointer to tilemap start
-  NextMapDataStart         dw    ; pointer to tilemap new part to load
+  YScrollTotal             dw    ; total Y scroll in level (in pixels)
+  YScrollTotalMax          dw    ; maximum of YScrollTotal value (in pixels)
+  YScrollVDP               db    ; VDP YScroll (in pixels)
+  LevelMapStart            dw    ; pointer to tilemap start (in bytes)
+  NextMapDataStart         dw    ; pointer to tilemap new part to load (in bytes)
 .ends
 
 
@@ -57,6 +58,10 @@ SetupLevel1:
     ld (YScrollVDP),a
     ld hl,0
     ld (YScrollTotal),hl
+    
+    ;compute max y scroll value
+    ld hl,((Tilemap1End-Tilemap1Start)/64-24)*8
+    ld (YScrollTotalMax),hl
 ret
 
 ;update v scroll
@@ -67,19 +72,30 @@ VScrollManager:
   push hl
     ld a,c
     cp 0
-    jr z,VScrollManager_end
+    jp z,VScrollManager_end
     ld a,c
     cp 1
-    jr z,VScrollManager_down
+    jp z,VScrollManager_down
     ld a,c
     cp -1
-    jr z,VScrollManager_up
+    jp z,VScrollManager_up
     
     
   VScrollManager_down:
-    ;scroll down +1
-    ;update YScrollTotal
     ld hl,(YScrollTotal)
+
+    ;check that YScrollTotal is not at YScrollTotalMax
+    ld bc,(YScrollTotalMax)
+    ld a,h
+    cp b
+    jr nz,+
+    ld a,l
+    cp c
+    jr nz,+
+    ;we are at max, stop scrolling
+    jp z,VScrollManager_end
+  +:
+    ;update YScrollTotal
     inc hl
     ld (YScrollTotal),hl
     
@@ -87,7 +103,7 @@ VScrollManager:
     ld a,(YScrollVDP)
     inc a
     ;check if YScrollVDP >223
-    cp 223
+    cp 224
     jr c,+
     ;if YScrollVDP >223
     ld a,0
@@ -102,7 +118,7 @@ VScrollManager:
     ;test if new tilemap line to load
     ld a,(YScrollVDP)
     and %00000111
-    jr nz,VScrollManager_end
+    jp nz,VScrollManager_end
     ;new line to load
     
     ;compute where the new data is in rom
@@ -163,11 +179,46 @@ VScrollManager:
         or c
         jr nz,-
     ;end of VScrollManager_down
-    jr VScrollManager_end
+    jp VScrollManager_end
 
     
 
   VScrollManager_up:
+    ld hl,(YScrollTotal)
+
+    ;check that YScrollTotal is not at 0
+    ld a,h
+    cp 0
+    jr nz,+
+    ld a,l
+    cp 0
+    jr nz,+
+    ;we are at 0, stop scrolling
+    jp z,VScrollManager_end
+  +:
+    ;update YScrollTotal
+    dec hl
+    ld (YScrollTotal),hl
+    
+    ;update YScrollVDP
+    ld a,(YScrollVDP)
+    dec a
+    ;check if YScrollVDP <0
+    jr nc,+
+    ld a,223
+
+  +:
+    ld (YScrollVDP),a
+    ;VDP vertical scrolling
+    out ($bf),a
+    ld a,%10001001
+    out ($bf),a
+    
+    ;test if new tilemap line to load
+    ld a,(YScrollVDP)
+    and %00000111
+    jp nz,VScrollManager_end
+    ;new line to load
 
   VScrollManager_end:
   pop hl
@@ -843,8 +894,6 @@ DoGameLogicDbg:
     push de
     push hl
     
-    ld c,1
-    call VScrollManager
   
     ld a,$06 ; at least 6 sprites to show (rocket)
     ld (number_of_sprites),a
@@ -861,6 +910,12 @@ DoGameLogicDbg:
     ld hl, (speedY)
     add hl,bc
     ld (posY),hl
+    
+    ;y scroll depending on speedY
+    ld hl, (speedY)
+    ld c,h
+    call VScrollManager
+
     
     ;set speed to 0
     ld hl,0
