@@ -77,45 +77,45 @@
 ; RAM section
 ;==============================================================
 .ramsection "variables" slot 2
-new_frame                     db ; 0: no; 1: yes
-PauseFlag db ;1 if pause
-;demo variables
-forest_anim_step dw;from 0 to forest_anim_steps*$100
-pedal_anim_step dw;from 0 to forest_anim_steps*$100
-Xscroll dw
-posX                     dw ; multiplied by 2^8
-posY                     dw ; multiplied by 2^8
-number_of_sprites     db ; number of sprites to draw this frame
-;game
-speedX                     dw ; multiplied by 2^8
-speedY                     dw ; multiplied by 2^8
-;posX                     dw ; multiplied by 2^8
-;posY                     dw ; multiplied by 2^8
-;number_of_sprites     db ; number of sprites to draw this frame
-rocket_fuel         dw 
-current_level db
-already_lost db ;0 if not, 1 if lost at least 1 time
-goto_level db ;0 if no need to change level, n to enter level n
-star_color dw ;color used: bright and yellow
-;PauseFlag db ;1 if pause
+  new_frame                     db ; 0: no; 1: yes
+  PauseFlag db ;1 if pause
+  ;demo variables
+  forest_anim_step dw;from 0 to forest_anim_steps*$100
+  pedal_anim_step dw;from 0 to forest_anim_steps*$100
+  Xscroll dw
+  posX                     dw ; multiplied by 2^8
+  posY                     dw ; multiplied by 2^8
+  number_of_sprites     db ; number of sprites to draw this frame
+  ;game
+  speedX                     dw ; multiplied by 2^8
+  speedY                     dw ; multiplied by 2^8
+  ;posX                     dw ; multiplied by 2^8
+  ;posY                     dw ; multiplied by 2^8
+  ;number_of_sprites     db ; number of sprites to draw this frame
+  rocket_fuel         dw 
+  current_level db
+  already_lost db ;0 if not, 1 if lost at least 1 time
+  goto_level db ;0 if no need to change level, n to enter level n
+  star_color dw ;color used: bright and yellow
+  ;PauseFlag db ;1 if pause
 
-;music
-music1_start_ptr         dw ;pointer
-music1_current_ptr         dw ;pointer
-music1_tone_duration         db ;when 0 got to next tone
-music1_current_tone         dw ;value (for debug)
-music2_start_ptr         dw ;pointer
-music2_current_ptr         dw ;pointer
-music2_tone_duration         db ;when 0 got to next tone
-music2_current_tone         dw ;value (for debug)
-music3_start_ptr         dw ;pointer
-music3_current_ptr         dw ;pointer
-music3_tone_duration         db ;when 0 got to next tone
-music3_current_tone         dw ;value (for debug)
-drum_start_ptr         dw ;pointer
-drum_current_ptr         dw ;pointer
-drum_tone_duration         db ;when 0 got to next tone
-drum_current_tone         db ;value (for debug)
+  ;music
+  music1_start_ptr         dw ;pointer
+  music1_current_ptr         dw ;pointer
+  music1_tone_duration         db ;when 0 got to next tone
+  music1_current_tone         dw ;value (for debug)
+  music2_start_ptr         dw ;pointer
+  music2_current_ptr         dw ;pointer
+  music2_tone_duration         db ;when 0 got to next tone
+  music2_current_tone         dw ;value (for debug)
+  music3_start_ptr         dw ;pointer
+  music3_current_ptr         dw ;pointer
+  music3_tone_duration         db ;when 0 got to next tone
+  music3_current_tone         dw ;value (for debug)
+  drum_start_ptr         dw ;pointer
+  drum_current_ptr         dw ;pointer
+  drum_tone_duration         db ;when 0 got to next tone
+  drum_current_tone         db ;value (for debug)
 
 .ends
 
@@ -162,14 +162,16 @@ drum_current_tone         db ;value (for debug)
 
 
 ;inclusions
+.section "misc" free ;TODO : a section for every file!
 .include "fnc_init.inc"
 .include "fnc_sound.inc"
 .include "fnc_sprites.inc"
 .include "fnc_demo.inc"
-.include "fnc_game.inc"
 .include "fnc_text.inc"
+.ends
+.include "fnc_game.inc"
 
-
+.section "main" free
 ;==============================================================
 ; Main program
 ;==============================================================
@@ -223,14 +225,16 @@ IsButtonPressed:
     cp  %00100000
     ret
 
+.ends
 
 ;==============================================================
 ; Data
 ;==============================================================
+.section "assets" free
 .include "data_jmimu.inc"
 .include "data_demo.inc"
 .include "data_game.inc"
-
+.ends
 
 
 

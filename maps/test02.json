@@ -31,7 +31,7 @@
  "tilesets":[
         {
          "firstgid":1,
-         "image":"tiles3.png",
+         "image":"tiles3.bmp",
          "imageheight":64,
          "imagewidth":128,
          "margin":0,

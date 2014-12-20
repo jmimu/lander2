@@ -1,6 +1,184 @@
+
+.ramsection "Game variables" slot 2
+  YScrollTotal             dw    ; total Y scroll in level
+  YScrollVDP               db    ; VDP YScroll
+  LevelMapStart            dw    ; pointer to tilemap start
+  NextMapDataStart         dw    ; pointer to tilemap new part to load
+.ends
+
+
+.section "game functions" free
+
+SetupLevel1:
+    ld hl,Palette1Start
+    ;==============================================================
+    ; Load palette
+    ;==============================================================
+    ; 1. Set VRAM write address to CRAM (palette) address 0 (for palette index 0)
+    ; by outputting $c000 ORed with $0000
+    ld a,$00
+    out ($bf),a
+    ld a,$c0
+    out ($bf),a
+    ; 2. Output colour data
+    ;ld hl,Palette1Start
+    ld b,(Palette1End-Palette1Start)
+    ld c,$be
+    otir
+
+    ;load tilemap of current level
+    ld hl,Tilemap1Start
+    ;hl is where the tilemap of the level starts
+    ;==============================================================
+    ; Write tilemap data
+    ;==============================================================
+    ; 1. Set VRAM write address to name table index 0
+    ; by outputting $4000 ORed with $3800+0
+    ld a,$00
+    out ($bf),a
+    ld a,$38|$40
+    out ($bf),a
+    ; 2. Output tilemap data
+    ;ld hl,Tilemap1Start
+    ld bc,$600+$40; Counter for number of bytes to write
+    -:
+        ld a,(hl)    ; Get data byte
+        out ($be),a
+        inc hl       ; Point to next tile
+        dec bc
+        ld a,b
+        or c
+        jr nz,-
+    
+    ;initialize scroll variables
+    ld hl,Tilemap1Start
+    ld (LevelMapStart),hl
+    ld a,0
+    ld (YScrollVDP),a
+    ld hl,0
+    ld (YScrollTotal),hl
+ret
+
+;update v scroll
+;input : c=add to v scroll (values can be -1,0,+1)
+VScrollManager:
+  push af
+  push bc
+  push hl
+    ld a,c
+    cp 0
+    jr z,VScrollManager_end
+    ld a,c
+    cp 1
+    jr z,VScrollManager_down
+    ld a,c
+    cp -1
+    jr z,VScrollManager_up
+    
+    
+  VScrollManager_down:
+    ;scroll down +1
+    ;update YScrollTotal
+    ld hl,(YScrollTotal)
+    inc hl
+    ld (YScrollTotal),hl
+    
+    ;update YScrollVDP
+    ld a,(YScrollVDP)
+    inc a
+    ;check if YScrollVDP >223
+    cp 223
+    jr c,+
+    ;if YScrollVDP >223
+    ld a,0
+
+  +:
+    ld (YScrollVDP),a
+    ;VDP vertical scrolling
+    out ($bf),a
+    ld a,%10001001
+    out ($bf),a
+    
+    ;test if new tilemap line to load
+    ld a,(YScrollVDP)
+    and %00000111
+    jr nz,VScrollManager_end
+    ;new line to load
+    
+    ;compute where the new data is in rom
+    ;(LevelMapStart)+((YScrollTotal)/8+24)*64
+    ld hl,(YScrollTotal)
+    srl h
+    rr l
+    srl h
+    rr l
+    srl h
+    rr l ;hl=(YScrollTotal)/8
+    ld bc,24
+    add hl,bc
+    add hl, hl
+    add hl, hl
+    add hl, hl
+    add hl, hl
+    add hl, hl
+    add hl, hl;hl=((YScrollTotal)/8+24)*64
+    ld bc, (LevelMapStart)
+    add hl,bc    
+    ld (NextMapDataStart),hl;(NextMapDataStart)=(LevelMapStart)+((YScrollTotal)/8+24)*32
+    
+    ;compute where to add it in vram : ((YScrollVDP+192)/8)*64
+    ld a,(YScrollVDP)
+    add a,192
+    ;test if carry, then a<=a-224, because of v screen loop
+    jr c,+
+    ;test if a>224, then a<=a-224, because of v screen loop
+    cp 224
+    jr nc,+
+    jr VScrollManager_down_no_carry
+  +:
+    sub 224
+  VScrollManager_down_no_carry:
+    ld h,0
+    ld l,a
+    add hl,hl
+    add hl,hl
+    add hl,hl
+    
+    ; Set VRAM write address to name table index 0
+    ; by outputting $4000 ORed with $3800+hl
+    ld a,l
+    out ($bf),a
+    ld a,$38|$40
+    add a,h
+    out ($bf),a
+    ; 2. Output tilemap data
+    ld hl,(NextMapDataStart)
+    ld bc,64  ; Counter for number of bytes to write
+    -:
+        ld a,(hl)    ; Get data byte
+        out ($be),a
+        inc hl       ; Point to next tile
+        dec bc
+        ld a,b
+        or c
+        jr nz,-
+    ;end of VScrollManager_down
+    jr VScrollManager_end
+
+    
+
+  VScrollManager_up:
+
+  VScrollManager_end:
+  pop hl
+  pop bc
+  pop af
+ret
+
+
 RunGame:
     ; setup screen (VDP register 0)
-    ld a,%11000110
+    ld a,%01000110
 ;         |||||||`- External Sync.
 ;         ||||||`-- 1
 ;         |||||`--- 1
@@ -127,17 +305,8 @@ RunGame:
         jp nz,-
 
 
-    ;load palette of current level
-    ld hl,Palette1Start
-    ld a,(current_level)
-    ld bc,level_mem_size
-  -:
-    dec a
-    cp 0
-    jr z,+
-    add hl,bc
-    jr -
-  +:;hl is where the palette of the level starts
+    ;load default palette
+    ld hl,Palette0Start
     ;==============================================================
     ; Load palette
     ;==============================================================
@@ -148,8 +317,8 @@ RunGame:
     ld a,$c0
     out ($bf),a
     ; 2. Output colour data
-    ;ld hl,Palette1Start
-    ld b,(Palette1End-Palette1Start)
+    ;ld hl,Palette0Start
+    ld b,(Palette0End-Palette0Start)
     ld c,$be
     otir
 
@@ -233,39 +402,8 @@ RunGame:
     ld a,$81
     out ($bf),a    
     
-    ;load tilemap of current level
-    ld hl,Tilemap1Start
-    ld a,(current_level)
-    ld bc,level_mem_size
-  -:
-    dec a
-    cp 0
-    jr z,+
-    add hl,bc
-    jr -
-  +:;hl is where the tilemap of the level starts
-    ;==============================================================
-    ; Write tilemap data
-    ;==============================================================
-    ; 1. Set VRAM write address to name table index 0
-    ; by outputting $4000 ORed with $3800+0
-    ld a,$00
-    out ($bf),a
-    ld a,$38|$40
-    out ($bf),a
-    ; 2. Output tilemap data
-    ;ld hl,Tilemap1Start
-    ld bc,Tilemap1End-Tilemap1Start  ; Counter for number of bytes to write
-    -:
-        ld a,(hl)    ; Get data byte
-        out ($be),a
-        inc hl       ; Point to next tile
-        dec bc
-        ld a,b
-        or c
-        jr nz,-
-
-
+    call SetupLevel1
+    
     
     ; Turn screen on
     ld a,%11100000
@@ -317,11 +455,11 @@ RunGame:
     ld c,%01100000;channel in c*%100000(max 3*%100000)
     call CutOneChannel
 
-    call DoGameLogic
+    call DoGameLogicDbg
     call WaitForVBlank
     call UpdatePalette
     call UpdateScreen
-    call PSGMOD_Play
+    ;call PSGMOD_Play
     
     ;check if level finished
     ld a,(goto_level)
@@ -391,25 +529,25 @@ ReadButtons:
         and %00000001
         cp  %00000000
         jr nz,+
-        call OnButtonUp
+        call OnButtonUpDbg
     +:  
         in a,($dc)
         and %00000010
         cp  %00000000
         jr nz,+
-        call OnButtonDown
+        call OnButtonDownDbg
     +:  
         in a,($dc)
         and %00000100
         cp  %00000000
         jr nz,+
-        call OnButtonLeft
+        call OnButtonLeftDbg
     +:  
         in a,($dc)
         and %00001000
         cp  %00000000
         jr nz,+
-        call OnButtonRight
+        call OnButtonRightDbg
     +:
     pop af
 ret
@@ -440,7 +578,7 @@ OnButtonDown:
         inc a
         ld (number_of_sprites),a
 
-        ld bc,$-4 ;//remove 4pix/256frame to y speed
+        ld bc,-$4 ;//remove 4pix/256frame to y speed
         ld hl,(speedY)
         add hl,bc
         ld (speedY),hl
@@ -563,6 +701,53 @@ OnButtonRight:
     pop af
 ret
 
+;------------------ debug
+
+OnButtonUpDbg:
+    push bc
+    push hl
+        ld bc,$100 ;
+        ld hl,(speedY)
+        add hl,bc
+        ld (speedY),hl
+    +:
+    pop hl
+    pop bc
+ret
+OnButtonDownDbg:
+    push bc
+    push hl
+        ld bc,-$100 ;
+        ld hl,(speedY)
+        add hl,bc
+        ld (speedY),hl
+    +:
+    pop hl
+    pop bc
+ret
+OnButtonLeftDbg:
+    push bc
+    push hl
+        ld bc,$100 ;
+        ld hl,(speedX)
+        add hl,bc
+        ld (speedX),hl
+    +:
+    pop hl
+    pop bc
+ret
+OnButtonRightDbg:
+    push bc
+    push hl
+        ld bc,-$100 ;
+        ld hl,(speedX)
+        add hl,bc
+        ld (speedX),hl
+    +:
+    pop hl
+    pop bc
+ret
+;----------------- end debug
 
 WaitForVBlank:
     push af
@@ -651,6 +836,61 @@ UpdateScreen:
     ret
 
 
+DoGameLogicDbg:
+    push af
+  
+    push bc
+    push de
+    push hl
+    
+    ld c,1
+    call VScrollManager
+  
+    ld a,$06 ; at least 6 sprites to show (rocket)
+    ld (number_of_sprites),a
+    
+    ;mechanics
+    
+    ;update x pos
+    ld bc,(posX)
+    ld hl, (speedX)
+    add hl,bc
+    ld (posX),hl
+    ;update y pos
+    ld bc,(posY)
+    ld hl, (speedY)
+    add hl,bc
+    ld (posY),hl
+    
+    ;set speed to 0
+    ld hl,0
+    ld (speedX),hl
+    ld (speedY),hl
+    
+    call ReadButtons ;updates number_of_sprites
+    ;hide other sprites
+    ld a,(number_of_sprites)
+    ld c,$01 ; hide only next sprite, the following will be hidden too
+    call HideSprites
+
+    
+    ;draw rocket sprites
+    ld bc,(posX)    
+    ld h,b;x in h
+    ld bc,(posY)    
+    ld l,b;y in l
+    ld d,rocket_tile_number;number of the tile in VRAM in d
+    ld e,$0;sprite index in e, here these are the first sprites used
+    call SpriteSet16x24
+    
+        
+    pop hl
+    pop de
+    pop bc
+    pop af
+
+    ret
+
 DoGameLogic:
     push af
   
@@ -702,25 +942,8 @@ DoGameLogic:
     ld l,0 ;line (tiles) in l
     call PrintInt
     
-    ;;draw texts
-    ;ld a,(music2_tone_duration)
-    ;ld e,a;value (8bit) in e
-    ;ld c,1 ;col (tiles) in c
-    ;ld l,1 ;line (tiles) in l
-    ;call PrintInt
-    ;ld hl,(music2_current_tone)
-    ;ld e,h;value (8bit) in e
-    ;ld c,1 ;col (tiles) in c
-    ;ld l,2 ;line (tiles) in l
-    ;call PrintInt
-    ;ld hl,(music2_current_tone)
-    ;ld e,l;value (8bit) in e
-    ;ld c,5 ;col (tiles) in c
-    ;ld l,2 ;line (tiles) in l
-    ;call PrintInt
-    
     call drawWarning
-    ;call TestAllCollisions
+    call TestAllCollisions
         
     pop hl
     pop de
@@ -944,6 +1167,9 @@ TestCollision:;TODO: using only level1 data!
     pop bc
     pop af
     ret
+
+
+.ends ;--------------- end game section
 
 
 ;==============================================================
