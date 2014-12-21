@@ -973,6 +973,9 @@ DoGameLogicDbg:
     ld hl, (speedY)
     ld c,h
     call VScrollManager
+    call VScrollManager
+    call VScrollManager
+    call VScrollManager
 
     
     ;set speed to 0

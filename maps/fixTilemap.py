@@ -69,12 +69,22 @@ for (i, tile) in enumerate(uncompressed_map_bg):
   if (tile>0):
     tile-=back_tileset_firstgid
   #fixing law
-
+  if (tile>=64):
+    tile+=32
   fixed_uncompressed_map_bg.append(tile+back_tileset_firstgid)
+
+fixed_uncompressed_map_coll=[]
+for (i, tile) in enumerate(uncompressed_map_coll):
+  if (tile>0):
+    tile-=coll_tileset_firstgid
+  #fixing law
+  tile+=64
+  fixed_uncompressed_map_coll.append(tile+coll_tileset_firstgid)
 
 
 
 data["layers"][bg_index]=fixed_uncompressed_map_bg
+data["layers"][coll_index]=fixed_uncompressed_map_coll
 
 
 with open('tmp_fixed.json', 'w') as outfile:

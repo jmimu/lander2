@@ -3,6 +3,11 @@ variable Yscroll represents the position of the camera in the level (in pixels).
 From 0 to 416 => 16 bit
 VDP v-scroll value must be in [0;223]
 
+make one inc file per level to declaire data and specific functions like init,
+level mechanics, and what happends when hit special blocks
 
+make a generic load data function using pile to get all adresses
 
-make load data function using pile to get all adresses
+last level : lava going up with 2 levels of palette hack : light then lava.
+both with color loop ? Make the cave dark
+

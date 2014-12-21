@@ -58,20 +58,19 @@
 ;game
 .define number_of_empty_tiles 13;tile 13 and more make collisions
 .define last_full_tile 34;tile 35 and more make no collisions
-.define digits_tile_number $A7 ;position of "0" in vram
-.define fire_tile_number $81
-.define explosion_tile_number $86
-.define fuel_tile_number $84
-.define rocket_tile_number $8C
+.define digits_tile_number $87 ;position of "0" in vram
+.define fire_tile_number $61
+.define explosion_tile_number $66
+.define fuel_tile_number $64
+.define rocket_tile_number $6C
 .define landing_tile_number $27;TODO: remove, use collision data
-.define guy_tile_number $92
-.define diff_tile_ascii 119 ;difference between index in tiles and in ascii ("A" tile number -65)
+.define guy_tile_number $72
+.define diff_tile_ascii $57 ;difference between index in tiles and in ascii ("A" tile number -65)
 .define fuel_use $-70 ;$-80
 .define speedX_tolerance $40 ;must be < $80 !
 .define speedY_tolerance $40
-.define level_mem_size 1824 ;size of 1 palette + 1 tilemap
-.define number_of_levels 5 ;
-
+.define level_mem_size 1824 ;size of 1 palette + 1 tilemap ;TODO: delete
+.define number_of_levels 5 ;TODO: delete
 
 ;==============================================================
 ; RAM section
