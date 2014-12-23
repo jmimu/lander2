@@ -400,13 +400,17 @@ RunGame:
         ; and must be increased to 4 bit
         ld a,(hl)        ; Get data byte
         out ($be),a
+        ld a,0
+        out ($be),a
+        out ($be),a
+        out ($be),a
         inc hl           ; Add one to hl so it points to the next data byte
         dec bc
         ld a,b
         or c
         jp nz,-
     ld hl,(tiles_vram_used)
-    ld bc,FontData_End-FontData_Start;*4 ; *4 because 1bpp
+    ld bc,(FontData_End-FontData_Start)*4 ; *4 because 1bpp
     add hl,bc
     ld (tiles_vram_used),hl
     
