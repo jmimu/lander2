@@ -562,11 +562,12 @@ RunGame:
 
     call DoGameLogicDbg
     
+    ;act as "call (WaitForVBlankFunction)"
+    ld hl,MainLoop_return_from_WaitForVBlankFunction
+    push hl
     ld hl,(WaitForVBlankFunction)
     jp (hl)
    MainLoop_return_from_WaitForVBlankFunction:
-   
-    ;call WaitForVBlankLava
     
     call UpdatePalette
     call UpdateScreen
@@ -1020,8 +1021,7 @@ WaitForVBlankLava:
     pop bc
     pop af
   
-  jp MainLoop_return_from_WaitForVBlankFunction
-  ;no ret, this is called with jp
+  ret
 
 
 WaitForVBlankSimple:
@@ -1037,8 +1037,7 @@ WaitForVBlankSimple:
       ld (new_frame),a
       
     pop af
-  jp MainLoop_return_from_WaitForVBlankFunction
-  ;no ret, this is called with jp
+  ret
 
 
 PSGMOD_Play:

@@ -85,8 +85,8 @@ SetupLevel10:
     ld hl,500
     ld (YLava),hl
     
-    ld hl,WaitForVBlankSimple
-    ;ld hl,WaitForVBlankLava
+    ;ld hl,WaitForVBlankSimple
+    ld hl,WaitForVBlankLava
     ld (WaitForVBlankFunction),hl
     
 ret
