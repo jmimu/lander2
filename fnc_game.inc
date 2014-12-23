@@ -4,71 +4,15 @@
   YScrollTotalMax          dw    ; maximum of YScrollTotal value (in pixels)
   YScrollVDP               db    ; VDP YScroll (in pixels)
   LevelMapStart            dw    ; pointer to tilemap start (in bytes)
-  NextMapDataStart         dw    ; pointer to tilemap new part to load (in bytes)
-  
+  NextMapDataStart         dw    ; pointer to tilemap new part to load due to scrolling (in bytes)
   YLava                    dw    ; total Y lava in level (in pixels)
+  SpecialTileFunction      dw    ; pointer to function called when touching a special tile
 .ends
 
 
 .section "game functions" free
 
-SetupLevel1:
-    ld hl,Palette1Start
-    ;==============================================================
-    ; Load palette
-    ;==============================================================
-    ; 1. Set VRAM write address to CRAM (palette) address 0 (for palette index 0)
-    ; by outputting $c000 ORed with $0000
-    ld a,$00
-    out ($bf),a
-    ld a,$c0
-    out ($bf),a
-    ; 2. Output colour data
-    ;ld hl,Palette1Start
-    ld b,(Palette1End-Palette1Start)
-    ld c,$be
-    otir
 
-    ;load tilemap of current level
-    ld hl,Tilemap1Start
-    ;hl is where the tilemap of the level starts
-    ;==============================================================
-    ; Write tilemap data
-    ;==============================================================
-    ; 1. Set VRAM write address to name table index 0
-    ; by outputting $4000 ORed with $3800+0
-    ld a,$00
-    out ($bf),a
-    ld a,$38|$40
-    out ($bf),a
-    ; 2. Output tilemap data
-    ;ld hl,Tilemap1Start
-    ld bc,$600+$40; Counter for number of bytes to write
-    -:
-        ld a,(hl)    ; Get data byte
-        out ($be),a
-        inc hl       ; Point to next tile
-        dec bc
-        ld a,b
-        or c
-        jr nz,-
-    
-    ;initialize scroll variables
-    ld hl,Tilemap1Start
-    ld (LevelMapStart),hl
-    ld a,0
-    ld (YScrollVDP),a
-    ld hl,0
-    ld (YScrollTotal),hl
-    
-    ;compute max y scroll value
-    ld hl,((Tilemap1End-Tilemap1Start)/64-24)*8
-    ld (YScrollTotalMax),hl
-    
-    ld hl,500
-    ld (YLava),hl
-    
-ret
 
 ;update v scroll
 ;input : c=add to v scroll (values can be -1,0,+1)
@@ -418,7 +362,8 @@ RunGame:
         ld a,b
         or c
         jp nz,-
-
+    ld hl,0
+    ld (tiles_vram_used),hl
 
     ;load default palette
     ld hl,Palette0Start
@@ -438,7 +383,7 @@ RunGame:
     otir
 
     ;==============================================================
-    ; Load tiles
+    ; Load font tiles
     ;==============================================================
     ; 1. Set VRAM write address to tile index 0
     ; by outputting $4000 ORed with $0000
@@ -447,8 +392,9 @@ RunGame:
     ld a,$40
     out ($bf),a
     ; 2. Output tile data
-    ld hl,TilesStart              ; Location of tile data
-    ld bc,TilesEnd-TilesStart  ; Counter for number of bytes to write
+    ld bc,FontData_End-FontData_Start  ; Counter for number of bytes to write
+    ld hl,FontData_Start              ; Location of tile data
+    
     -:
         ; Output data byte then three zeroes, because our tile data is 1 bit
         ; and must be increased to 4 bit
@@ -459,8 +405,39 @@ RunGame:
         ld a,b
         or c
         jp nz,-
-
-    ;draw texts befor turning on screen to avoid problems
+    ld hl,(tiles_vram_used)
+    ld bc,FontData_End-FontData_Start;*4 ; *4 because 1bpp
+    add hl,bc
+    ld (tiles_vram_used),hl
+    
+    ;==============================================================
+    ; Load sprites tiles
+    ;==============================================================
+    ; 1. Set VRAM write address to tile index 0
+    ; by outputting $4000 ORed with (tiles_vram_used)
+    ld a,l
+    out ($bf),a
+    ld a,h
+    add a,$40
+    out ($bf),a
+    ; 2. Output tile data
+    ld bc,Tiles_sprites_End-Tiles_sprites_Start  ; Counter for number of bytes to write
+    ld hl,Tiles_sprites_Start              ; Location of tile data
+    
+    -:
+        ld a,(hl)        ; Get data byte
+        out ($be),a
+        inc hl           ; Add one to hl so it points to the next data byte
+        dec bc
+        ld a,b
+        or c
+        jp nz,-
+    ld hl,(tiles_vram_used)
+    ld bc,Tiles_sprites_End-Tiles_sprites_Start
+    add hl,bc
+    ld (tiles_vram_used),hl
+    
+    ;draw texts before turning on screen to avoid problems
     ;draw hello text
     ld bc,TextHelloEnd-TextHelloStart
     ld b,c;text length in b
@@ -517,7 +494,7 @@ RunGame:
     ld a,$81
     out ($bf),a    
     
-    call SetupLevel1
+    call SetupLevel10
     
     
     ; Turn screen on
@@ -1301,150 +1278,146 @@ TestAllCollisions:
 ;x in h (in tiles)
 ;y in l (in tiles)
 TestCollision:;TODO: using only level1 data!
-    push af
-    push bc
-    push hl
-    
-      ;compute tile number
-      ld b,0
-      ld c,h;x in bc
-      call Multby32
-      add hl,bc
-      ld b,h
-      ld c,l
-      ;tile number in bc
-      push bc
-      
-      ;load tilemap of current level
-      ld hl,Tilemap1Start
-      ld a,(current_level)
-      ld bc,level_mem_size
-    -:
-      dec a
-      cp 0
-      jr z,+
-      add hl,bc
-      jr -
-    +:;hl is where the tilemap of the level starts
-    
-      pop bc
-      ;ld hl,Tilemap1Start
-      add hl,bc
-      add hl,bc ;hl is the pointer to the tile number
-      
-      
-      ;if (hl)>number_of_empty_tiles
-      ld a, number_of_empty_tiles
-      ld b,a
-      ld a,(hl)
-      cp b
-      jp c,end_TestCollision
-      ;it's not and emprty tile... check if it is a landing zone
-      ld b,landing_tile_number
-      cp b
-      jr z,try_to_land
-      ;check if it is a full tile
-      ld a,(hl)
-      ld b,a
-      ld a, last_full_tile
-      cp b
-      jp c,end_TestCollision
-      jr destroy
-      
-   try_to_land:   
-      ;good place, now check speeds
-      ;in x: TODO : use speedX_tolerance
-      ld hl,(speedX)  
-      ;ld bc,speedX_tolerance
-      ;add hl,bc ;hl must be < speedX_tolerance*2
-      ld bc,$80
-      add hl,bc ;h must be < 1
-      ld a,0
-      cp h
-      jr nz,destroy
-      ;in y: TODO : use speedY_tolerance
-      ld hl,(speedY)  
-      ld bc,$80
-      add hl,bc ;h must be < 1
-      ld a,0
-      cp h
-      jr nz,destroy
-      
-      
-      ;draw lander ; maybe draw it as a background ?
-      ld bc,(posX)    
-      ld h,b;x in h
-      ld bc,(posY)    
-      ld l,b;y in l
-      ld bc,$0808
-      add hl,bc ;draw the guy a little further
-      ld d,guy_tile_number;number of the tile in VRAM in d
-      ld e,$6;sprite index in e, 6 because we draw the rocket too
-      call SpriteSet16x16
-      ;next level
-      ld a,(current_level)
-      inc a
-      ld (goto_level),a
-      ;draw text
-      ld bc,TextWonEnd-TextWonStart
-      ld b,c;text length in b
-      ld c,2;col (tiles) in c
-      ld l,3;line (tiles) in l
-      ld de,TextWonStart;text pointer in de
-      call PrintTextStatic
-      
-      jp end_TestCollision
-      
-    destroy:
-        ;return to correct yellow
-        ld a,$1C
-        out ($bf),a
-        ld a,$c0
-        out ($bf),a
-        ; 2. Output colour data
-        ld a,$0f
-        out ($be),a
-    
-        ;show explosion
-        ld bc,(posX)    
-        ld h,b;x in h
-        ld bc,(posY)    
-        ld l,b;y in l
-        ld d,explosion_tile_number;number of the tile in VRAM in d
-        ld e,$0;sprite index in e, 0 because we replace the rocket
-        call SpriteSet16x24
-      
-        ld a,(current_level)
-        ;ld a,1 ;return to first level
-        ld (goto_level),a
-        
-        ;refill!
-        ld hl,$FF0F
-        ld (rocket_fuel),hl
-        ld a,1
-        ld (already_lost),a
-        
-        ;draw text
-        ld bc,TextLostEnd-TextLostStart
-        ld b,c;text length in b
-        ld c,2;col (tiles) in c
-        ld l,3;line (tiles) in l
-        ld de,TextLostStart;text pointer in de
-        call PrintTextStatic
-        
-    end_TestCollision:
-    pop hl
-    pop bc
-    pop af
+;    push af
+;    push bc
+;    push hl
+;    
+;      ;compute tile number
+;      ld b,0
+;      ld c,h;x in bc
+;      call Multby32
+;      add hl,bc
+;      ld b,h
+;      ld c,l
+;      ;tile number in bc
+;      push bc
+;      
+;      ;load tilemap of current level
+;      ld hl,Tilemap1Start
+;      ld a,(current_level)
+;      ld bc,level_mem_size
+;    -:
+;      dec a
+;      cp 0
+;      jr z,+
+;      add hl,bc
+;      jr -
+;    +:;hl is where the tilemap of the level starts
+;    
+;      pop bc
+;      ;ld hl,Tilemap1Start
+;      add hl,bc
+;      add hl,bc ;hl is the pointer to the tile number
+;      
+;      
+;      ;if (hl)>number_of_empty_tiles
+;      ld a, number_of_empty_tiles
+;      ld b,a
+;      ld a,(hl)
+;      cp b
+;      jp c,end_TestCollision
+;      ;it's not and emprty tile... check if it is a landing zone
+;      ld b,landing_tile_number
+;      cp b
+;      jr z,try_to_land
+;      ;check if it is a full tile
+;      ld a,(hl)
+;      ld b,a
+;      ld a, last_full_tile
+;      cp b
+;      jp c,end_TestCollision
+;      jr destroy
+;      
+;   try_to_land:   
+;      ;good place, now check speeds
+;      ;in x: TODO : use speedX_tolerance
+;      ld hl,(speedX)  
+;      ;ld bc,speedX_tolerance
+;      ;add hl,bc ;hl must be < speedX_tolerance*2
+;      ld bc,$80
+;      add hl,bc ;h must be < 1
+;      ld a,0
+;      cp h
+;      jr nz,destroy
+;      ;in y: TODO : use speedY_tolerance
+;      ld hl,(speedY)  
+;      ld bc,$80
+;      add hl,bc ;h must be < 1
+;      ld a,0
+;      cp h
+;      jr nz,destroy
+;      
+;      
+;      ;draw lander ; maybe draw it as a background ?
+;      ld bc,(posX)    
+;      ld h,b;x in h
+;      ld bc,(posY)    
+;      ld l,b;y in l
+;      ld bc,$0808
+;      add hl,bc ;draw the guy a little further
+;      ld d,guy_tile_number;number of the tile in VRAM in d
+;      ld e,$6;sprite index in e, 6 because we draw the rocket too
+;      call SpriteSet16x16
+;      ;next level
+;      ld a,(current_level)
+;      inc a
+;      ld (goto_level),a
+;      ;draw text
+;      ld bc,TextWonEnd-TextWonStart
+;      ld b,c;text length in b
+;      ld c,2;col (tiles) in c
+;      ld l,3;line (tiles) in l
+;      ld de,TextWonStart;text pointer in de
+;      call PrintTextStatic
+;      
+;      jp end_TestCollision
+;      
+;    destroy:
+;        ;return to correct yellow
+;        ld a,$1C
+;        out ($bf),a
+;        ld a,$c0
+;        out ($bf),a
+;        ; 2. Output colour data
+;        ld a,$0f
+;        out ($be),a
+;    
+;        ;show explosion
+;        ld bc,(posX)    
+;        ld h,b;x in h
+;        ld bc,(posY)    
+;        ld l,b;y in l
+;        ld d,explosion_tile_number;number of the tile in VRAM in d
+;        ld e,$0;sprite index in e, 0 because we replace the rocket
+;        call SpriteSet16x24
+;      
+;        ld a,(current_level)
+;        ;ld a,1 ;return to first level
+;        ld (goto_level),a
+;        
+;        ;refill!
+;        ld hl,$FF0F
+;        ld (rocket_fuel),hl
+;        ld a,1
+;        ld (already_lost),a
+;        
+;        ;draw text
+;        ld bc,TextLostEnd-TextLostStart
+;        ld b,c;text length in b
+;        ld c,2;col (tiles) in c
+;        ld l,3;line (tiles) in l
+;        ld de,TextLostStart;text pointer in de
+;        call PrintTextStatic
+;        
+;    end_TestCollision:
+;    pop hl
+;    pop bc
+;    pop af
     ret
 
 
 .ends ;--------------- end game section
 
-
-;==============================================================
-; Data
-;==============================================================
 
 
 

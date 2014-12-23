@@ -128,7 +128,7 @@ PrintText:
       
       ; 2. Output tilemap data   
       ld a,(de);the char
-      add a,diff_tile_ascii
+      sub diff_tile_ascii
       out ($be),a
       ld a,0 ;one zero
       out ($be),a
@@ -209,7 +209,7 @@ PrintTextStatic: ;for static screens (turn off screen to avoid missing letters)
       
       ; 2. Output tilemap data   
       ld a,(de);the char
-      add a,diff_tile_ascii
+      sub diff_tile_ascii
       out ($be),a
       ld a,0 ;one zero
       out ($be),a

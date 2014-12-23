@@ -16,6 +16,28 @@
 ;drum_tone_duration         db ;when 0 got to next tone
 ;drum_current_tone         db ;value (for debug)
 
+
+.ramsection "Music variables" slot 2
+  music1_start_ptr         dw ;pointer
+  music1_current_ptr         dw ;pointer
+  music1_tone_duration         db ;when 0 got to next tone
+  music1_current_tone         dw ;value (for debug)
+  music2_start_ptr         dw ;pointer
+  music2_current_ptr         dw ;pointer
+  music2_tone_duration         db ;when 0 got to next tone
+  music2_current_tone         dw ;value (for debug)
+  music3_start_ptr         dw ;pointer
+  music3_current_ptr         dw ;pointer
+  music3_tone_duration         db ;when 0 got to next tone
+  music3_current_tone         dw ;value (for debug)
+  drum_start_ptr         dw ;pointer
+  drum_current_ptr         dw ;pointer
+  drum_tone_duration         db ;when 0 got to next tone
+  drum_current_tone         db ;value (for debug)
+.ends
+
+.section "music functions" free ;
+
 ;music format:
 ;only 2 channel, no volume change...
 ;when tone duration ==1, make a 1-frame pause. At 0 change note
@@ -537,3 +559,4 @@ PlayDrum:
 ;
 ;  ret
 
+.ends ;--------------- end music functions section

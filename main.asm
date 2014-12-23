@@ -58,14 +58,14 @@
 ;game
 .define number_of_empty_tiles 13;tile 13 and more make collisions
 .define last_full_tile 34;tile 35 and more make no collisions
-.define digits_tile_number $87 ;position of "0" in vram
-.define fire_tile_number $61
-.define explosion_tile_number $66
-.define fuel_tile_number $64
-.define rocket_tile_number $6C
+.define digits_tile_number $10 ;position of "0" in vram
+.define fire_tile_number $5F
+.define explosion_tile_number $64
+.define fuel_tile_number $62
+.define rocket_tile_number $6A
 .define landing_tile_number $27;TODO: remove, use collision data
-.define guy_tile_number $72
-.define diff_tile_ascii $57 ;difference between index in tiles and in ascii ("A" tile number -65)
+.define guy_tile_number $70
+.define diff_tile_ascii 32 ;difference between index in tiles and in ascii ("A" tile number -65)
 .define fuel_use $-70 ;$-80
 .define speedX_tolerance $40 ;must be < $80 !
 .define speedY_tolerance $40
@@ -97,25 +97,7 @@
   goto_level db ;0 if no need to change level, n to enter level n
   star_color dw ;color used: bright and yellow
   ;PauseFlag db ;1 if pause
-
-  ;music
-  music1_start_ptr         dw ;pointer
-  music1_current_ptr         dw ;pointer
-  music1_tone_duration         db ;when 0 got to next tone
-  music1_current_tone         dw ;value (for debug)
-  music2_start_ptr         dw ;pointer
-  music2_current_ptr         dw ;pointer
-  music2_tone_duration         db ;when 0 got to next tone
-  music2_current_tone         dw ;value (for debug)
-  music3_start_ptr         dw ;pointer
-  music3_current_ptr         dw ;pointer
-  music3_tone_duration         db ;when 0 got to next tone
-  music3_current_tone         dw ;value (for debug)
-  drum_start_ptr         dw ;pointer
-  drum_current_ptr         dw ;pointer
-  drum_tone_duration         db ;when 0 got to next tone
-  drum_current_tone         db ;value (for debug)
-
+  tiles_vram_used   dw ; number of tiles in vram (where to add next tiles)
 .ends
 
 
@@ -161,14 +143,16 @@
 
 
 ;inclusions
+.include "fnc_sound.inc"
+
 .section "misc" free ;TODO : a section for every file!
 .include "fnc_init.inc"
-.include "fnc_sound.inc"
 .include "fnc_sprites.inc"
 .include "fnc_demo.inc"
 .include "fnc_text.inc"
 .ends
 .include "fnc_game.inc"
+.include "level10.inc"
 
 .section "main" free
 ;==============================================================

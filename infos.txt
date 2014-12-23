@@ -10,4 +10,27 @@ make a generic load data function using pile to get all adresses
 
 last level : lava going up with 2 levels of palette hack : light then lava.
 both with color loop ? Make the cave dark
+--------------------------------------------------------------------------------
+each level has his onw SpecialTileFunction, called when touching a special case
+(most of the time try to land and end en level).
+SpecialTileFunction is a variable initialized at each level
+
+
+function RunGame is strange no need to use palette0...
+
+
+add tiles_vram_used in demo too
+
+--------------------------------------------------------------------------------
+ 3008 bytes for chars, TODO: divide it by 4 using 1bpp tiles => 2256 bytes saved
+ 
+ re-arrange rom to have data specific to a level in one file, and chers in an other,
+ and be able to load chars using an other function
+ 
+ 3590 bytes for Brahms music
+ 2100 bytes for demo music
+ 4864 bytes for vertical level
+ 96 tiles for vertical level bg: 3072 bytes, if compressed : 2603 bytes
+ demo sprites :  768, 559 if compressed
+ demo tiles : 1536, 1075 if compressed
 
