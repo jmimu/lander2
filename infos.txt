@@ -21,8 +21,10 @@ function RunGame is strange no need to use palette0...
 
 add tiles_vram_used in demo too
 
+dont use color 1 in bg tiles (make is white for text)
+
 --------------------------------------------------------------------------------
- 3008 bytes for chars, TODO: divide it by 4 using 1bpp tiles => 2256 bytes saved
+ 3008 bytes for chars, divided by 4 using 1bpp tiles => 2256 bytes saved
  
  re-arrange rom to have data specific to a level in one file, and chers in an other,
  and be able to load chars using an other function

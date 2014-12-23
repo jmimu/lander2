@@ -896,8 +896,8 @@ WaitForVBlank:
       ; Update palette
       ;==============================================================
       ; 1. Set VRAM write address to CRAM (palette) address 0 (for palette index 0)
-      ; by outputting $c000 ORed with $0005 (number of the color to change)
-      ld a,$05
+      ; by outputting $c000 ORed with $0006 (number of the color to change)
+      ld a,$06
       out ($bf),a
       ld a,$c0
       out ($bf),a
@@ -912,22 +912,22 @@ WaitForVBlank:
       ; Update palette
       ;==============================================================
       ; 1. Set VRAM write address to CRAM (palette) address 0 (for palette index 0)
-      ; by outputting $c000 ORed with $0005 (number of the color to change)
-      ld a,$05
-      out ($bf),a
-      ld a,$c0
-      out ($bf),a
-      ld a,$03
-      out ($be),a
-      ;change color 8
-      ld a,$08
+      ; by outputting $c000 ORed with $0006 (number of the color to change)
+      ld a,$06
       out ($bf),a
       ld a,$c0
       out ($bf),a
       ld a,$03
       out ($be),a
       ;change color 9
-      ld a,$08
+      ld a,$09
+      out ($bf),a
+      ld a,$c0
+      out ($bf),a
+      ld a,$03
+      out ($be),a
+      ;change color A
+      ld a,$0A
       out ($bf),a
       ld a,$c0
       out ($bf),a
@@ -942,15 +942,8 @@ WaitForVBlank:
       ; Update palette
       ;==============================================================
       ; 1. Set VRAM write address to CRAM (palette) address 0 (for palette index 0)
-      ; by outputting $c000 ORed with $0005 (number of the color to change)
-      ld a,$05
-      out ($bf),a
-      ld a,$c0
-      out ($bf),a
-      ld a,$01
-      out ($be),a
-      ;change color 8
-      ld a,$08
+      ; by outputting $c000 ORed with $0006 (number of the color to change)
+      ld a,$06
       out ($bf),a
       ld a,$c0
       out ($bf),a
@@ -958,6 +951,13 @@ WaitForVBlank:
       out ($be),a
       ;change color 9
       ld a,$09
+      out ($bf),a
+      ld a,$c0
+      out ($bf),a
+      ld a,$01
+      out ($be),a
+      ;change color A
+      ld a,$0A
       out ($bf),a
       ld a,$c0
       out ($bf),a
@@ -979,22 +979,22 @@ WaitForVBlank:
       ; Update palette
       ;==============================================================
       ; 1. Set VRAM write address to CRAM (palette) address 0 (for palette index 0)
-      ; by outputting $c000 ORed with $0005 (number of the color to change)
-      ld a,$05
+      ; by outputting $c000 ORed with $0006 (number of the color to change)
+      ld a,$06
       out ($bf),a
       ld a,$c0
       out ($bf),a
       ld a,$10
       out ($be),a
-      ;change color 8
-      ld a,$08
+      ;change color 9
+      ld a,$09
       out ($bf),a
       ld a,$c0
       out ($bf),a
       ld a,$3a
       out ($be),a
-      ;change color 9
-      ld a,$09
+      ;change color A
+      ld a,$0A
       out ($bf),a
       ld a,$c0
       out ($bf),a
