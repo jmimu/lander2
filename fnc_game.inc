@@ -48,6 +48,10 @@ VScrollManager:
     ;update YScrollTotal
     inc hl
     ld (YScrollTotal),hl
+    ;update posY
+    ld hl,(posY)
+    dec h
+    ld (posY),hl
     
     ;update YScrollVDP
     ld a,(YScrollVDP)
@@ -149,6 +153,10 @@ VScrollManager:
     ;update YScrollTotal
     dec hl
     ld (YScrollTotal),hl
+    ;update posY
+    ld hl,(posY)
+    inc h
+    ld (posY),hl
     
     ;update YScrollVDP
     ld a,(YScrollVDP)
@@ -625,25 +633,25 @@ ReadButtons:
         and %00000001
         cp  %00000000
         jr nz,+
-        call OnButtonUpDbg
+        call OnButtonUp;Dbg
     +:  
         in a,($dc)
         and %00000010
         cp  %00000000
         jr nz,+
-        call OnButtonDownDbg
+        call OnButtonDown;Dbg
     +:  
         in a,($dc)
         and %00000100
         cp  %00000000
         jr nz,+
-        call OnButtonLeftDbg
+        call OnButtonLeft;Dbg
     +:  
         in a,($dc)
         and %00001000
         cp  %00000000
         jr nz,+
-        call OnButtonRightDbg
+        call OnButtonRight;Dbg
     +:
     pop af
 ret
@@ -1091,6 +1099,11 @@ DoGameLogicDbg:
     ld (number_of_sprites),a
     
     ;mechanics
+    ;increment Y-speed (gravity)
+    ld hl,(speedY)
+    inc hl
+    inc hl
+    ld (speedY),hl
     
     ;update x pos
     ld bc,(posX)
@@ -1103,20 +1116,38 @@ DoGameLogicDbg:
     add hl,bc
     ld (posY),hl
     
-    ;y scroll depending on speedY
-    ld hl, (speedY)
-    ld c,h
+    ;y scroll depending on posY
+    ;if posY<60, scroll up
+    ;if posY>100, scroll down
+    ld hl, (posY)
+    ld b,h ;b is the entire part of posY
+    ld a,b
+    cp 60
+    jr nc,+
+    ld c,-1
     call VScrollManager
-    ld hl, (YScrollTotal)
-    add hl,hl
-    add hl,hl
-    ld (YLava),hl
+  +:
+    cp 100
+    jr c,+
+    ld c,1
+    call VScrollManager
+  +:
+    
+    
+    ;y scroll depending on speedY
+    ;ld hl, (speedY)
+    ;ld c,h
+    ;call VScrollManager
+    ;ld hl, (YScrollTotal)
+    ;add hl,hl
+    ;add hl,hl
+    ;ld (YLava),hl
 
     
     ;set speed to 0
-    ld hl,0
-    ld (speedX),hl
-    ld (speedY),hl
+    ;ld hl,0
+    ;ld (speedX),hl
+    ;ld (speedY),hl
     
     call ReadButtons ;updates number_of_sprites
     ;hide other sprites
