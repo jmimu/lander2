@@ -7,6 +7,7 @@
   NextMapDataStart         dw    ; pointer to tilemap new part to load due to scrolling (in bytes)
   YLava                    dw    ; total Y lava in level (in pixels)
   SpecialTileFunction      dw    ; pointer to function called when touching a special tile
+  WaitForVBlankFunction    dw    ; pointer to function WaitForVBlank
 .ends
 
 
@@ -560,7 +561,13 @@ RunGame:
     call CutOneChannel
 
     call DoGameLogicDbg
-    call WaitForVBlank
+    
+    ld hl,(WaitForVBlankFunction)
+    jp (hl)
+   MainLoop_return_from_WaitForVBlankFunction:
+   
+    ;call WaitForVBlankLava
+    
     call UpdatePalette
     call UpdateScreen
     ;call PSGMOD_Play
@@ -853,7 +860,7 @@ OnButtonRightDbg:
 ret
 ;----------------- end debug
 
-WaitForVBlank:
+WaitForVBlankLava:
     push af
     push bc
     
@@ -861,13 +868,15 @@ WaitForVBlank:
       ld hl,(YLava)
       ld bc,(YScrollTotal)
       ;want (YLava)-(YScrollTotal)
-      ld a,b
-      neg
-      ld b,a
-      ld a,c
-      neg
-      ld c,a
-      add hl,bc ;hl=(YLava)-(YScrollTotal)
+      or a ; reset carry flag (see http://www.smspower.org/Development/Z80ProgrammingTechniques#SubHlde)
+      sbc hl,bc
+      ;ld a,b
+      ;neg
+      ;ld b,a
+      ;ld a,c
+      ;neg
+      ;ld c,a
+      ;add hl,bc ;hl=(YLava)-(YScrollTotal)
       
       ;put the 3 lava lines in screen in b,d,e 
       ld b,l
@@ -1010,7 +1019,27 @@ WaitForVBlank:
       out ($be),a
     pop bc
     pop af
-    ret   
+  
+  jp MainLoop_return_from_WaitForVBlankFunction
+  ;no ret, this is called with jp
+
+
+WaitForVBlankSimple:
+    push af
+    
+    -:
+      ;check if end of frame
+      ld a,(new_frame)
+      cp 0
+      jr z,-
+
+      ld a,0
+      ld (new_frame),a
+      
+    pop af
+  jp MainLoop_return_from_WaitForVBlankFunction
+  ;no ret, this is called with jp
+
 
 PSGMOD_Play:
     ;~ ld c,0;channel in c*%100000(max 3*%100000)
@@ -1120,13 +1149,25 @@ DoGameLogicDbg:
     ;if posY<60, scroll up
     ;if posY>100, scroll down
     ld hl, (posY)
-    ld b,h ;b is the entire part of posY
-    ld a,b
+    ld a,h ;a is the entire part of posY
+    cp 60
+    jr nc,+
+    ld c,-1
+    call VScrollManager
+    ;once again to have a 2-speed scrolling
+    ld hl, (posY)
+    ld a,h ;a is the entire part of posY
     cp 60
     jr nc,+
     ld c,-1
     call VScrollManager
   +:
+    cp 100
+    jr c,+
+    ld c,1
+    call VScrollManager
+    ld hl, (posY)
+    ld a,h ;a is the entire part of posY
     cp 100
     jr c,+
     ld c,1
