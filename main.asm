@@ -25,19 +25,17 @@
 .memorymap
    defaultslot 0
    ; ROM area
-   slotsize        $8000
+   slotsize        $C000
    slot            0       $0000
-   slotsize        $4000
-   slot            1       $8000
    ; RAM area
    slotsize        $2000
-   slot            2       $C000
-   slot            3       $E000
+   slot            1       $C000
+   slot            2       $E000
 .endme
 
 .rombankmap
    bankstotal 1
-   banksize $8000
+   banksize $C000
    banks 1
 .endro
 
@@ -75,7 +73,7 @@
 ;==============================================================
 ; RAM section
 ;==============================================================
-.ramsection "variables" slot 2
+.ramsection "variables" slot 1
   new_frame                     db ; 0: no; 1: yes
   PauseFlag db ;1 if pause
   ;demo variables
@@ -213,9 +211,14 @@ IsButtonPressed:
 ;==============================================================
 ; Data
 ;==============================================================
-.section "assets" free
+;.bank 1 slot 0
+.section "assets_demo" free
 .include "data_jmimu.inc"
 .include "data_demo.inc"
+.ends
+
+;.bank 2 slot 0
+.section "assets_game" free
 .include "data_game.inc"
 .ends
 

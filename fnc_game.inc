@@ -1,5 +1,5 @@
 
-.ramsection "Game variables" slot 2
+.ramsection "Game variables" slot 1
   YScrollTotal             dw    ; total Y scroll in level (in pixels)
   YScrollTotalMax          dw    ; maximum of YScrollTotal value (in pixels)
   YScrollVDP               db    ; VDP YScroll (in pixels)

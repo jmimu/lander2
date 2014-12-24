@@ -17,7 +17,7 @@
 ;drum_current_tone         db ;value (for debug)
 
 
-.ramsection "Music variables" slot 2
+.ramsection "Music variables" slot 1
   music1_start_ptr         dw ;pointer
   music1_current_ptr         dw ;pointer
   music1_tone_duration         db ;when 0 got to next tone
