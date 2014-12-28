@@ -149,7 +149,7 @@ VScrollManager:
     cp 0
     jr nz,+
     ;we are at 0, stop scrolling
-    jp z,VScrollManager_end
+    jp z,VScrollManager_end ;remove this line to enable out of memory 
   +:
     ;update YScrollTotal
     dec hl
@@ -563,6 +563,7 @@ RunGame:
     call DoGameLogicDbg
     
     ;act as "call (WaitForVBlankFunction)"
+    ;impossible to push or ld pc?
     ld hl,MainLoop_return_from_WaitForVBlankFunction
     push hl
     ld hl,(WaitForVBlankFunction)
@@ -1205,7 +1206,8 @@ DoGameLogicDbg:
     ld e,$0;sprite index in e, here these are the first sprites used
     call SpriteSet16x24
     
-        
+    call TestAllCollisions
+    
     pop hl
     pop de
     pop bc
@@ -1341,31 +1343,54 @@ TestAllCollisions:
       srl l
       ;y in l (in tiles)
       call TestCollision
-      
-      ;tests if point posX+8,posY+24 is on a full tile
-      ;optimization: update only l
-      inc l;add 24 pix!
-      inc l
-      inc l
-      call TestCollision
+      ;
+      ;;tests if point posX+8,posY+24 is on a full tile
+      ;;optimization: update only l
+      ;inc l;add 24 pix!
+      ;inc l
+      ;inc l
+      ;call TestCollision
     ret
 
 ;x in h (in tiles)
 ;y in l (in tiles)
-TestCollision:;TODO: using only level1 data!
-;    push af
-;    push bc
-;    push hl
-;    
-;      ;compute tile number
-;      ld b,0
-;      ld c,h;x in bc
-;      call Multby32
-;      add hl,bc
-;      ld b,h
-;      ld c,l
-;      ;tile number in bc
-;      push bc
+TestCollision:;use tilemap collision data
+    push af
+    push bc
+    push hl
+      ;find the tile where we are with scrolling
+    
+      ;TODO: use scrolling value!
+      ;compute tile number
+      ld b,0
+      ld c,h;x in bc
+      call Multby32
+      add hl,bc
+      ld b,h
+      ld c,l
+      ;tile number in bc
+      ;push bc
+      
+      ;try to read data in vram
+      ; 1. Set VRAM write address to name table index 0
+      ; by outputting $4000 ORed with $3800+bc
+      ;ld a,b
+      ;out ($bf),a
+      ;ld a,$38|$40
+      ;add a,c
+      ;out ($bf),a
+      ; 2. get tilemap data
+      ;in a,($be)
+      ;ld h,a
+      ;in a,($be)
+      ;ld l,a
+      
+    TestCollisionDbg1:
+      ld l,a;just debug
+      
+      ;tilemap data is in hl
+      
+      
 ;      
 ;      ;load tilemap of current level
 ;      ld hl,Tilemap1Start
@@ -1484,10 +1509,10 @@ TestCollision:;TODO: using only level1 data!
 ;        ld de,TextLostStart;text pointer in de
 ;        call PrintTextStatic
 ;        
-;    end_TestCollision:
-;    pop hl
-;    pop bc
-;    pop af
+    TestCollision_end:
+    pop hl
+    pop bc
+    pop af
     ret
 
 

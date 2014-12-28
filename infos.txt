@@ -10,6 +10,26 @@ make a generic load data function using pile to get all adresses
 
 last level : lava going up with 2 levels of palette hack : light then lava.
 both with color loop ? Make the cave dark
+when getting out, enable vscroll up out of memory with this line :
+;remove this line to enable out of memory
+stop collisions and stop fuel counter, end of game when hitting y=0
+
+--------------------------------------------------------------------------------
+
+collisions:
+the first 3 bits of each tile in tilemap contains collision data.
+000: empty
+001: full
+010: half low
+011: half hi
+100: slope down (check x-flip)
+101: slope up (check x-flip)
+110: half side (check x-flip)
+111: special
+
+read collision data from rom (not vram) : level data start + yscrolltotal + yscroll mod 8
+
+
 --------------------------------------------------------------------------------
 each level has his onw SpecialTileFunction, called when touching a special case
 (most of the time try to land and end en level).
