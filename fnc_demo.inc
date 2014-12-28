@@ -1,6 +1,6 @@
 InitializeJmimu:
 ;disable scrolling
-    ld a,0
+    xor a
     out ($bf),a
     ld a,%10001000
     out ($bf),a
@@ -143,7 +143,7 @@ InitializeDemo:
     call InitMusic3
 
     ;disable scrolling
-    ld a,0
+    xor a
     out ($bf),a
     ld a,%10001000
     out ($bf),a
@@ -270,7 +270,7 @@ InitializeDemo:
     ld bc,$0
     ld (forest_anim_step),bc
 
-    ld a,0
+    xor a
     ld (Xscroll),a
 
     ld hl,0
@@ -423,12 +423,12 @@ Demo_CreateForest:
     -:
         ld a,forest_1st_tile  ;tile number (little endian)
         out ($be),a
-        ld a,0  ;metadata
+        xor a  ;metadata
         out ($be),a
 
         ld a,forest_1st_tile+1  ;tile number (little endian)
         out ($be),a
-        ld a,0  ;metadata
+        xor a  ;metadata
         out ($be),a
         dec c
         jr nz,-
@@ -438,12 +438,12 @@ Demo_CreateForest:
     -:
         ld a,forest_1st_tile+2  ;tile number (little endian)
         out ($be),a
-        ld a,0  ;metadata
+        xor a  ;metadata
         out ($be),a
 
         ld a,forest_1st_tile+3  ;tile number (little endian)
         out ($be),a
-        ld a,0  ;metadata
+        xor a  ;metadata
         out ($be),a
         dec c
         jr nz,-
@@ -453,12 +453,12 @@ Demo_CreateForest:
      -:
          ld a,forest_1st_tile+4  ;tile number (little endian)
          out ($be),a
-         ld a,0  ;metadata
+         xor a  ;metadata
          out ($be),a
  
          ld a,forest_1st_tile+5  ;tile number (little endian)
          out ($be),a
-         ld a,0  ;metadata
+         xor a  ;metadata
          out ($be),a
          dec c
          jr nz,-
@@ -468,12 +468,12 @@ Demo_CreateForest:
      -:
          ld a,forest_1st_tile+6  ;tile number (little endian)
          out ($be),a
-         ld a,0  ;metadata
+         xor a  ;metadata
          out ($be),a
  
          ld a,forest_1st_tile+7  ;tile number (little endian)
          out ($be),a
-         ld a,0  ;metadata
+         xor a  ;metadata
          out ($be),a
          dec c
          jr nz,- 
@@ -483,12 +483,12 @@ Demo_CreateForest:
     -:
         ld a,forest_scroll_1st_tile_from_forest_start+forest_1st_tile  ;tile number (little endian)
         out ($be),a
-        ld a,0  ;metadata
+        xor a  ;metadata
         out ($be),a
 
         ld a,forest_scroll_1st_tile_from_forest_start+forest_1st_tile+1  ;tile number (little endian)
         out ($be),a
-        ld a,0  ;metadata
+        xor a  ;metadata
         out ($be),a
         dec c
         jr nz,-
@@ -498,12 +498,12 @@ Demo_CreateForest:
     ;-:
     ;    ld a,$1  ;tile number (little endian)
     ;    out ($be),a
-    ;    ld a,0  ;metadata
+    ;    xor a  ;metadata
     ;    out ($be),a
     ;
     ;    ld a,$1  ;tile number (little endian)
     ;    out ($be),a
-    ;    ld a,0  ;metadata
+    ;    xor a  ;metadata
     ;    out ($be),a
     ;    dec c
     ;    jr nz,-
@@ -516,7 +516,7 @@ Demo_WaitForVBlank:
     push af
     
     ;no scroll at screen top
-    ld a,0
+    xor a
     out ($bf),a
     ld a,%10001000
     out ($bf),a
@@ -569,7 +569,7 @@ Demo_WaitForVBlank:
       cp 0
       jr z,-
 
-      ld a,0
+      xor a
       ld (new_frame),a      
     pop af    
     ret   

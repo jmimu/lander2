@@ -130,7 +130,7 @@ PrintText:
       ld a,(de);the char
       sub diff_tile_ascii
       out ($be),a
-      ld a,0 ;one zero
+      xor a ;one zero
       out ($be),a
       inc de;move pointer in data
       inc hl;move pointer on screen
@@ -211,7 +211,7 @@ PrintTextStatic: ;for static screens (turn off screen to avoid missing letters)
       ld a,(de);the char
       sub diff_tile_ascii
       out ($be),a
-      ld a,0 ;one zero
+      xor a ;one zero
       out ($be),a
       inc de;move pointer in data
       inc hl;move pointer on screen

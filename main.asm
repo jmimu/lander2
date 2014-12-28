@@ -156,7 +156,7 @@
 main:
     ld sp, $dff0 ;where stack ends ;$dff0
     
-    ld a,0
+    xor a
     ld (PauseFlag),a
 
     ;==============================================================

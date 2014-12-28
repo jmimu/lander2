@@ -61,7 +61,7 @@ VScrollManager:
     cp 224
     jr c,+
     ;if YScrollVDP >223
-    ld a,0
+    xor a
 
   +:
     ld (YScrollVDP),a
@@ -270,7 +270,7 @@ RunGame:
     call InitMusic3
 
     ;disable scrolling
-    ld a,0
+    xor a
     out ($bf),a
     ld a,%10001000
     out ($bf),a
@@ -336,7 +336,7 @@ RunGame:
     jr nz,+
     ld hl,$FF0F
     ld (rocket_fuel),hl
-    ld a,0
+    xor a
     ld (already_lost),a
   +:
   
@@ -409,7 +409,7 @@ RunGame:
         ; and must be increased to 4 bit
         ld a,(hl)        ; Get data byte
         out ($be),a
-        ld a,0
+        xor a
         out ($be),a
         out ($be),a
         out ($be),a
@@ -534,7 +534,7 @@ RunGame:
     ld hl,$1400
     ld (posY),hl
 
-    ld a,0
+    xor a
     ld (goto_level),a
     
     ld a,1
@@ -989,7 +989,7 @@ WaitForVBlankLava:
       cp 0
       jr z,-
 
-      ld a,0
+      xor a
       ld (new_frame),a
       
       
@@ -1034,7 +1034,7 @@ WaitForVBlankSimple:
       cp 0
       jr z,-
 
-      ld a,0
+      xor a
       ld (new_frame),a
       
     pop af
@@ -1295,7 +1295,7 @@ drawWarning:
       ;add hl,bc ;hl must be < speedX_tolerance*2
       ld bc,$80
       add hl,bc ;h must be < 1
-      ld a,0
+      xor a
       cp h
       jr z,+
         ;draw text
@@ -1310,7 +1310,7 @@ drawWarning:
       ld hl,(speedY)  
       ld bc,$80
       add hl,bc ;h must be < 1
-      ld a,0
+      xor a
       cp h
       jr z,+
         ;draw text
@@ -1436,14 +1436,14 @@ TestCollision:;use tilemap collision data
 ;      ;add hl,bc ;hl must be < speedX_tolerance*2
 ;      ld bc,$80
 ;      add hl,bc ;h must be < 1
-;      ld a,0
+;      xor a
 ;      cp h
 ;      jr nz,destroy
 ;      ;in y: TODO : use speedY_tolerance
 ;      ld hl,(speedY)  
 ;      ld bc,$80
 ;      add hl,bc ;h must be < 1
-;      ld a,0
+;      xor a
 ;      cp h
 ;      jr nz,destroy
 ;      

@@ -73,7 +73,7 @@ SetupLevel10:
     ;initialize scroll variables
     ld hl,Tilemap10Start
     ld (LevelMapStart),hl
-    ld a,0
+    xor a
     ld (YScrollVDP),a
     ld hl,0
     ld (YScrollTotal),hl
