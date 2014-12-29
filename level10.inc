@@ -85,10 +85,12 @@ SetupLevel10:
     ld hl,500
     ld (YLava),hl
     
-    ;ld hl,WaitForVBlankSimple
-    ld hl,WaitForVBlankLava
+    ld hl,WaitForVBlankSimple
+    ;ld hl,WaitForVBlankLava
     ld (WaitForVBlankFunction),hl
     
+    ld hl,32
+    ld (LevelMapWidth),hl
 ret
 
 

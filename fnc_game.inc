@@ -5,17 +5,26 @@
   YScrollVDP               db    ; VDP YScroll (in pixels)
   LevelMapStart            dw    ; pointer to tilemap start (in bytes)
   NextMapDataStart         dw    ; pointer to tilemap new part to load due to scrolling (in bytes)
+  LevelMapWidth            dw    ; tilemap width start (in tiles)
   YLava                    dw    ; total Y lava in level (in pixels)
   SpecialTileFunction      dw    ; pointer to function called when touching a special tile
   WaitForVBlankFunction    dw    ; pointer to function WaitForVBlank
+  
+  
 .ends
 
 
 .section "game functions" free
 
+;used to fake a call to a variable function
+;function address is in (hl)
+CallFunctionHL:
+  ;PC was already pushed by "call CallFunctionHL" !
+  jp (hl)
 
 
-;update v scroll
+
+;update v scroll (only for 32-tile wide tilemaps)
 ;input : c=add to v scroll (values can be -1,0,+1)
 VScrollManager:
   push af
@@ -562,13 +571,9 @@ RunGame:
 
     call DoGameLogicDbg
     
-    ;act as "call (WaitForVBlankFunction)"
-    ;impossible to push or ld pc?
-    ld hl,MainLoop_return_from_WaitForVBlankFunction
-    push hl
     ld hl,(WaitForVBlankFunction)
-    jp (hl)
-   MainLoop_return_from_WaitForVBlankFunction:
+    call CallFunctionHL;act as "call (hl)"
+    
     
     call UpdatePalette
     call UpdateScreen

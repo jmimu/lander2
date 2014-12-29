@@ -28,7 +28,7 @@ the first 3 bits of each tile in tilemap contains collision data.
 111: special
 
 read collision data from rom (not vram) : level data start + yscrolltotal + yscroll mod 8
-
+!!!!! force tilemap w to be a power of 2, make a xy2index function for each w.
 
 --------------------------------------------------------------------------------
 each level has his onw SpecialTileFunction, called when touching a special case
