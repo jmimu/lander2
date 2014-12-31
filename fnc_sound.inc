@@ -166,313 +166,362 @@ PlayNoise:
 
 
 InitMusic1:
-  ;data1 start in hl
-  ld (music1_start_ptr),hl
-  dec hl ; get back 4 bytes
-  dec hl
-  dec hl
-  dec hl
-  ld (music1_current_ptr),hl ;current pointer is to a fake previous tone because music_tone_duration is 0
-  ld a,1
-  ld (music1_tone_duration),a
+  push af
+    ;data1 start in hl
+    ld (music1_start_ptr),hl
+    dec hl ; get back 4 bytes
+    dec hl
+    dec hl
+    dec hl
+    ld (music1_current_ptr),hl ;current pointer is to a fake previous tone because music_tone_duration is 0
+    ld a,1
+    ld (music1_tone_duration),a
+  pop af
   ret
 
 InitMusic2:
-  ;data2 start in hl
-  ld (music2_start_ptr),hl
-  dec hl ; get back 4 bytes
-  dec hl
-  dec hl
-  dec hl
-  ld (music2_current_ptr),hl ;current pointer is to a fake previous tone because music_tone_duration is 0
-  ld a,1
-  ld (music2_tone_duration),a
+  push af
+    ;data2 start in hl
+    ld (music2_start_ptr),hl
+    dec hl ; get back 4 bytes
+    dec hl
+    dec hl
+    dec hl
+    ld (music2_current_ptr),hl ;current pointer is to a fake previous tone because music_tone_duration is 0
+    ld a,1
+    ld (music2_tone_duration),a
+  pop af
   ret
   
 InitMusic3:
-  ;data3 start in hl
-  ld (music3_start_ptr),hl
-  dec hl ; get back 4 bytes
-  dec hl
-  dec hl
-  dec hl
-  ld (music3_current_ptr),hl ;current pointer is to a fake previous tone because music_tone_duration is 0
-  ld a,1
-  ld (music3_tone_duration),a
+  push af
+    ;data3 start in hl
+    ld (music3_start_ptr),hl
+    dec hl ; get back 4 bytes
+    dec hl
+    dec hl
+    dec hl
+    ld (music3_current_ptr),hl ;current pointer is to a fake previous tone because music_tone_duration is 0
+    ld a,1
+    ld (music3_tone_duration),a
+  pop af
   ret
 
 InitDrum:
-  ;data start in hl
-  ld (drum_start_ptr),hl
-  dec hl ; get back 2 bytes
-  dec hl
-  ld (drum_current_ptr),hl ;current pointer is to a fake previous tone because music_tone_duration is 0
-  ld a,1
-  ld (drum_tone_duration),a
+  push af
+    ;data start in hl
+    ld (drum_start_ptr),hl
+    dec hl ; get back 2 bytes
+    dec hl
+    ld (drum_current_ptr),hl ;current pointer is to a fake previous tone because music_tone_duration is 0
+    ld a,1
+    ld (drum_tone_duration),a
+  pop af
   ret
-	
+
 PlayMusic1:
-  ;check is current tone is still played
-  ld a,(music1_tone_duration)
-  dec a
-  ld (music1_tone_duration),a
-  ;cp 1 ;if duration == 1 make a pause
-  ;jr nz,+
-  ;  ;make pause
-  ;  ld c,0;channel in c*%100000(max 3*%100000)
-  ;  call CutOneChannel
-  ;  ret
-  ;+: ; not 1, try 0
-  cp 0
-  jr z,+
-    ret ;if not 0 continue tone...
-  +:
-  ;if 0, have to change tone...
-  ld hl,(music1_current_ptr)
-  inc hl
-  inc hl
-  inc hl
-  inc hl;go 4 bytes later
-  ld (music1_current_ptr),hl
-  
-  ;check if end of partition
-  ld bc,(music1_current_ptr)
-  ld a,(bc)
-  cp $FF
-  jr nz,+ ;(music1_current_ptr) != $ff, not end of track
-  
-  inc bc
-  ld a,(bc)
-  cp $FF
-  jr nz,+;(music1_current_ptr+1) != $ff, not end of track
-  
-  ;have to loop music
-  ld hl,(music1_start_ptr)
-  ld (music1_current_ptr),hl ;return to begin of track
-  
-  +:
-  
-  ;play tone:
-  ld bc,(music1_current_ptr)
-  ld a,(bc)
-  ld h,a
-  inc bc
-  ld a,(bc)
-  ld l,a;tone in hl
-  
-  ld (music1_current_tone),hl
-  
-  ;get duration
-  inc bc
-  ld a,(bc)
-  ld (music1_tone_duration),a
-  
-  ;test if tone==0
-  ld a,h
-  cp $00
-  jr nz,+
+  push af
+  push bc
+  push hl
+    ;check is current tone is still played
+    ld a,(music1_tone_duration)
+    dec a
+    ld (music1_tone_duration),a
+    ;cp 1 ;if duration == 1 make a pause
+    ;jr nz,+
+    ;  ;make pause
+    ;  ld c,0;channel in c*%100000(max 3*%100000)
+    ;  call CutOneChannel
+    ;  ret
+    ;+: ; not 1, try 0
+    cp 0
+    jr z,+
+      pop hl
+      pop bc
+      pop af
+      ret ;if not 0 continue tone...
+    +:
+    ;if 0, have to change tone...
+    ld hl,(music1_current_ptr)
+    inc hl
+    inc hl
+    inc hl
+    inc hl;go 4 bytes later
+    ld (music1_current_ptr),hl
+    
+    ;check if end of partition
+    ld bc,(music1_current_ptr)
+    ld a,(bc)
+    cp $FF
+    jr nz,+ ;(music1_current_ptr) != $ff, not end of track
+    
+    inc bc
+    ld a,(bc)
+    cp $FF
+    jr nz,+;(music1_current_ptr+1) != $ff, not end of track
+    
+    ;have to loop music
+    ld hl,(music1_start_ptr)
+    ld (music1_current_ptr),hl ;return to begin of track
+    
+    +:
+    
+    ;play tone:
+    ld bc,(music1_current_ptr)
+    ld a,(bc)
+    ld h,a
+    inc bc
+    ld a,(bc)
+    ld l,a;tone in hl
+    
+    ld (music1_current_tone),hl
+    
+    ;get duration
+    inc bc
+    ld a,(bc)
+    ld (music1_tone_duration),a
+    
+    ;test if tone==0
+    ld a,h
+    cp $00
+    jr nz,+
 
-  ld a,l
-  cp $00
-  jr nz,+;(music1_current_ptr+1) != 0, not pause
-  ;this is a pause, so cut sound
-  ld c,0;channel in c*%100000(max 3*%100000)
-  call CutOneChannel
-  ret
- +:
-  ;get volume
-  inc bc
-  ld a,(bc)
-  ld c,0;channel in c*%100000(max 3*%100000)
-  ;ld a,%1000 ;volume
-  call EnableChannel
-  call PlayTone
-
+    ld a,l
+    cp $00
+    jr nz,+;(music1_current_ptr+1) != 0, not pause
+    ;this is a pause, so cut sound
+    ld c,0;channel in c*%100000(max 3*%100000)
+    call CutOneChannel
+    pop hl
+    pop bc
+    pop af
+    ret
+   +:
+    ;get volume
+    inc bc
+    ld a,(bc)
+    ld c,0;channel in c*%100000(max 3*%100000)
+    ;ld a,%1000 ;volume
+    call EnableChannel
+    call PlayTone
+  pop hl
+  pop bc
+  pop af
   ret
   
 PlayMusic2:
-  ;check is current tone is still played
-  ld a,(music2_tone_duration)
-  dec a
-  ld (music2_tone_duration),a
-  cp 0 ;if duration == 0, next tone
-  jr z,+
-    ret ;if not 0 continue tone...
-  +:
-  ;if 0, have to change tone...
-  ld hl,(music2_current_ptr)
-  inc hl
-  inc hl
-  inc hl
-  inc hl;go 4 bytes later
-  ld (music2_current_ptr),hl
-  
-  ;check if end of partition
-  ld bc,(music2_current_ptr)
-  ld a,(bc)
-  cp $FF
-  jr nz,+ ;(music2_current_ptr) != $ff, not end of track
-  
-  inc bc
-  ld a,(bc)
-  cp $FF
-  jr nz,+;(music2_current_ptr+1) != $ff, not end of track
-  
-  ;have to loop music
-  ld hl,(music2_start_ptr)
-  ld (music2_current_ptr),hl ;return to begin of track
-  
-  +:
-  
-  ;play tone:
-  ld bc,(music2_current_ptr)
-  ld a,(bc)
-  ld h,a
-  inc bc
-  ld a,(bc)
-  ld l,a;tone in hl
-  
-  ld (music2_current_tone),hl
-  
-  ;get duration
-  inc bc
-  ld a,(bc)
-  ld (music2_tone_duration),a
-  
-  ;test if tone==0
-  ld a,h
-  cp $00
-  jr nz,+
+  push af
+  push bc
+  push hl
+    ;check is current tone is still played
+    ld a,(music2_tone_duration)
+    dec a
+    ld (music2_tone_duration),a
+    cp 0 ;if duration == 0, next tone
+    jr z,+
+      pop hl
+      pop bc
+      pop af
+      ret ;if not 0 continue tone...
+    +:
+    ;if 0, have to change tone...
+    ld hl,(music2_current_ptr)
+    inc hl
+    inc hl
+    inc hl
+    inc hl;go 4 bytes later
+    ld (music2_current_ptr),hl
+    
+    ;check if end of partition
+    ld bc,(music2_current_ptr)
+    ld a,(bc)
+    cp $FF
+    jr nz,+ ;(music2_current_ptr) != $ff, not end of track
+    
+    inc bc
+    ld a,(bc)
+    cp $FF
+    jr nz,+;(music2_current_ptr+1) != $ff, not end of track
+    
+    ;have to loop music
+    ld hl,(music2_start_ptr)
+    ld (music2_current_ptr),hl ;return to begin of track
+    
+    +:
+    
+    ;play tone:
+    ld bc,(music2_current_ptr)
+    ld a,(bc)
+    ld h,a
+    inc bc
+    ld a,(bc)
+    ld l,a;tone in hl
+    
+    ld (music2_current_tone),hl
+    
+    ;get duration
+    inc bc
+    ld a,(bc)
+    ld (music2_tone_duration),a
+    
+    ;test if tone==0
+    ld a,h
+    cp $00
+    jr nz,+
 
-  ld a,l
-  cp $00
-  jr nz,+;(music2_current_ptr+1) != 0, not pause
-  ;this is a pause, so cut sound
-  ld c,%100000;channel in c*%100000(max 3*%100000)
-  call CutOneChannel
-  ret
- +:
-  ;get volume
-  inc bc
-  ld a,(bc)
-  ld c,%100000;channel in c*%100000(max 3*%100000)
-  call EnableChannel
-  call PlayTone
-
+    ld a,l
+    cp $00
+    jr nz,+;(music2_current_ptr+1) != 0, not pause
+    ;this is a pause, so cut sound
+    ld c,%100000;channel in c*%100000(max 3*%100000)
+    call CutOneChannel
+    pop hl
+    pop bc
+    pop af
+    ret
+   +:
+    ;get volume
+    inc bc
+    ld a,(bc)
+    ld c,%100000;channel in c*%100000(max 3*%100000)
+    call EnableChannel
+    call PlayTone
+  pop hl
+  pop bc
+  pop af
   ret
 
 PlayMusic3:
-  ;check is current tone is still played
-  ld a,(music3_tone_duration)
-  dec a
-  ld (music3_tone_duration),a
-  cp 0 ;if duration == 0, next tone
-  jr z,+
-    ret ;if not 0 continue tone...
-  +:
-  ;if 0, have to change tone...
-  ld hl,(music3_current_ptr)
-  inc hl
-  inc hl
-  inc hl
-  inc hl;go 4 bytes later
-  ld (music3_current_ptr),hl
-  
-  ;check if end of partition
-  ld bc,(music3_current_ptr)
-  ld a,(bc)
-  cp $FF
-  jr nz,+ ;(music3_current_ptr) != $ff, not end of track
-  
-  inc bc
-  ld a,(bc)
-  cp $FF
-  jr nz,+;(music3_current_ptr+1) != $ff, not end of track
-  
-  ;have to loop music
-  ld hl,(music3_start_ptr)
-  ld (music3_current_ptr),hl ;return to begin of track
-  
-  +:
-  
-  ;play tone:
-  ld bc,(music3_current_ptr)
-  ld a,(bc)
-  ld h,a
-  inc bc
-  ld a,(bc)
-  ld l,a;tone in hl
-  
-  ld (music3_current_tone),hl
-  
-  ;get duration
-  inc bc
-  ld a,(bc)
-  ld (music3_tone_duration),a
-  
-  ;test if tone==0
-  ld a,h
-  cp $00
-  jr nz,+
+  push af
+  push bc
+  push hl
+    ;check is current tone is still played
+    ld a,(music3_tone_duration)
+    dec a
+    ld (music3_tone_duration),a
+    cp 0 ;if duration == 0, next tone
+    jr z,+
+      pop hl
+      pop bc
+      pop af
+      ret ;if not 0 continue tone...
+    +:
+    ;if 0, have to change tone...
+    ld hl,(music3_current_ptr)
+    inc hl
+    inc hl
+    inc hl
+    inc hl;go 4 bytes later
+    ld (music3_current_ptr),hl
+    
+    ;check if end of partition
+    ld bc,(music3_current_ptr)
+    ld a,(bc)
+    cp $FF
+    jr nz,+ ;(music3_current_ptr) != $ff, not end of track
+    
+    inc bc
+    ld a,(bc)
+    cp $FF
+    jr nz,+;(music3_current_ptr+1) != $ff, not end of track
+    
+    ;have to loop music
+    ld hl,(music3_start_ptr)
+    ld (music3_current_ptr),hl ;return to begin of track
+    
+    +:
+    
+    ;play tone:
+    ld bc,(music3_current_ptr)
+    ld a,(bc)
+    ld h,a
+    inc bc
+    ld a,(bc)
+    ld l,a;tone in hl
+    
+    ld (music3_current_tone),hl
+    
+    ;get duration
+    inc bc
+    ld a,(bc)
+    ld (music3_tone_duration),a
+    
+    ;test if tone==0
+    ld a,h
+    cp $00
+    jr nz,+
 
-  ld a,l
-  cp $00
-  jr nz,+;(music3_current_ptr+1) != 0, not pause
-  ;this is a pause, so cut sound
-  ld c,%1000000;channel in c*%100000(max 3*%100000)
-  call CutOneChannel
-  ret
- +:
-  ;get volume
-  inc bc
-  ld a,(bc)
-  ld c,%1000000;channel in c*%100000(max 3*%100000)
-  call EnableChannel
-  call PlayTone
-
+    ld a,l
+    cp $00
+    jr nz,+;(music3_current_ptr+1) != 0, not pause
+    ;this is a pause, so cut sound
+    ld c,%1000000;channel in c*%100000(max 3*%100000)
+    call CutOneChannel
+    pop hl
+    pop bc
+    pop af
+    ret
+   +:
+    ;get volume
+    inc bc
+    ld a,(bc)
+    ld c,%1000000;channel in c*%100000(max 3*%100000)
+    call EnableChannel
+    call PlayTone
+  pop hl
+  pop bc
+  pop af
   ret
 
 
 PlayDrum:
-  ;check is current tone is still played
-  ld a,(drum_tone_duration)
-  dec a
-  ld (drum_tone_duration),a
-  cp 0
-  jr z,+
-    ret ;if not 0 continue tone...
-  +:
-  ;if 0, have to change tone...
-  ld hl,(drum_current_ptr)
-  inc hl
-  inc hl;go 2 bytes later
-  ld (drum_current_ptr),hl
-  
-  ;check if end of partition
-  ld bc,(drum_current_ptr)
-  ld a,(bc)
-  cp $FF
-  jr nz,+ ;(drum_current_ptr) != $ff, not end of track
-  
-    ;have to loop music
-  ld hl,(drum_start_ptr)
-  ld (drum_current_ptr),hl ;return to begin of track
-  ld b,h
-  ld c,l
-  +:
-  
-  ;get duration
-  inc bc
-  ld a,(bc)
-  ld (drum_tone_duration),a
+  push af
+  push bc
+  push hl
+    ;check is current tone is still played
+    ld a,(drum_tone_duration)
+    dec a
+    ld (drum_tone_duration),a
+    cp 0
+    jr z,+
+      pop hl
+      pop bc
+      pop af
+      ret ;if not 0 continue tone...
+    +:
+    ;if 0, have to change tone...
+    ld hl,(drum_current_ptr)
+    inc hl
+    inc hl;go 2 bytes later
+    ld (drum_current_ptr),hl
+    
+    ;check if end of partition
+    ld bc,(drum_current_ptr)
+    ld a,(bc)
+    cp $FF
+    jr nz,+ ;(drum_current_ptr) != $ff, not end of track
+    
+      ;have to loop music
+    ld hl,(drum_start_ptr)
+    ld (drum_current_ptr),hl ;return to begin of track
+    ld b,h
+    ld c,l
+    +:
+    
+    ;get duration
+    inc bc
+    ld a,(bc)
+    ld (drum_tone_duration),a
 
-  ;play tone:
-  ld bc,(drum_current_ptr)
-  ld a,(bc)	;tone in a
-  ld (drum_current_tone),a
-  
-  call PlayNoise
-
+    ;play tone:
+    ld bc,(drum_current_ptr)
+    ld a,(bc)	;tone in a
+    ld (drum_current_tone),a
+    
+    call PlayNoise
+  pop hl
+  pop bc
+  pop af
   ret
 
 	

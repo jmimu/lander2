@@ -1,5 +1,26 @@
 InitializeJmimu:
-;disable scrolling
+
+    ; Turn screen off
+    ld a,%10100000
+    ;      |||| |`- Zoomed sprites -> 16x16 pixels
+    ;      |||| `-- Doubled sprites -> 2 tiles per sprite, 8x16
+    ;      |||`---- 30 row/240 line mode
+    ;      ||`----- 28 row/224 line mode
+    ;      |`------ VBlank interrupts
+    ;      `------- Disable display
+    out ($bf),a
+    ld a,$81
+    out ($bf),a
+
+    ;music init
+    ld hl,demo_music_ch1_start;data1 start in hl
+    call InitMusic1
+    ld hl,demo_music_ch2_start;data2 start in hl
+    call InitMusic2
+    ld hl,demo_music_ch3_start;data3 start in hl
+    call InitMusic3
+
+    ;disable scrolling
     xor a
     out ($bf),a
     ld a,%10001000
@@ -25,6 +46,22 @@ InitializeJmimu:
         jp nz,-
 
 
+    ;==============================================================
+    ; clear palette
+    ;==============================================================
+    ; 1. Set VRAM write address to CRAM (palette) address 0 (for palette index 0)
+    ; by outputting $c000 ORed with $0000
+    ld a,$00
+    out ($bf),a
+    ld a,$c0
+    out ($bf),a
+    ; 2. Output colour data
+    ld b,32
+    -:
+      xor a
+      out ($be),a
+      dec c
+      jr nz,-
     
 
     ;==============================================================
@@ -76,7 +113,7 @@ InitializeJmimu:
 
 
     ; setup screen (VDP register 0)
-    ld a,%11100110
+    ld a,%11000110
 ;         |||||||`- External Sync.
 ;         ||||||`-- 1
 ;         |||||`--- 1
@@ -104,9 +141,11 @@ InitializeJmimu:
     
     ei
     
-    ld b,1 ;color value
     ;how the color loop works :
-    ;???
+    ; fill the 16 colors index with colors in jmimu_colors
+    ld hl,jmimu_colors
+    ld b,(hl) ;color value
+    ld d,0 ;counter
     jmimu_palette_loop:
       ;set palette of jmimu
       ;==============================================================
@@ -125,15 +164,27 @@ InitializeJmimu:
         out ($be),a
         inc c
         call WaitForVBlankSimple
+        call Demo_PSGMOD_Play
         call WaitForVBlankSimple
+        call Demo_PSGMOD_Play
         call WaitForVBlankSimple
+        call Demo_PSGMOD_Play
         call WaitForVBlankSimple
+        call Demo_PSGMOD_Play
+        call WaitForVBlankSimple
+        call Demo_PSGMOD_Play
+        call WaitForVBlankSimple
+        call Demo_PSGMOD_Play
+        call WaitForVBlankSimple
+        call Demo_PSGMOD_Play
         ld a,16
         cp c
       jr nz,-
-      inc b
-      ld a,8
-      cp b
+      inc d
+      inc hl
+      ld b,(hl)
+      ld a,5
+      cp d
       jr nz,jmimu_palette_loop
 
 ret
@@ -142,14 +193,18 @@ ret
 
 
 InitializeDemo:
-    ;music init
-    ld hl,demo_music_ch1_start;data1 start in hl
-    call InitMusic1
-    ld hl,demo_music_ch2_start;data2 start in hl
-    call InitMusic2
-    ld hl,demo_music_ch3_start;data3 start in hl
-    call InitMusic3
-
+    ; Turn screen off
+    ld a,%10100000
+    ;      |||| |`- Zoomed sprites -> 16x16 pixels
+    ;      |||| `-- Doubled sprites -> 2 tiles per sprite, 8x16
+    ;      |||`---- 30 row/240 line mode
+    ;      ||`----- 28 row/224 line mode
+    ;      |`------ VBlank interrupts
+    ;      `------- Disable display
+    out ($bf),a
+    ld a,$81
+    out ($bf),a
+    
     ;disable scrolling
     xor a
     out ($bf),a
