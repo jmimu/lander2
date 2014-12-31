@@ -62,8 +62,7 @@ if coll_tileset:
   print("coll_tileset_w: ",coll_tileset_w)
   print("coll_tileset_h: ",coll_tileset_h)
 else:
-  print("Error, no tileset \"collisions\"!")
-  exit()
+  print("No tileset \"collisions\"!")
 
 #if in to half return the tile number, else remove half
 #returns number without flip, and a hz flip flag
@@ -98,8 +97,10 @@ for i in range(height):
   for j in range(width):
     flip_tile=uncompressed_map_bg[k]
     (non_flip_tile,flip)=numTile2filp_back(flip_tile)
-    flip_coll=uncompressed_map_coll[k]
-    (non_flip_coll,flip2)=numTile2filp_coll(flip_coll)
+    non_flip_coll=0
+    if (coll_tileset):
+      flip_coll=uncompressed_map_coll[k]
+      (non_flip_coll,flip2)=numTile2filp_coll(flip_coll)
     print("tile",first_map_tile_index+non_flip_tile,"  flip",flip,"  coll",non_flip_coll)
 
     #final value is composed with the tile number, hz flip bit and collision bits

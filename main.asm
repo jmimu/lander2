@@ -164,7 +164,7 @@ main:
     ;==============================================================
     call initVDP
 
-    ;call InitializeJmimu
+    call InitializeJmimu
     
     ;run demo
     call InitializeDemo

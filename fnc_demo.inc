@@ -101,8 +101,12 @@ InitializeJmimu:
     out ($bf),a
     ld a,$81
     out ($bf),a
-  
-    ld b,0 ;color value
+    
+    ei
+    
+    ld b,1 ;color value
+    ;how the color loop works :
+    ;???
     jmimu_palette_loop:
       ;set palette of jmimu
       ;==============================================================
@@ -120,14 +124,18 @@ InitializeJmimu:
         ld a,b
         out ($be),a
         inc c
-        ld a,32
+        call WaitForVBlankSimple
+        call WaitForVBlankSimple
+        call WaitForVBlankSimple
+        call WaitForVBlankSimple
+        ld a,16
         cp c
-      jr z,-
+      jr nz,-
       inc b
-    jp jmimu_palette_loop
-    
-    ei
-    call WaitForButton
+      ld a,8
+      cp b
+      jr nz,jmimu_palette_loop
+
 ret
 
 
