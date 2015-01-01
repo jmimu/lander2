@@ -8,9 +8,16 @@ level mechanics, and what happends when hit special blocks
 
 make a generic load data function using pile to get all adresses
 
-last level : lava going up with 2 levels of palette hack : light then lava.
+for vertical level, frist step is on the top-right landing zone.
+The tile is hz-flipped so collision detection can understand if we are on one
+or the orther landing zone (bottom is no hz-flipped).
+Use this on each zone where we have to go from one to the other landing zone.
+
+Double every landing zone for 2-player game?
+
+last level : lava going up with 2 levels of palette hack: light then lava.
 both with color loop ? Make the cave dark
-when getting out, enable vscroll up out of memory with this line :
+when getting out, enable vscroll up out of memory with this line:
 ;remove this line to enable out of memory
 stop collisions and stop fuel counter, end of game when hitting y=0
 
@@ -27,7 +34,7 @@ the first 3 bits of each tile in tilemap contains collision data.
 110: half side (check x-flip)
 111: special
 
-read collision data from rom (not vram) : level data start + yscrolltotal + yscroll mod 8
+read collision data from rom (not vram): level data start + yscrolltotal + yscroll mod 8
 !!!!! force tilemap w to be a power of 2, make a xy2index function for each w.
 
 --------------------------------------------------------------------------------

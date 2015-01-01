@@ -141,51 +141,99 @@ InitializeJmimu:
     
     ei
     
+    ;;how the color loop works :
+    ;; fill the 16 colors index with colors in jmimu_colors
+    ;ld hl,jmimu_colors
+    ;ld b,(hl) ;color value
+    ;ld d,0 ;counter
+    ;jmimu_palette_loop:
+    ;  ;set palette of jmimu
+    ;  ;==============================================================
+    ;  ; Update palette
+    ;  ;==============================================================
+    ;  ; 1. Set VRAM write address to CRAM (palette) address 0 (for palette index 0)
+    ;  ; by outputting $c000 ORed with c (number of the color to change)
+    ;  ld c,$01
+    ;  -:
+    ;    ld a,c
+    ;    out ($bf),a
+    ;    ld a,$c0
+    ;    out ($bf),a
+    ;    ; 2. Output colour data
+    ;    ld a,b
+    ;    out ($be),a
+    ;    inc c
+    ;    call WaitForVBlankSimple
+    ;    call Demo_PSGMOD_Play
+    ;    ;call WaitForVBlankSimple
+    ;    call Demo_PSGMOD_Play
+    ;    call WaitForVBlankSimple
+    ;    call Demo_PSGMOD_Play
+    ;    call Demo_PSGMOD_Play
+    ;    call WaitForVBlankSimple
+    ;    call Demo_PSGMOD_Play
+    ;    ;call WaitForVBlankSimple
+    ;    call Demo_PSGMOD_Play
+    ;    call WaitForVBlankSimple
+    ;    call Demo_PSGMOD_Play
+    ;    ;call WaitForVBlankSimple
+    ;    call Demo_PSGMOD_Play
+    ;    ;call Demo_PSGMOD_Play
+    ;    ld a,16
+    ;    cp c
+    ;  jr nz,-
+    ;  inc d
+    ;  inc hl
+    ;  ld b,(hl)
+    ;  ld a,5
+    ;  cp d
+    ;  jr nz,jmimu_palette_loop
+
     ;how the color loop works :
-    ; fill the 16 colors index with colors in jmimu_colors
-    ld hl,jmimu_colors
-    ld b,(hl) ;color value
-    ld d,0 ;counter
-    jmimu_palette_loop:
+    ; fill the 16 colors index with 16 colors in jmimu_colors,
+    ; index in jmimu_colors increasing slowly
+    ld de,start_jmimu_colors
+    ld ixl,64;48
+    -:
       ;set palette of jmimu
       ;==============================================================
       ; Update palette
       ;==============================================================
-      ; 1. Set VRAM write address to CRAM (palette) address 0 (for palette index 0)
-      ; by outputting $c000 ORed with c (number of the color to change)
-      ld c,$01
-      -:
-        ld a,c
-        out ($bf),a
-        ld a,$c0
-        out ($bf),a
-        ; 2. Output colour data
-        ld a,b
-        out ($be),a
-        inc c
-        call WaitForVBlankSimple
-        call Demo_PSGMOD_Play
-        call WaitForVBlankSimple
-        call Demo_PSGMOD_Play
-        call WaitForVBlankSimple
-        call Demo_PSGMOD_Play
-        call WaitForVBlankSimple
-        call Demo_PSGMOD_Play
-        call WaitForVBlankSimple
-        call Demo_PSGMOD_Play
-        call WaitForVBlankSimple
-        call Demo_PSGMOD_Play
-        call WaitForVBlankSimple
-        call Demo_PSGMOD_Play
-        ld a,16
-        cp c
+      ; 1. Set VRAM write address to CRAM (palette) address 1 (for palette index 1)
+      ; by outputting $c000 ORed with $0001
+      ld a,$01
+      out ($bf),a
+      ld a,$c0
+      out ($bf),a
+      ; 2. Output colour data
+      ld h,d
+      ld l,e
+      ld b,15
+      ld c,$be
+      otir
+      ; 1. Set VRAM write address to CRAM (palette) address $11 (for palette index $11)
+      ; by outputting $c000 ORed with $0001
+      ld a,$11
+      out ($bf),a
+      ld a,$c0
+      out ($bf),a
+      ; 2. Output colour data
+      ld b,15
+      ld c,$be
+      otir
+      dec de
+      dec ixl
+      call WaitForVBlankSimple
+      call Demo_PSGMOD_Play
+      call Demo_PSGMOD_Play
+      call WaitForVBlankSimple
+      call Demo_PSGMOD_Play
+      call Demo_PSGMOD_Play
+      call WaitForVBlankSimple
+      call Demo_PSGMOD_Play
+      call Demo_PSGMOD_Play
       jr nz,-
-      inc d
-      inc hl
-      ld b,(hl)
-      ld a,5
-      cp d
-      jr nz,jmimu_palette_loop
+      
 
 ret
 
