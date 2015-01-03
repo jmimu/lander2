@@ -252,6 +252,108 @@ VScrollManager:
   pop af
 ret
 
+;difficulty in b (1 to 5)
+SetDifficulty:
+  push af
+    ;use difficulty 0 for debugging
+    ld a,b
+    cp 0
+    jr nz,+
+    ;difficulty 0
+    ld a,$0
+    ld (fuel_use),a;$-70
+    ld a,$60
+    ld (speedX_tolerance),a;$40
+    ld a,$60
+    ld (speedY_tolerance),a;$40
+    ld a,$-10
+    ld (Xdumping),a;$0
+    ld a,1
+    ld (refuel),a;$0
+    jp SetDifficulty_end
+  +:
+    ld a,b
+    cp 1
+    jr nz,+
+    ;difficulty 1
+    ld a,$-10
+    ld (fuel_use),a;$-70
+    ld a,$60
+    ld (speedX_tolerance),a;$40
+    ld a,$60
+    ld (speedY_tolerance),a;$40
+    ld a,$-10
+    ld (Xdumping),a;$0
+    ld a,1
+    ld (refuel),a;$0
+    jp SetDifficulty_end
+  +:
+    ld a,b
+    cp 2
+    jr nz,+
+    ;difficulty 2
+    ld a,$-20
+    ld (fuel_use),a;$-70
+    ld a,$50
+    ld (speedX_tolerance),a;$40
+    ld a,$50
+    ld (speedY_tolerance),a;$40
+    ld a,$-5
+    ld (Xdumping),a;$0
+    ld a,1
+    ld (refuel),a;$0
+    jr SetDifficulty_end
+  +:
+    ld a,b
+    cp 3
+    jr nz,+
+    ;difficulty 3
+    ld a,$-40
+    ld (fuel_use),a;$-70
+    ld a,$40
+    ld (speedX_tolerance),a;$40
+    ld a,$40
+    ld (speedY_tolerance),a;$40
+    ld a,$0
+    ld (Xdumping),a;$0
+    ld a,1
+    ld (refuel),a;$0
+    jr SetDifficulty_end
+  +:
+    ld a,b
+    cp 4
+    jr nz,+
+    ;difficulty 4
+    ld a,$-50
+    ld (fuel_use),a;$-70
+    ld a,$40
+    ld (speedX_tolerance),a;$40
+    ld a,$40
+    ld (speedY_tolerance),a;$40
+    ld a,$0
+    ld (Xdumping),a;$0
+    ld a,0
+    ld (refuel),a;$0
+    jr SetDifficulty_end
+  +:
+    ld a,b
+    cp 5
+    jr nz,SetDifficulty_end
+    ;difficulty 5
+    ld a,$-70
+    ld (fuel_use),a;$-70
+    ld a,$40
+    ld (speedX_tolerance),a;$40
+    ld a,$40
+    ld (speedY_tolerance),a;$40
+    ld a,$0
+    ld (Xdumping),a;$0
+    ld a,0
+    ld (refuel),a;$0  
+  SetDifficulty_end:
+  pop af
+  ret
+
 
 RunGame:
     ; setup screen (VDP register 0)
@@ -295,6 +397,9 @@ RunGame:
     
     ld hl,$0000
     ld (star_color),hl
+    
+    ld b,0;debug mode
+    call SetDifficulty
 
   game_start:
     call CutAllSound
@@ -686,7 +791,7 @@ OnButtonDown:
         cp 0
         jp z,+
         ;if not, decrease rocket_fuel
-        ld bc,fuel_use
+        ld bc,(fuel_use)
         add hl,bc
         ld (rocket_fuel),hl
         
@@ -734,7 +839,7 @@ OnButtonLeft:
         cp 0
         jp z,+
         ;if not, decrease rocket_fuel
-        ld bc,fuel_use
+        ld bc,(fuel_use)
         add hl,bc
         ld (rocket_fuel),hl
         
@@ -781,7 +886,7 @@ OnButtonRight:
         cp 0
         jp z,+
         ;if not, decrease rocket_fuel
-        ld bc,fuel_use
+        ld bc,(fuel_use)
         add hl,bc
         ld (rocket_fuel),hl
         
@@ -1296,7 +1401,7 @@ drawWarning:
         call PrintText
 
       ld hl,(speedX)  
-      ;ld bc,speedX_tolerance
+      ;ld bc,(speedX_tolerance)
       ;add hl,bc ;hl must be < speedX_tolerance*2
       ld bc,$80
       add hl,bc ;h must be < 1
@@ -1437,7 +1542,7 @@ TestCollision:;use tilemap collision data
 ;      ;good place, now check speeds
 ;      ;in x: TODO : use speedX_tolerance
 ;      ld hl,(speedX)  
-;      ;ld bc,speedX_tolerance
+;      ;ld bc,(speedX_tolerance)
 ;      ;add hl,bc ;hl must be < speedX_tolerance*2
 ;      ld bc,$80
 ;      add hl,bc ;h must be < 1

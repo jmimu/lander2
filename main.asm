@@ -62,9 +62,6 @@
 .define rocket_tile_number $6A
 .define guy_tile_number $70
 .define diff_tile_ascii 32 ;difference between index in tiles and in ascii ("A" tile number -65)
-.define fuel_use 0;$-70
-.define speedX_tolerance $40 ;must be < $80 !
-.define speedY_tolerance $40
 .define number_of_levels 5
 
 ;==============================================================
@@ -93,6 +90,13 @@
   star_color dw ;color used: bright and yellow
   ;PauseFlag db ;1 if pause
   tiles_vram_used   dw ; number of tiles in vram (where to add next tiles)
+  
+  ;difficulty settings
+  fuel_use db;$-70
+  speedX_tolerance db;$40 ;must be < $80 !
+  speedY_tolerance db;$40
+  Xdumping         db;0
+  refuel           db;0=no, 1=true
 .ends
 
 
