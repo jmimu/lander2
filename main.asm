@@ -88,6 +88,7 @@
   already_lost db ;0 if not, 1 if lost at least 1 time
   goto_level db ;0 if no need to change level, n to enter level n
   star_color dw ;color used: bright and yellow
+  landing_zone_color dw; loop between 4 colors (hi-byte is color index)
   ;PauseFlag db ;1 if pause
   tiles_vram_used   dw ; number of tiles in vram (where to add next tiles)
   

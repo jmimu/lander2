@@ -58,6 +58,11 @@ TextWarnYStart:
 .db "FALLING TOO FAST!"
 TextWarnYEnd:
 
+
+LandingColorLoop:
+;.db %00111001,%00101101,%00011110,%00011011
+.db %00000011,%00000011,%00111111,%00111111
+
 ;TileEmptyStart:
 ;;Tile 0
 ;.db $0 $0 $0 $0
