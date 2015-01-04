@@ -57,10 +57,10 @@
 .define number_of_empty_tiles 13;tile 13 and more make collisions
 .define digits_tile_number $10 ;position of "0" in vram
 .define fire_tile_number $5F
-.define explosion_tile_number $64
+.define explosion_tile_number $63
 .define fuel_tile_number $62
-.define rocket_tile_number $6A
-.define guy_tile_number $70
+.define rocket_tile_number $69 ;big rocket starts at rocket_tile_number, small at rocket_tile_number+2
+.define guy_tile_number $71
 .define diff_tile_ascii 32 ;difference between index in tiles and in ascii ("A" tile number -65)
 .define number_of_levels 5
 
@@ -97,6 +97,7 @@
   speedY_tolerance db;$40
   Xdumping         db;0
   refuel           db;0=no, 1=true
+  big_rocket     db;0=no, 1=true
 .ends
 
 

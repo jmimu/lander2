@@ -53,7 +53,48 @@ SpriteSet8x8:
   out ($be), a
 ret
 
+;--------------------------------------------------------------------
+SpriteSet16x8:
+  ;x in h
+  ;y in l
+  ;n in d
+  ;sprite index in e
 
+  ;vdp set addr
+  ld a, e
+  out ($bf), a
+  ld a, $7f
+  out ($bf), a
+
+  ;y+0 y+0
+  ld a, l
+  out ($be), a
+  out ($be), a
+
+  ;vdp set addr
+  ld a, e
+  add a, a
+  or $80
+  out ($bf), a
+  ld a, $7f
+  out ($bf), a
+
+  ;x+0 n+0 x+8 n+1
+  ld a, h
+  out ($be), a
+  ld a, d
+  out ($be), a
+
+  ld a, h
+  add a, $08
+  out ($be), a
+  inc d
+  ld a, d
+  out ($be), a
+
+ret
+
+;
 ;--------------------------------------------------------------------
 SpriteSet16x16:
   ;x in h
@@ -111,6 +152,32 @@ SpriteSet16x16:
   ld a, d
   out ($be), a
 ret
+
+;-------------------------------------------------------------------
+DrawRocket
+  ;x in h
+  ;y in l
+  ;sprite index in e
+    ;top part
+    ld d,rocket_tile_number;number of the tile in VRAM in d
+    ;test if big_rocket
+    ld a,(big_rocket)
+    cp 0
+    jr nz,+
+    inc d;if small rocket start 2 tiles later
+    inc d
+  +: 
+    call SpriteSet16x8
+    ;body part
+    ld a,l
+    add a,8
+    ld l,a;y+8
+    ld d,rocket_tile_number+4
+    inc e
+    inc e
+    call SpriteSet16x16
+
+  ret
 
 ;--------------------------------------------------------------------
 SpriteSet16x24:

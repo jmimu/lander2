@@ -270,6 +270,8 @@ SetDifficulty:
     ld (Xdumping),a;$0
     ld a,1
     ld (refuel),a;$0
+    ld a,0
+    ld (big_rocket),a;$1
     jp SetDifficulty_end
   +:
     ld a,b
@@ -286,6 +288,8 @@ SetDifficulty:
     ld (Xdumping),a;$0
     ld a,1
     ld (refuel),a;$0
+    ld a,0
+    ld (big_rocket),a;$1
     jp SetDifficulty_end
   +:
     ld a,b
@@ -302,6 +306,8 @@ SetDifficulty:
     ld (Xdumping),a;$0
     ld a,1
     ld (refuel),a;$0
+    ld a,0
+    ld (big_rocket),a;$1
     jr SetDifficulty_end
   +:
     ld a,b
@@ -318,6 +324,8 @@ SetDifficulty:
     ld (Xdumping),a;$0
     ld a,1
     ld (refuel),a;$0
+    ld a,0
+    ld (big_rocket),a;$1
     jr SetDifficulty_end
   +:
     ld a,b
@@ -334,6 +342,8 @@ SetDifficulty:
     ld (Xdumping),a;$0
     ld a,0
     ld (refuel),a;$0
+    ld a,1
+    ld (big_rocket),a;$1
     jr SetDifficulty_end
   +:
     ld a,b
@@ -350,6 +360,8 @@ SetDifficulty:
     ld (Xdumping),a;$0
     ld a,0
     ld (refuel),a;$0  
+    ld a,1
+    ld (big_rocket),a;$1
   SetDifficulty_end:
   pop af
   ret
@@ -1307,14 +1319,13 @@ DoGameLogicDbg:
     call HideSprites
 
     
-    ;draw rocket sprites
+    ;draw rocket sprites ;TODO: use small_rocket!
     ld bc,(posX)    
     ld h,b;x in h
     ld bc,(posY)    
     ld l,b;y in l
-    ld d,rocket_tile_number;number of the tile in VRAM in d
     ld e,$0;sprite index in e, here these are the first sprites used
-    call SpriteSet16x24
+    call DrawRocket
     
     call TestAllCollisions
     

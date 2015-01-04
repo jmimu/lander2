@@ -73,9 +73,7 @@ TextWarnYEnd:
 
 Tiles_sprites_Start:
 
-;rocket
-;Tile 35
-
+;fire
 .db $0 $0 $0 $0
 .db $0 $0 $7 $7
 .db $0 $0 $3f $3f
@@ -84,7 +82,6 @@ Tiles_sprites_Start:
 .db $0 $0 $1f $1f
 .db $0 $0 $3 $3
 .db $0 $0 $0 $0
-;Tile 36
 
 .db $24 $3c $ff $c3
 .db $3c $3c $ff $c3
@@ -94,7 +91,6 @@ Tiles_sprites_Start:
 .db $0 $0 $3c $3c
 .db $0 $0 $18 $18
 .db $0 $0 $18 $18
-;Tile 37
 
 .db $0 $0 $0 $0
 .db $0 $0 $e0 $e0
@@ -104,8 +100,8 @@ Tiles_sprites_Start:
 .db $0 $0 $f8 $f8
 .db $0 $0 $c0 $c0
 .db $0 $0 $0 $0
-;Tile 38
 
+;fuel
 .db $0 $8 $0 $0
 .db $8 $14 $0 $0
 .db $1c $22 $0 $0
@@ -114,18 +110,18 @@ Tiles_sprites_Start:
 .db $3e $41 $0 $0
 .db $1c $22 $0 $0
 .db $0 $1c $0 $0
-;Tile 39
 
-.db $0 $0 $0 $0
-.db $aa $ff $55 $0
-.db $ff $ff $0 $0
-.db $ff $ff $0 $0
-.db $ff $ff $0 $0
-.db $ff $ff $0 $0
-.db $ff $ff $0 $0
-.db $ff $ff $0 $0
-;Tile 40
+;landing zone
+;.db $0 $0 $0 $0
+;.db $aa $ff $55 $0
+;.db $ff $ff $0 $0
+;.db $ff $ff $0 $0
+;.db $ff $ff $0 $0
+;.db $ff $ff $0 $0
+;.db $ff $ff $0 $0
+;.db $ff $ff $0 $0
 
+;explosion
 .db $0 $5 $0 $5
 .db $0 $8 $0 $8
 .db $0 $a $0 $a
@@ -134,7 +130,6 @@ Tiles_sprites_Start:
 .db $0 $6 $1 $7
 .db $0 $2a $1 $2b
 .db $0 $34 $3 $37
-;Tile 41
 
 .db $0 $a0 $0 $a0
 .db $0 $10 $0 $10
@@ -144,7 +139,6 @@ Tiles_sprites_Start:
 .db $0 $60 $80 $e0
 .db $0 $54 $80 $d4
 .db $0 $2c $c0 $ec
-;Tile 42
 
 .db $0 $54 $b $5f
 .db $0 $0 $2f $2f
@@ -154,7 +148,6 @@ Tiles_sprites_Start:
 .db $0 $60 $1f $7f
 .db $1 $1 $7f $7e
 .db $1 $1 $3f $3e
-;Tile 43
 
 .db $0 $2a $d0 $fa
 .db $0 $0 $f4 $f4
@@ -164,7 +157,6 @@ Tiles_sprites_Start:
 .db $0 $6 $f8 $fe
 .db $80 $80 $fe $7e
 .db $80 $80 $fc $7c
-;Tile 44
 
 .db $1 $1 $bf $be
 .db $3 $3 $7f $7c
@@ -174,7 +166,6 @@ Tiles_sprites_Start:
 .db $6 $7 $3f $38
 .db $4 $7 $3f $38
 .db $0 $3 $1f $1c
-;Tile 45
 
 .db $80 $80 $fd $7d
 .db $c0 $c0 $fe $3e
@@ -184,8 +175,8 @@ Tiles_sprites_Start:
 .db $60 $e0 $fc $1c
 .db $20 $e0 $fc $1c
 .db $0 $c0 $f8 $38
-;Tile 46
 
+;big rocket top
 .db $1 $0 $0 $0
 .db $1 $0 $0 $0
 .db $3 $1 $1 $0
@@ -194,7 +185,6 @@ Tiles_sprites_Start:
 .db $9 $7 $1 $4
 .db $9 $7 $1 $4
 .db $9 $7 $1 $4
-;Tile 47
 
 .db $80 $0 $0 $0
 .db $80 $0 $0 $0
@@ -204,8 +194,27 @@ Tiles_sprites_Start:
 .db $90 $e0 $80 $20
 .db $90 $e0 $80 $20
 .db $90 $e0 $80 $20
-;Tile 48
 
+;small rocket top
+.db $0 $0 $0 $0
+.db $0 $0 $0 $0
+.db $1 $0 $0 $0
+.db $1 $0 $0 $0
+.db $3 $1 $1 $0
+.db $5 $3 $3 $0
+.db $b $7 $7 $0
+.db $9 $7 $1 $4
+
+.db $0 $0 $0 $0
+.db $0 $0 $0 $0
+.db $80 $0 $0 $0
+.db $80 $0 $0 $0
+.db $c0 $80 $80 $0
+.db $a0 $c0 $c0 $0
+.db $d0 $e0 $e0 $0
+.db $90 $e0 $80 $20
+
+;rocket body
 .db $a $7 $6 $0
 .db $a $7 $6 $0
 .db $a $7 $6 $0
@@ -214,7 +223,6 @@ Tiles_sprites_Start:
 .db $9 $7 $1 $4
 .db $17 $f $f $0
 .db $2f $1f $1f $0
-;Tile 49
 
 .db $50 $e0 $60 $0
 .db $50 $e0 $60 $0
@@ -224,7 +232,6 @@ Tiles_sprites_Start:
 .db $90 $e0 $80 $20
 .db $e8 $f0 $f0 $0
 .db $f4 $f8 $f8 $0
-;Tile 50
 
 .db $2f $1f $1f $0
 .db $2f $1f $1f $0
@@ -234,7 +241,6 @@ Tiles_sprites_Start:
 .db $5a $31 $31 $0
 .db $4a $31 $31 $0
 .db $31 $0 $0 $0
-;Tile 51
 
 .db $f4 $f8 $f8 $0
 .db $f4 $f8 $f8 $0
@@ -244,8 +250,8 @@ Tiles_sprites_Start:
 .db $5a $8c $8c $0
 .db $52 $8c $8c $0
 .db $8c $0 $0 $0
-;Tile 52
 
+;guy
 .db $3 $0 $0 $0
 .db $67 $0 $0 $3
 .db $77 $1 $20 $23
@@ -254,7 +260,6 @@ Tiles_sprites_Start:
 .db $13 $c $3 $b
 .db $8 $7 $0 $4
 .db $4 $3 $0 $2
-;Tile 53
 
 .db $c0 $0 $0 $0
 .db $e6 $0 $0 $c0
@@ -264,7 +269,6 @@ Tiles_sprites_Start:
 .db $c8 $30 $c0 $d0
 .db $10 $e0 $0 $20
 .db $20 $c0 $0 $40
-;Tile 54
 
 .db $4 $3 $0 $2
 .db $6 $1 $2 $2
@@ -274,7 +278,6 @@ Tiles_sprites_Start:
 .db $f $0 $6 $6
 .db $1f $0 $e $e
 .db $1f $0 $0 $0
-;Tile 55
 
 .db $20 $c0 $0 $40
 .db $60 $80 $40 $40
@@ -285,16 +288,14 @@ Tiles_sprites_Start:
 .db $f8 $0 $70 $70
 .db $f8 $0 $0 $0
 
-;Tile 56
-
-.db $00 $00 $00 $00
-.db $00 $00 $00 $00
-.db $00 $00 $00 $00
-.db $08 $08 $08 $08
-.db $00 $00 $00 $00
-.db $00 $00 $00 $00
-.db $00 $00 $00 $00
-.db $00 $00 $00 $00
+;.db $00 $00 $00 $00
+;.db $00 $00 $00 $00
+;.db $00 $00 $00 $00
+;.db $08 $08 $08 $08
+;.db $00 $00 $00 $00
+;.db $00 $00 $00 $00
+;.db $00 $00 $00 $00
+;.db $00 $00 $00 $00
 
 Tiles_sprites_End:
 
