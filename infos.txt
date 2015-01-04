@@ -42,6 +42,7 @@ make a draw_rocket function that takes "small_rocket" into account.
 if small rocket, top collison point is less high.
 
 TODO: implement dumping
+TODO: implement color loop for bg 11, 12 ,13 ,14
 --------------------------------------------------------------------------------
 each level has his onw SpecialTileFunction, called when touching a special case
 (most of the time try to land and end en level).
