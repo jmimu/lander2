@@ -153,13 +153,78 @@ SpriteSet16x16:
   out ($be), a
 ret
 
+;--------------------------------------------------------------------
+SpriteSet8x16:
+  ;x in h
+  ;y in l
+  ;n in d
+  ;sprite index in e
+
+  ;vdp set addr
+  ld a, e
+  out ($bf), a
+  ld a, $7f
+  out ($bf), a
+
+  ;y+0
+  ;y+8
+  ld a, l
+  out ($be), a
+  add a, $08
+  out ($be), a
+
+  ;vdp set addr
+  ld a, e
+  add a, a
+  or $80
+  out ($bf), a
+  ld a, $7f
+  out ($bf), a
+
+  ;x+0 n+0
+  ;x+0 n+1
+  ld a, h
+  out ($be), a
+  ld a, d
+  out ($be), a
+
+  ld a, h
+  out ($be), a
+  inc d
+  ld a, d
+  out ($be), a
+ret
+
 ;-------------------------------------------------------------------
 DrawRocket
   ;x in h
   ;y in l
   ;sprite index in e
+  
+  push af
+  push bc
+  push de
+  
+    ;select rocket image
+    ld a,(rocket_status)  
+    cp 0
+    jr nz,+ ;if 0, normal image
+    ld b,normal_rocket_tile_number
+    jr DrawRockey_top_ready
+  +:
+    cp 1
+    jr nz,+ ;if 1, bottom fire image
+    ld b,fire_rocket_tile_number    
+    jr DrawRockey_top_ready
+  +:
+    cp 1
+    jr nz,+ ;if 2, explosion image
+    ld b,explosion_tile_number    
+  +:
+  
+  DrawRockey_top_ready:
     ;top part
-    ld d,rocket_tile_number;number of the tile in VRAM in d
+    ld d,b;number of the tile in VRAM in d
     ;test if big_rocket
     ld a,(big_rocket)
     cp 0
@@ -168,15 +233,37 @@ DrawRocket
     inc d
   +: 
     call SpriteSet16x8
-    ;body part
+    
+    ;select rocket image
+    ld a,(rocket_status)  
+    cp 0
+    jr nz,+ ;if 0, normal image
+    ld b,normal_rocket_tile_number+4
+    jr DrawRockey_bottom_ready
+  +:
+    cp 1
+    jr nz,+ ;if 1, bottom fire image
+    ld b,fire_rocket_tile_number+4
+    jr DrawRockey_bottom_ready
+  +:
+    cp 1
+    jr nz,+ ;if 2, explosion image
+    ld b,explosion_tile_number+2
+  +:
+  
+  DrawRockey_bottom_ready:
+    ;bottom part
     ld a,l
     add a,8
     ld l,a;y+8
-    ld d,rocket_tile_number+4
+    ld d,b
     inc e
     inc e
     call SpriteSet16x16
 
+  pop de
+  pop bc
+  pop af
   ret
 
 ;--------------------------------------------------------------------

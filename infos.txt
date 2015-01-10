@@ -1,3 +1,8 @@
+pouvoir changer l'ordre des sprites ?
+gére les numéros de sprites dans les fonctions de dessin ?
+
+--------------------------------
+
 ** Vertical scrolling :
 variable Yscroll represents the position of the camera in the level (in pixels).
 From 0 to 416 => 16 bit

@@ -662,6 +662,8 @@ RunGame:
     ld (posX),hl
     ld hl,$1400
     ld (posY),hl
+    xor a
+    ld (rocket_status),a
 
     xor a
     ld (goto_level),a
@@ -814,6 +816,7 @@ OnButtonDown:
         ld a,(number_of_sprites)
         ld e,a;sprite index in e
         inc a
+        inc a
         ld (number_of_sprites),a
 
         ld bc,-$4 ;//remove 4pix/256frame to y speed
@@ -827,10 +830,10 @@ OnButtonDown:
         ld h,a;x in h
         ld bc,(posY)
         ld a,b
-        add a,$18;y+24
+        add a,$12;y+$12
         ld l,a;y in l
         ld d,fire_tile_number+1;number of the tile in VRAM in d
-        call SpriteSet8x8
+        call SpriteSet8x16
         
         ;noise!
         ld c,%01100000;channel in c*%100000(max 3*%100000)
@@ -923,7 +926,7 @@ OnButtonRight:
         ld a,b
         add a,$08;y+8
         ld l,a;y in l
-        ld d,fire_tile_number+2;number of the tile in VRAM in d
+        ld d,fire_tile_number+3;number of the tile in VRAM in d
         call SpriteSet8x8
         
         ;noise!
@@ -1409,7 +1412,7 @@ DoGameLogicDbg:
     call HideSprites
 
     
-    ;draw rocket sprites ;TODO: use small_rocket!
+    ;draw rocket sprites
     ld bc,(posX)    
     ld h,b;x in h
     ld bc,(posY)    
@@ -1466,9 +1469,8 @@ DoGameLogic:
     ld h,b;x in h
     ld bc,(posY)    
     ld l,b;y in l
-    ld d,rocket_tile_number;number of the tile in VRAM in d
     ld e,$0;sprite index in e, here these are the first sprites used
-    call SpriteSet16x24
+    call DrawRocket
 
     ;draw texts
     ld hl,(rocket_fuel)

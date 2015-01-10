@@ -58,9 +58,10 @@
 .define digits_tile_number $10 ;position of "0" in vram
 .define fire_tile_number $5F
 .define explosion_tile_number $63
-.define fuel_tile_number $62
-.define rocket_tile_number $69 ;big rocket starts at rocket_tile_number, small at rocket_tile_number+2
-.define guy_tile_number $71
+.define fuel_tile_number $7D
+.define normal_rocket_tile_number $69 ;big rocket starts at rocket_tile_number, small at rocket_tile_number+2
+.define fire_rocket_tile_number $71 ;big rocket starts at rocket_tile_number, small at rocket_tile_number+2
+.define guy_tile_number $79
 .define diff_tile_ascii 32 ;difference between index in tiles and in ascii ("A" tile number -65)
 .define number_of_levels 5
 
@@ -84,6 +85,7 @@
   ;posY                     dw ; multiplied by 2^8
   ;number_of_sprites     db ; number of sprites to draw this frame
   rocket_fuel         dw 
+  rocket_status      db ;0: normal, 1: bottom fire, 2: destroyed
   current_level db
   already_lost db ;0 if not, 1 if lost at least 1 time
   goto_level db ;0 if no need to change level, n to enter level n
@@ -170,11 +172,11 @@ main:
     ;==============================================================
     call initVDP
 
-    call InitializeJmimu
+    ;call InitializeJmimu
     
     ;run demo
-    call InitializeDemo
-    call RunDemo
+    ;call InitializeDemo
+    ;call RunDemo
 
     ; Turn screen off
     ld a,%10100000
