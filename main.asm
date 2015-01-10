@@ -77,7 +77,6 @@
   Xscroll dw
   posX                     dw ; multiplied by 2^8
   posY                     dw ; multiplied by 2^8
-  number_of_sprites     db ; number of sprites to draw this frame
   ;game
   speedX                     dw ; multiplied by 2^8
   speedY                     dw ; multiplied by 2^8
@@ -89,7 +88,8 @@
   current_level db
   already_lost db ;0 if not, 1 if lost at least 1 time
   goto_level db ;0 if no need to change level, n to enter level n
-  star_color dw ;color used: bright and yellow
+  star_color1 dw ;color used: bright and yellow
+  star_color2 dw ;color used: bright and yellow
   landing_zone_color dw; loop between 4 colors (hi-byte is color index)
   ;PauseFlag db ;1 if pause
   tiles_vram_used   dw ; number of tiles in vram (where to add next tiles)
@@ -150,10 +150,10 @@
 
 .section "misc" free ;TODO : a section for every file!
 .include "fnc_init.inc"
-.include "fnc_sprites.inc"
 .include "fnc_demo.inc"
 .include "fnc_text.inc"
 .ends
+.include "fnc_sprites.inc"
 .include "fnc_game.inc"
 .include "level10.inc"
 

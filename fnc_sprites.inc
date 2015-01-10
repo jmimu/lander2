@@ -1,8 +1,22 @@
+.ramsection "Sprites variables" slot 1
+  number_of_sprites     db ; number of sprites to draw this frame
+.ends
+
+.section "sprites functions" free
+
+;--------------------------------------------------------------------
+ResetSprites:
+  xor a
+  ld (number_of_sprites),a
+ret
+
+
 ;--------------------------------------------------------------------
 SetLastSprite:
-  ;sprite index in e
+  ld a,(number_of_sprites)
+  ld e,a;sprite index in e
   ld a, e
-  inc a
+  ;inc a
   out ($bf), a
   ld a, $7f
   out ($bf), a
@@ -10,6 +24,7 @@ SetLastSprite:
   ld a, $D0 ;set $D0 to the y of sprite e+1 = e is the last sprite to print
   out ($be), a
 ret
+
 ;--------------------------------------------------------------------
 HideSprites:
   ;first sprite to hide index in a
@@ -29,7 +44,11 @@ SpriteSet8x8:
   ;x in h
   ;y in l
   ;n in d
-  ;sprite index in e
+  ld a,(number_of_sprites)
+  ld e,a;sprite index in e
+  inc a
+  ld (number_of_sprites),a
+
 
   ;vdp set addr
   ld a, e
@@ -58,7 +77,12 @@ SpriteSet16x8:
   ;x in h
   ;y in l
   ;n in d
-  ;sprite index in e
+  ld a,(number_of_sprites)
+  ld e,a;sprite index in e
+  inc a
+  inc a
+  ld (number_of_sprites),a
+
 
   ;vdp set addr
   ld a, e
@@ -100,7 +124,12 @@ SpriteSet16x16:
   ;x in h
   ;y in l
   ;n in d
-  ;sprite index in e
+  ld a,(number_of_sprites)
+  ld a,(number_of_sprites)
+  ld e,a;sprite index in e
+  add a,4
+  ld (number_of_sprites),a
+
 
   ;vdp set addr
   ld a, e
@@ -158,7 +187,12 @@ SpriteSet8x16:
   ;x in h
   ;y in l
   ;n in d
-  ;sprite index in e
+  ld a,(number_of_sprites)
+  ld e,a;sprite index in e
+  inc a
+  inc a
+  ld (number_of_sprites),a
+
 
   ;vdp set addr
   ld a, e
@@ -199,7 +233,6 @@ ret
 DrawRocket
   ;x in h
   ;y in l
-  ;sprite index in e
   
   push af
   push bc
@@ -271,7 +304,10 @@ SpriteSet16x24:
   ;x in h
   ;y in l
   ;n in d
-  ;sprite index in e
+  ld a,(number_of_sprites)
+  ld e,a;sprite index in e
+  add a,6
+  ld (number_of_sprites),a
 
   ;vdp set addr
   ld a, e
@@ -343,3 +379,4 @@ SpriteSet16x24:
  
 ret
 
+.ends

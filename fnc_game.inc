@@ -408,7 +408,9 @@ RunGame:
     ld (rocket_fuel),hl
     
     ld hl,$0000
-    ld (star_color),hl
+    ld (star_color1),hl
+    ld hl,$2000
+    ld (star_color2),hl
     
     ld a,0
     ld (landing_zone_color),a
@@ -812,12 +814,6 @@ OnButtonDown:
         add hl,bc
         ld (rocket_fuel),hl
         
-        
-        ld a,(number_of_sprites)
-        ld e,a;sprite index in e
-        inc a
-        inc a
-        ld (number_of_sprites),a
 
         ld bc,-$4 ;//remove 4pix/256frame to y speed
         ld hl,(speedY)
@@ -834,6 +830,10 @@ OnButtonDown:
         ld l,a;y in l
         ld d,fire_tile_number+1;number of the tile in VRAM in d
         call SpriteSet8x16
+        
+        ;change rocket status to bottom fire (1)
+        ld a,1
+        ld (rocket_status),a
         
         ;noise!
         ld c,%01100000;channel in c*%100000(max 3*%100000)
@@ -861,10 +861,6 @@ OnButtonLeft:
         add hl,bc
         ld (rocket_fuel),hl
         
-        ld a,(number_of_sprites)
-        ld e,a;sprite index in e
-        inc a
-        ld (number_of_sprites),a
 
         ld bc,$0004 ;//add 4pix/256frame to x speed
         ld hl,(speedX)
@@ -908,10 +904,6 @@ OnButtonRight:
         add hl,bc
         ld (rocket_fuel),hl
         
-        ld a,(number_of_sprites)
-        ld e,a;sprite index in e
-        inc a
-        ld (number_of_sprites),a
 
         ld bc,$-4 ;//remove 4pix/256frame to x speed
         ld hl,(speedX)
@@ -1202,33 +1194,49 @@ UpdatePalette:
    push bc
    push hl
     ;update star color
-    ld hl,(star_color)
+    ld hl,(star_color1)
     ld bc,$100 ;color change speed
     add hl,bc
-    ld (star_color),hl
+    ld (star_color1),hl
+    ld hl,(star_color2)
+    ld bc,$100 ;color change speed
+    add hl,bc
+    ld (star_color2),hl
     ;==============================================================
     ; Update palette
     ;==============================================================
     ; 1. Set VRAM write address to CRAM (palette) address 0 (for palette index 0)
-    ; by outputting $c000 ORed with $000F (number of the color to change)
+    ; by outputting $c000 ORed with number of the color to change
     ld a,$0F
     out ($bf),a
     ld a,$c0
     out ($bf),a
     ; 2. Output colour data
-    ld hl,(star_color)
+    ld hl,(star_color1)
     ld a,h
     and %00110000 ;use only bright colors (let only blue byte change)
     or  %00001111 ; R and G are at max
     out ($be),a
     
-    ;update fire color 2
-    ld a,$1C
+    ;update fire color 1
+    ld a,$1A
     out ($bf),a
     ld a,$c0
     out ($bf),a
     ; 2. Output colour data
-    ld hl,(star_color)
+    ld hl,(star_color1)
+    ld a,h
+    and %00110101 ;use only bright colors (let only blue byte change)
+    or  %00001010 ; R and G are at max
+    out ($be),a
+    
+    ;update fire color 2
+    ld a,$1B
+    out ($bf),a
+    ld a,$c0
+    out ($bf),a
+    ; 2. Output colour data
+    ld hl,(star_color2)
     ld a,h
     and %00110101 ;use only bright colors (let only blue byte change)
     or  %00001010 ; R and G are at max
@@ -1339,8 +1347,11 @@ DoGameLogicDbg:
     push hl
     
   
-    ld a,$06 ; at least 6 sprites to show (rocket)
-    ld (number_of_sprites),a
+    call ResetSprites
+    ;TODO: make it better
+    ;change rocket status
+    ld a,0
+    ld (rocket_status),a
     
     ;mechanics
     ;increment Y-speed (gravity)
@@ -1405,11 +1416,8 @@ DoGameLogicDbg:
     ;ld (speedX),hl
     ;ld (speedY),hl
     
-    call ReadButtons ;updates number_of_sprites
-    ;hide other sprites
-    ld a,(number_of_sprites)
-    ld c,$01 ; hide only next sprite, the following will be hidden too
-    call HideSprites
+    call ReadButtons
+    
 
     
     ;draw rocket sprites
@@ -1421,6 +1429,9 @@ DoGameLogicDbg:
     call DrawRocket
     
     call TestAllCollisions
+
+    ;hide other sprites
+    call SetLastSprite
     
     pop hl
     pop de
@@ -1436,8 +1447,7 @@ DoGameLogic:
     push de
     push hl
   
-    ld a,$06 ; at least 6 sprites to show (rocket)
-    ld (number_of_sprites),a
+    call ResetSprites
     
     ;mechanics
     ;increment Y-speed (gravity)
@@ -1457,12 +1467,7 @@ DoGameLogic:
     add hl,bc
     ld (posY),hl
     
-    call ReadButtons ;updates number_of_sprites
-    ;hide other sprites
-    ld a,(number_of_sprites)
-    ld c,$01 ; hide only next sprite, the following will be hidden too
-    call HideSprites
-
+    call ReadButtons
     
     ;draw rocket sprites
     ld bc,(posX)    
@@ -1481,7 +1486,11 @@ DoGameLogic:
     
     call drawWarning
     call TestAllCollisions
-        
+
+
+    ;hide other sprites
+    call SetLastSprite
+
     pop hl
     pop de
     pop bc
