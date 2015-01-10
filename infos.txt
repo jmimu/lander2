@@ -1,5 +1,4 @@
-pouvoir changer l'ordre des sprites ?
-gére les numéros de sprites dans les fonctions de dessin ?
+change collision test: add scrolling before >>3
 
 --------------------------------
 

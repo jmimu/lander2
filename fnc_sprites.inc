@@ -241,30 +241,41 @@ DrawRocket
     ;select rocket image
     ld a,(rocket_status)  
     cp 0
-    jr nz,+ ;if 0, normal image
+    jr nz,DrawRocket_testFire ;if 0, normal image
     ld b,normal_rocket_tile_number
+    ;test if small rocket
+    ld a,(big_rocket)
+    cp 0
+    jr nz,+
+    inc b;if small rocket start 2 tiles later
+    inc b
+  +: 
     jr DrawRockey_top_ready
-  +:
+    
+  DrawRocket_testFire:
     cp 1
-    jr nz,+ ;if 1, bottom fire image
-    ld b,fire_rocket_tile_number    
+    jr nz,DrawRocket_testExplosion ;if 1, bottom fire image
+    ld b,fire_rocket_tile_number
+    ;test if small rocket
+    ld a,(big_rocket)
+    cp 0
+    jr nz,+
+    inc b;if small rocket start 2 tiles later
+    inc b
+  +: 
     jr DrawRockey_top_ready
-  +:
-    cp 1
-    jr nz,+ ;if 2, explosion image
+    
+  DrawRocket_testExplosion:
+    cp 2
+    jr nz,DrawRockey_top_ready ;if 2, explosion image
     ld b,explosion_tile_number    
-  +:
+  
+  
   
   DrawRockey_top_ready:
     ;top part
     ld d,b;number of the tile in VRAM in d
-    ;test if big_rocket
-    ld a,(big_rocket)
-    cp 0
-    jr nz,+
-    inc d;if small rocket start 2 tiles later
-    inc d
-  +: 
+    
     call SpriteSet16x8
     
     ;select rocket image
@@ -279,7 +290,7 @@ DrawRocket
     ld b,fire_rocket_tile_number+4
     jr DrawRockey_bottom_ready
   +:
-    cp 1
+    cp 2
     jr nz,+ ;if 2, explosion image
     ld b,explosion_tile_number+2
   +:

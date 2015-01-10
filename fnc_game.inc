@@ -1349,9 +1349,14 @@ DoGameLogicDbg:
   
     call ResetSprites
     ;TODO: make it better
-    ;change rocket status
-    ld a,0
+    ;update rocket status
+    ;if 1, set to 0
+    ld a,(rocket_status)
+    cp 1
+    jr nz,+
+    xor a
     ld (rocket_status),a
+  +:
     
     ;mechanics
     ;increment Y-speed (gravity)
@@ -1558,20 +1563,31 @@ TestAllCollisions:
       srl h
       inc h ;add 8 pix!
       ;x in h (in tiles)
-      ld bc,(posY)    
+      ld bc,(posY)
       ld l,b
+      ;if small rocket, 2 pixels less in y
+      ld a,(big_rocket)
+      cp 1
+      jr z,+
+      inc l
+      inc l
+    +:
       srl l
       srl l
       srl l
       ;y in l (in tiles)
       call TestCollision
       ;
-      ;;tests if point posX+8,posY+24 is on a full tile
-      ;;optimization: update only l
-      ;inc l;add 24 pix!
-      ;inc l
-      ;inc l
-      ;call TestCollision
+      ;tests if point posX+8,posY+24 is on a full tile
+      ld bc,(posY)
+      ld l,b
+      srl l
+      srl l
+      srl l
+      inc l;add 24 pix!
+      inc l
+      inc l
+      call TestCollision
     ret
 
 ;x in h (in tiles)
@@ -1582,30 +1598,57 @@ TestCollision:;use tilemap collision data
     push hl
       ;find the tile where we are with scrolling
     
-      ;TODO: use scrolling value!
+      ;use scrolling value!
+      ld a,(YScrollVDP)
+      srl a
+      srl a
+      srl a;divide by 8
+      ld b,a
+      ld a,l
+      add a,b
+      ;have to check vertical carry
+      ;check if a>=28, remove 28
+      cp 28
+      jr c,+
+      sub 28
+    +:
+      ld l,a ;l: final y in tiles
+    
       ;compute tile number
       ld b,0
       ld c,h;x in bc
-      call Multby32
+      call Multby32 ;hl=l*32
       add hl,bc
-      ld b,h
-      ld c,l
+      add hl,hl;multiply by 2
+      ld b,l
+      ld c,h
       ;tile number in bc
-      ;push bc
       
       ;try to read data in vram
-      ; 1. Set VRAM write address to name table index 0
-      ; by outputting $4000 ORed with $3800+bc
-      ;ld a,b
-      ;out ($bf),a
-      ;ld a,$38|$40
-      ;add a,c
-      ;out ($bf),a
+      ; 1. Set VRAM read address to name table index 0
+      ; by outputting $0000 ORed with $3800+bc
+      ld a,b
+      out ($bf),a
+      ld a,$38
+      add a,c
+      out ($bf),a
       ; 2. get tilemap data
-      ;in a,($be)
-      ;ld h,a
-      ;in a,($be)
-      ;ld l,a
+      in a,($be)
+      ld h,a
+      in a,($be)
+      ld l,a
+      
+      ;collision data is in l & %11100000
+      
+      ld a,l
+      and %11100000
+      cp %00100000
+      jr nz,+
+      ;touches=> explode
+      ld a,2
+      ld (rocket_status),a
+      call WaitForButton
+    +:
       
     TestCollisionDbg1:
       ld l,a;just debug
