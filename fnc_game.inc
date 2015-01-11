@@ -1563,31 +1563,58 @@ TestAllCollisions:
       srl h
       inc h ;add 8 pix!
       ;x in h (in tiles)
+      push hl ;record x for later
+      
       ld bc,(posY)
       ld l,b
-      ;if small rocket, 2 pixels less in y
+      ld h,0
+      ;if small rocket, add 2 pixels in y
       ld a,(big_rocket)
       cp 1
       jr z,+
-      inc l
-      inc l
+      inc hl
+      inc hl
     +:
-      srl l
+      ;add scrolling value
+      ld a,(YScrollVDP)
+      ld c,a
+      ld b,0
+      add hl,bc
+      ;have to check if hl>=224
+      ;first test if >255
+      ld a,h
+      cp 0
+      jr nz,TestAllCollisions_Vcarry ;if>255, have a carry
+      ld a,l
+      cp 224
+      jr c,TestAllCollisions_VcarryOK;if<224, no carry
+    TestAllCollisions_Vcarry:
+      ld bc,-224
+      add hl,bc
+      
+      ;carry is handled
+    TestAllCollisions_VcarryOK:
+      srl l ;divide by 8
       srl l
       srl l
       ;y in l (in tiles)
+      
+      ;get x back
+      pop bc
+      ld h,b
+      
       call TestCollision
       ;
       ;tests if point posX+8,posY+24 is on a full tile
-      ld bc,(posY)
-      ld l,b
-      srl l
-      srl l
-      srl l
-      inc l;add 24 pix!
-      inc l
-      inc l
-      call TestCollision
+      ;ld bc,(posY)
+      ;ld l,b
+      ;srl l
+      ;srl l
+      ;srl l
+      ;inc l;add 24 pix!
+      ;inc l
+      ;inc l
+      ;call TestCollision
     ret
 
 ;x in h (in tiles)
@@ -1596,23 +1623,6 @@ TestCollision:;use tilemap collision data
     push af
     push bc
     push hl
-      ;find the tile where we are with scrolling
-    
-      ;use scrolling value!
-      ld a,(YScrollVDP)
-      srl a
-      srl a
-      srl a;divide by 8
-      ld b,a
-      ld a,l
-      add a,b
-      ;have to check vertical carry
-      ;check if a>=28, remove 28
-      cp 28
-      jr c,+
-      sub 28
-    +:
-      ld l,a ;l: final y in tiles
     
       ;compute tile number
       ld b,0
