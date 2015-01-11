@@ -1,4 +1,4 @@
-change collision test: add scrolling before >>3
+add other collisions models
 
 --------------------------------
 

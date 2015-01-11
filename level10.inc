@@ -74,6 +74,7 @@ SetupLevel10:
     ld hl,Tilemap10Start
     ld (LevelMapStart),hl
     xor a
+    ld (XScrollVDP),a
     ld (YScrollVDP),a
     ld hl,0
     ld (YScrollTotal),hl

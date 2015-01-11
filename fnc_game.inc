@@ -1,5 +1,8 @@
 
 .ramsection "Game variables" slot 1
+  XScrollTotal             dw    ; total X scroll in level (in pixels)
+  XScrollTotalMax          dw    ; maximum of XScrollTotal value (in pixels)
+  XScrollVDP               db    ; VDP XScroll (in pixels)
   YScrollTotal             dw    ; total Y scroll in level (in pixels)
   YScrollTotalMax          dw    ; maximum of YScrollTotal value (in pixels)
   YScrollVDP               db    ; VDP YScroll (in pixels)
@@ -1553,70 +1556,129 @@ drawWarning:
     pop af
     ret
 
+;convert posX,posY (in pixel) and deltaX deltaY (in pixels)
+;to number of tiles in VRAM (with scrolling)
+;posX MSB in b
+;posY MSB in c
+;deltaX in d
+;deltaY in e
+;output:
+;  x in h (in tiles)
+;  y in l (in tiles)
+RocketPos2vramTiles:
+  push af
+  push bc
+    push bc;save (posX,posY)
+    
+    ;X part
+    ld h,0
+    ld l,b ;get posX
+    ld c,d
+    ld b,0 ;deltaX in bc
+    add hl,bc
+    
+    ld a,(XScrollVDP)
+    ld c,a
+    add hl,bc;add scrolling value
+    
+    ld h,l
+    srl h;divide by 8
+    srl h
+    srl h
+    ;x in h (in tiles)
+    
+    ;Y part
+    pop bc ;get (posX,posY)
+    push hl ;record x for later
+    
+    ld l,c
+    ld h,0;Y in hl
+    ld c,e
+    ld b,0 ;deltaY in bc
+    add hl,bc
+    ;add scrolling value
+    ld a,(YScrollVDP)
+    ld c,a
+    ld b,0
+    add hl,bc
+    ;have to check if hl>=224
+    ;first test if >255
+    ld a,h
+    cp 0
+    jr nz,RocketPos2vramTiles_Vcarry ;if>255, have a carry
+    ld a,l
+    cp 224
+    jr c,RocketPos2vramTiles_VcarryOK;if<224, no carry
+  RocketPos2vramTiles_Vcarry:
+    ld bc,-224
+    add hl,bc
+    
+    ;carry is handled
+  RocketPos2vramTiles_VcarryOK:
+    srl l ;divide by 8
+    srl l
+    srl l
+    ;y in l (in tiles)
+    
+    ;get x back
+    pop bc
+    ld h,b
+    
+  pop bc
+  pop af
+  ret
 
 TestAllCollisions:
-      ;tests if point posX+8,posY is on a full tile
-      ld bc,(posX)    
-      ld h,b
-      srl h
-      srl h
-      srl h
-      inc h ;add 8 pix!
-      ;x in h (in tiles)
-      push hl ;record x for later
-      
-      ld bc,(posY)
-      ld l,b
-      ld h,0
-      ;if small rocket, add 2 pixels in y
+      ;test point posX+8,posY
+      ld bc,(posX);posX in b
+      ld hl,(posY)
+      ld c,h;posY in c
+      ld d,8;deltaX in d
+      ld e,0;deltaY in e
+      ;if small rocket, add 2 pixels in deltaY
       ld a,(big_rocket)
       cp 1
       jr z,+
-      inc hl
-      inc hl
+      inc e
+      inc e
     +:
-      ;add scrolling value
-      ld a,(YScrollVDP)
-      ld c,a
-      ld b,0
-      add hl,bc
-      ;have to check if hl>=224
-      ;first test if >255
-      ld a,h
-      cp 0
-      jr nz,TestAllCollisions_Vcarry ;if>255, have a carry
-      ld a,l
-      cp 224
-      jr c,TestAllCollisions_VcarryOK;if<224, no carry
-    TestAllCollisions_Vcarry:
-      ld bc,-224
-      add hl,bc
-      
-      ;carry is handled
-    TestAllCollisions_VcarryOK:
-      srl l ;divide by 8
-      srl l
-      srl l
-      ;y in l (in tiles)
-      
-      ;get x back
-      pop bc
-      ld h,b
-      
+      call RocketPos2vramTiles
       call TestCollision
-      ;
-      ;tests if point posX+8,posY+24 is on a full tile
-      ;ld bc,(posY)
-      ;ld l,b
-      ;srl l
-      ;srl l
-      ;srl l
-      ;inc l;add 24 pix!
-      ;inc l
-      ;inc l
-      ;call TestCollision
+      
+      ;test point posX+2,posY+24
+      ld d,2;deltaX in d
+      ld e,24;deltaY in e
+      call RocketPos2vramTiles
+      call TestCollision
+      
+      ;test point posX+8,posY+24
+      ld d,8;deltaX in d
+      ld e,24;deltaY in e
+      call RocketPos2vramTiles
+      call TestCollision
+      
+      ;test point posX+13,posY+24
+      ld d,13;deltaX in d
+      ld e,24;deltaY in e
+      call RocketPos2vramTiles
+      call TestCollision
+      
+      ;test point posX+4,posY+12
+      ld d,4;deltaX in d
+      ld e,12;deltaY in e
+      call RocketPos2vramTiles
+      call TestCollision
+      
+      ;test point posX+11,posY+12
+      ld d,11;deltaX in d
+      ld e,12;deltaY in e
+      call RocketPos2vramTiles
+      call TestCollision
+      
     ret
 
+;posX MSB in b ;TODO: use bc to get mod 8 part of positions
+;posY MSB in c
 ;x in h (in tiles)
 ;y in l (in tiles)
 TestCollision:;use tilemap collision data
