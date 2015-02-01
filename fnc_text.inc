@@ -13,8 +13,136 @@ Multby32:
     pop af
     ret
 
+;print digit as sprite
+PrintDigitSprite:
+  ;x in h
+  ;y in l
+  ;value in d
+  ld a,d
+  add a,digits_tile_number
+  ld d,a
+  jp SpriteSet8x8
+  
 
-PrintInt: ;print an int in octal...
+;divide by 100
+DivideBy100:
+  ;input x value in b
+  ;output : a = x/100
+  ;         b = x%100
+  ld a,b
+  cp 200
+  jr c,+ ;if carry, a<200
+  sub 200
+  ld b,a
+  ld a,2 ;else result is 2
+  ret
+ +:
+  cp 100
+  jr c,+ ;if carry, a<100
+  sub 100
+  ld b,a
+  ld a,1;else result is 1
+  ret
+ +:
+  ld b,a
+  xor a ;result is 0
+  ret
+
+
+;divide by 10
+;for x between 0 and 63: x*26/256
+;for x between 64 and 99: (x-1)*26/256
+DivideBy10:
+  ;input x value in b (between 0 and 99)
+  ;output : a = x/10
+  ;         b = x%10
+  ld a,b
+  push hl
+  push bc
+    cp 64
+    jr c,+
+    dec a ;if a>=64, use a-1
+   +:
+    ld hl,0
+    ld c,a
+    ld b,0
+    ;multiply bc by 26=16*8*2
+    
+    sla b ;//left shift for MSB
+    sla c ;//left shift for LSB
+    jr nc,+ ;if carry on sla c
+    inc b
+   +:
+    add hl,bc;move 2*x to hl
+   
+   
+    sla b ;//left shift for MSB
+    sla c ;//left shift for LSB
+    jr nc,+ ;if carry on sla c
+    inc b
+   +:
+    sla b ;//left shift for MSB
+    sla c ;//left shift for LSB
+    jr nc,+ ;if carry on sla c
+    inc b
+   +:
+    add hl,bc;add 8*x to hl (now (8+2)*x)
+    
+    sla b ;//left shift for MSB
+    sla c ;//left shift for LSB
+    jr nc,+ ;if carry on sla c
+    inc b
+   +:
+    add hl,bc;add 16*x to hl (now (16+8+2)*x)
+   
+    ld d,h ;d=x/10
+    
+    ;get modulo
+    ld hl,0
+    ld b,0
+    ld c,d
+    sla c ;//left shift
+    add hl, bc ;l=d*2
+    sla c ;//left shift
+    sla c ;//left shift
+    add hl,bc ;l=10*d
+    
+  pop bc
+    ;remove d*10 to b
+    ld a,b
+    sub l
+    ld c,a
+    ld a,d; a is x%10 
+    ld b,c;b is x/10
+  pop hl
+  ret
+
+
+PrintInt10Sprite: ;print an uint8 in decimal with sprites
+  ;x in h
+  ;y in l
+  ;value in e
+  ld b,e
+  call DivideBy100
+  ld d,a
+  ;value in d
+  call PrintDigitSprite
+  ld a,h
+  add a,8
+  ld h,a
+  call DivideBy10
+  ld d,a
+  ;value in d
+  call PrintDigitSprite
+  ld a,h
+  add a,8
+  ld h,a
+  ld d,b
+  ;value in d
+  jp PrintDigitSprite
+  
+
+PrintInt8: ;print an int in octal...
     ;col (tiles) in c
     ;line (tiles) in l
     ;value (8bit) in e

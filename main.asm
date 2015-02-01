@@ -95,10 +95,10 @@
   tiles_vram_used   dw ; number of tiles in vram (where to add next tiles)
   
   ;difficulty settings
-  fuel_use db;$-70
-  speedX_tolerance db;$40 ;must be < $80 !
-  speedY_tolerance db;$40
-  Xdumping         db;0
+  fuel_use dw;$-70
+  speedX_tolerance dw;$40 ;must be < $80 !
+  speedY_tolerance dw;$40
+  Xdumping         dw;0
   refuel           db;0=no, 1=true
   big_rocket     db;0=no, 1=true
 .ends

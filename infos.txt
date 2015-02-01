@@ -1,5 +1,15 @@
 add other collisions models
 
+when too fast adda sound and show bubble
+disp fuel as sprite (decimal)
+
+--------------------------------
+
+main loop :
+  have a function variable for logic (game, lost, won...)
+  remove change level part
+
+
 --------------------------------
 
 ** Vertical scrolling :

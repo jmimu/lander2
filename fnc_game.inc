@@ -258,19 +258,20 @@ ret
 ;difficulty in b (1 to 5)
 SetDifficulty:
   push af
+  push hl
     ;use difficulty 0 for debugging
     ld a,b
     cp 0
     jr nz,+
     ;difficulty 0
-    ld a,$0
-    ld (fuel_use),a;$-70
-    ld a,$60
-    ld (speedX_tolerance),a;$40
-    ld a,$60
-    ld (speedY_tolerance),a;$40
-    ld a,$-10
-    ld (Xdumping),a;$0
+    ld hl,-$10;0
+    ld (fuel_use),hl;$-70
+    ld hl,$60
+    ld (speedX_tolerance),hl;$40
+    ld hl,$60
+    ld (speedY_tolerance),hl;$40
+    ld hl,$-10
+    ld (Xdumping),hl;$0
     ld a,1
     ld (refuel),a;$0
     ld a,0
@@ -281,14 +282,14 @@ SetDifficulty:
     cp 1
     jr nz,+
     ;difficulty 1
-    ld a,$-10
-    ld (fuel_use),a;$-70
-    ld a,$60
-    ld (speedX_tolerance),a;$40
-    ld a,$60
-    ld (speedY_tolerance),a;$40
-    ld a,$-10
-    ld (Xdumping),a;$0
+    ld hl,$-10
+    ld (fuel_use),hl;$-70
+    ld hl,$60
+    ld (speedX_tolerance),hl;$40
+    ld hl,$60
+    ld (speedY_tolerance),hl;$40
+    ld hl,$-10
+    ld (Xdumping),hl;$0
     ld a,1
     ld (refuel),a;$0
     ld a,0
@@ -299,14 +300,14 @@ SetDifficulty:
     cp 2
     jr nz,+
     ;difficulty 2
-    ld a,$-20
-    ld (fuel_use),a;$-70
-    ld a,$50
-    ld (speedX_tolerance),a;$40
-    ld a,$50
-    ld (speedY_tolerance),a;$40
-    ld a,$-5
-    ld (Xdumping),a;$0
+    ld hl,$-20
+    ld (fuel_use),hl;$-70
+    ld hl,$50
+    ld (speedX_tolerance),hl;$40
+    ld hl,$50
+    ld (speedY_tolerance),hl;$40
+    ld hl,$-5
+    ld (Xdumping),hl;$0
     ld a,1
     ld (refuel),a;$0
     ld a,0
@@ -317,14 +318,14 @@ SetDifficulty:
     cp 3
     jr nz,+
     ;difficulty 3
-    ld a,$-40
-    ld (fuel_use),a;$-70
-    ld a,$40
-    ld (speedX_tolerance),a;$40
-    ld a,$40
-    ld (speedY_tolerance),a;$40
-    ld a,$0
-    ld (Xdumping),a;$0
+    ld hl,$-40
+    ld (fuel_use),hl;$-70
+    ld hl,$40
+    ld (speedX_tolerance),hl;$40
+    ld hl,$40
+    ld (speedY_tolerance),hl;$40
+    ld hl,$0
+    ld (Xdumping),hl;$0
     ld a,1
     ld (refuel),a;$0
     ld a,0
@@ -335,14 +336,14 @@ SetDifficulty:
     cp 4
     jr nz,+
     ;difficulty 4
-    ld a,$-50
-    ld (fuel_use),a;$-70
-    ld a,$40
-    ld (speedX_tolerance),a;$40
-    ld a,$40
-    ld (speedY_tolerance),a;$40
-    ld a,$0
-    ld (Xdumping),a;$0
+    ld hl,$-50
+    ld (fuel_use),hl;$-70
+    ld hl,$40
+    ld (speedX_tolerance),hl;$40
+    ld hl,$40
+    ld (speedY_tolerance),hl;$40
+    ld hl,$0
+    ld (Xdumping),hl;$0
     ld a,0
     ld (refuel),a;$0
     ld a,1
@@ -353,19 +354,20 @@ SetDifficulty:
     cp 5
     jr nz,SetDifficulty_end
     ;difficulty 5
-    ld a,$-70
-    ld (fuel_use),a;$-70
-    ld a,$40
-    ld (speedX_tolerance),a;$40
-    ld a,$40
-    ld (speedY_tolerance),a;$40
-    ld a,$0
-    ld (Xdumping),a;$0
+    ld hl,$-70
+    ld (fuel_use),hl;$-70
+    ld hl,$40
+    ld (speedX_tolerance),hl;$40
+    ld hl,$40
+    ld (speedY_tolerance),hl;$40
+    ld hl,$0
+    ld (Xdumping),hl;$0
     ld a,0
     ld (refuel),a;$0  
     ld a,1
     ld (big_rocket),a;$1
   SetDifficulty_end:
+  pop hl
   pop af
   ret
 
@@ -444,7 +446,7 @@ RunGame:
     ld c,24;col (tiles) in c
     ld l,6;line (tiles) in l
     ld e,h;value (8bit) in e
-    call PrintInt
+    call PrintInt8
     
     ld a,1
     ld (current_level),a
@@ -607,7 +609,7 @@ RunGame:
     ld l,10;line (tiles) in l
     ld a,(current_level)
     ld e,a;value (8bit) in e
-    call PrintInt
+    call PrintInt8
     
     ; Turn screen on
     ld a,%11100000
@@ -1436,6 +1438,18 @@ DoGameLogicDbg:
     ld e,$0;sprite index in e, here these are the first sprites used
     call DrawRocket
     
+    ;draw fuel logo
+    ld h,8 ;col (pix) in h
+    ld l,8 ;line (pix) in l
+    ld d,fuel_tile_number
+    call SpriteSet8x8
+    ;fuel value
+    ld hl,(rocket_fuel)
+    ld e,h;value (8bit) in e
+    ld h,16 ;col (pix) in h
+    ld l,8 ;line (pix) in l
+    call PrintInt10Sprite
+    
     call TestAllCollisions
 
     ;hide other sprites
@@ -1490,7 +1504,7 @@ DoGameLogic:
     ld e,h;value (8bit) in e
     ld c,1 ;col (tiles) in c
     ld l,0 ;line (tiles) in l
-    call PrintInt
+    call PrintInt10Sprite
     
     call drawWarning
     call TestAllCollisions
