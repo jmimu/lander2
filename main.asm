@@ -148,7 +148,7 @@
 ;inclusions
 .include "fnc_sound.inc"
 
-.section "misc" free ;TODO : a section for every file!
+.section "misc" free
 .include "fnc_init.inc"
 .include "fnc_demo.inc"
 .include "fnc_text.inc"

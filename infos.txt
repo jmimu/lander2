@@ -1,7 +1,6 @@
 add other collisions models
 
-when too fast adda sound and show bubble
-disp fuel as sprite (decimal)
+when too fast add a sound and show bubble
 
 --------------------------------
 

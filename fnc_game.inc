@@ -19,6 +19,8 @@
 
 .section "game functions" free
 
+.include "fnc_ingame.inc"
+
 ;used to fake a call to a variable function
 ;function address is in (hl)
 CallFunctionHL:
@@ -1454,6 +1456,16 @@ DoGameLogicDbg:
 
     ;hide other sprites
     call SetLastSprite
+    
+    ;test
+    ;draw text
+    ld bc,TextLevelEnd-TextLevelStart
+    ld b,c;text length in b
+    ld c,7;col (tiles) in c
+    ld l,10;line (tiles) in l
+    ld de,TextLevelStart;text pointer in de
+    ld a,1;have to write slowly ?????????
+    call PrintTextMiddleVScroll
     
     pop hl
     pop de
