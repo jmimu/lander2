@@ -35,7 +35,7 @@ TextLostStart:
 TextLostEnd:
 
 TextWonStart:
-.db "OK! PRESS 1 TO CONTINUE"
+.db "GREAT LANDING! PRESS 1 TO CONTINUE"
 TextWonEnd:
 
 TextCongratStart:
@@ -549,7 +549,8 @@ FontData_End:
 
 
 Palette0Start:
-.db $3b,$3f,$08,$18,$04,$06,$3a,$29,$2a,$3f,$01,$3d,$38,$0c,$08,$3c
+;.db $3b,$3f,$08,$18,$04,$06,$3a,$29,$2a,$3f,$01,$3d,$38,$0c,$08,$3c
+.db $00,$3f,$08,$18,$04,$06,$3a,$29,$2a,$3f,$01,$3d,$38,$0c,$08,$3c
 .db $3b, $0, $3f, $4, $8, $c, $1, $3, $2b, $20, $2a, $38, $f, $15, $6, $21
 Palette0End:
 

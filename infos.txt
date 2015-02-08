@@ -8,6 +8,7 @@ main loop :
   have a function variable for logic (game, lost, won...)
   remove change level part
 
+add a new game status for game finished
 
 --------------------------------
 

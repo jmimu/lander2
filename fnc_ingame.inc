@@ -103,3 +103,183 @@ PrintTextMiddleVScroll:
     call PrintText
 
     ret
+
+
+;update game status
+;gameStatus= 0: start, 1: play, 2: lost, 3: won
+GameStatusUpdate:
+    ld hl,(gameStatusCnt)
+    ld a,(gameStatus)
+    cp 0 ;test on gameStatus
+    jp nz,GameStatusUpdate_sup0
+    
+      ;if gameStatus==0 (start)
+      ld bc,$12
+      add hl,bc
+      ld a,h
+      cp 2
+      jr nz,+
+      ;if gameStatusCnt too big, change to play status
+      ld a,1
+      ld (gameStatus),a
+      ld hl,0
+      ld (gameStatusCnt),hl
+    +:
+      ;actions if gameStatus==0
+      ;TODO: show direction?
+      call DoGameLogicDbg
+      jp GameStatusUpdate_end
+      
+  GameStatusUpdate_sup0:
+    ld a,(gameStatus)
+    cp 1 ;test on gameStatus
+    jp nz,GameStatusUpdate_sup1
+    ;if gameStatus==1 (play)
+      call DoGameLogicDbg
+      jp GameStatusUpdate_end
+    
+  GameStatusUpdate_sup1:
+    ld a,(gameStatus)
+    cp 2 ;test on gameStatus
+    jp nz,GameStatusUpdate_sup2
+    ;if gameStatus==2 (lost)
+      call DoLost
+      jp GameStatusUpdate_end
+    
+  GameStatusUpdate_sup2:
+    ld a,(gameStatus)
+    cp 3 ;test on gameStatus
+    jp nz,GameStatusUpdate_end
+    ;if gameStatus==3 (won)
+      call DoWon
+      jp GameStatusUpdate_end
+  
+  
+  GameStatusUpdate_end:
+    ret
+    
+
+
+
+;-------------------------------------------------------------------------------
+DoLost:
+    call ResetSprites
+    
+    ;read button 1
+    in a,($dc)
+    and %00010000
+    cp  %00000000
+    jr nz,+
+        ld sp, $dff0 ;clear stack
+        jp game_start
+  +:  
+    
+    ;read button 2
+    in a,($dc)
+    and %00100000
+    cp  %00000000
+    jr nz,+
+        ld sp, $dff0 ;clear stack
+        jp RunGame
+  +:
+    
+    ;draw rocket sprites
+    ld bc,(posX)    
+    ld h,b;x in h
+    ld bc,(posY)    
+    ld l,b;y in l
+    ld e,$0;sprite index in e, here these are the first sprites used
+    call DrawRocket
+    
+    ;draw fuel logo
+    ld h,8 ;col (pix) in h
+    ld l,8 ;line (pix) in l
+    ld d,fuel_tile_number
+    call SpriteSet8x8
+    ;fuel value
+    ld hl,(rocket_fuel)
+    ld e,h;value (8bit) in e
+    ld h,16 ;col (pix) in h
+    ld l,8 ;line (pix) in l
+    call PrintInt10Sprite
+    
+    ;draw lost text
+    ld bc,TextLostEnd-TextLostStart
+    ld b,c;text length in b
+    ld c,7;col (tiles) in c
+    ld l,10;line (tiles) in l
+    ld de,TextLostStart;text pointer in de
+    ld a,1;have to write slowly ?????????
+    call PrintTextMiddleVScroll
+
+    ;hide other sprites
+    call SetLastSprite
+    
+
+    ret
+
+
+;-------------------------------------------------------------------------------
+DoWon:
+    call ResetSprites
+    
+    ;read button 1
+    in a,($dc)
+    and %00010000
+    cp  %00000000
+    jr nz,+
+        ;ld sp, $dff0 ;clear stack
+        jp game_start
+  +:  
+    
+    
+    ;draw rocket sprites
+    ld bc,(posX)    
+    ld h,b;x in h
+    ld bc,(posY)    
+    ld l,b;y in l
+    ld e,$0;sprite index in e, here these are the first sprites used
+    call DrawRocket
+    
+    ;draw player
+    ld bc,(posX)    
+    ld h,b;x in h
+    ld bc,(posY)    
+    ld l,b;y in l
+    ld bc,$0808
+    add hl,bc ;draw the guy a little further
+    ld d,guy_tile_number;number of the tile in VRAM in d
+    ld e,$6;sprite index in e, 6 because we draw the rocket too
+    call SpriteSet16x16
+    
+    ;draw fuel logo
+    ld h,8 ;col (pix) in h
+    ld l,8 ;line (pix) in l
+    ld d,fuel_tile_number
+    call SpriteSet8x8
+    ;fuel value
+    ld hl,(rocket_fuel)
+    ld e,h;value (8bit) in e
+    ld h,16 ;col (pix) in h
+    ld l,8 ;line (pix) in l
+    call PrintInt10Sprite
+    
+    ;draw won text
+    ld bc,TextWonEnd-TextWonStart
+    ld b,c;text length in b
+    ld c,7;col (tiles) in c
+    ld l,10;line (tiles) in l
+    ld de,TextWonStart;text pointer in de
+    ld a,1;have to write slowly ?????????
+    call PrintTextMiddleVScroll
+
+    ;hide other sprites
+    call SetLastSprite
+    
+
+    ret
+
+
+
+
+

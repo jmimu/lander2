@@ -13,7 +13,8 @@
   SpecialTileFunction      dw    ; pointer to function called when touching a special tile
   WaitForVBlankFunction    dw    ; pointer to function WaitForVBlank
   
-  
+  gameStatus               db    ; 0: start, 1: play, 2: lost, 3: won
+  gameStatusCnt            dw    ; counter of game status
 .ends
 
 
@@ -402,8 +403,14 @@ RunGame:
     ;disable scrolling
     xor a
     out ($bf),a
-    ld a,%10001000
+    ld a,%10001000 ;x scroll
     out ($bf),a
+    
+    xor a
+    out ($bf),a
+    ld a,%10001001 ;y scroll
+    out ($bf),a
+    
 
     ;game init
     ld a,1
@@ -419,12 +426,12 @@ RunGame:
     ld hl,$2000
     ld (star_color2),hl
     
-    ld a,0
+    xor a
     ld (landing_zone_color),a
     
     ld b,0;debug mode
     call SetDifficulty
-
+    
   game_start:
     call CutAllSound
 
@@ -680,15 +687,15 @@ RunGame:
     ld a,1
     ld (new_frame),a
 
-    ei;enable interruption (for vblank)
+    ei;enable interruption (for vblank)    
 
 
-    ;~ ;test sound
-    ;~ ld c,0;channel in c*%100000(max 3*%100000)
-    ;~ call EnableChannel
-    ;~ 
-    ;~ ld c,%01100000;channel in c*%100000(max 3*%100000)
-    ;~ call EnableChannel
+    ;set game status to level start
+    xor a
+    ld (gameStatus),a
+    ld hl,0
+    ld (gameStatusCnt),hl
+
 
   MainLoop:
 
@@ -699,8 +706,8 @@ RunGame:
     ;cut noise channel sound
     ld c,%01100000;channel in c*%100000(max 3*%100000)
     call CutOneChannel
-
-    call DoGameLogicDbg
+    
+    call GameStatusUpdate
     
     ld hl,(WaitForVBlankFunction)
     call CallFunctionHL;act as "call (hl)"
@@ -760,7 +767,7 @@ WaitForButton:
     pop af
     ret
 
-ReadButtons:
+ReadButtonsPlay:
     push af
         in a,($dc)
         and %00010000
@@ -1428,7 +1435,7 @@ DoGameLogicDbg:
     ;ld (speedX),hl
     ;ld (speedY),hl
     
-    call ReadButtons
+    call ReadButtonsPlay
     
 
     
@@ -1456,16 +1463,6 @@ DoGameLogicDbg:
 
     ;hide other sprites
     call SetLastSprite
-    
-    ;test
-    ;draw text
-    ld bc,TextLevelEnd-TextLevelStart
-    ld b,c;text length in b
-    ld c,7;col (tiles) in c
-    ld l,10;line (tiles) in l
-    ld de,TextLevelStart;text pointer in de
-    ld a,1;have to write slowly ?????????
-    call PrintTextMiddleVScroll
     
     pop hl
     pop de
@@ -1501,7 +1498,7 @@ DoGameLogic:
     add hl,bc
     ld (posY),hl
     
-    call ReadButtons
+    call ReadButtonsPlay
     
     ;draw rocket sprites
     ld bc,(posX)    
@@ -1745,7 +1742,10 @@ TestCollision:;use tilemap collision data
       ;touches=> explode
       ld a,2
       ld (rocket_status),a
-      call WaitForButton
+      ld hl,0
+      ld (gameStatusCnt),hl
+      ld a,2 ;lost
+      ld (gameStatus),a
     +:
       
     TestCollisionDbg1:
