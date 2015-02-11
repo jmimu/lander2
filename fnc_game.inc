@@ -1666,37 +1666,43 @@ TestAllCollisions:
       inc e
     +:
       call RocketPos2vramTiles
-      call TestCollision
+;      call TestCollision
+      
+      ;test landing point posX+8,posY+25
+      ld d,8;deltaX in d
+      ld e,25;deltaY in e
+      call RocketPos2vramTiles
+      call TestLanding
       
       ;test point posX+2,posY+24
       ld d,2;deltaX in d
       ld e,24;deltaY in e
       call RocketPos2vramTiles
-      call TestCollision
+;      call TestCollision
       
       ;test point posX+8,posY+24
       ld d,8;deltaX in d
       ld e,24;deltaY in e
       call RocketPos2vramTiles
-      call TestCollision
+;      call TestCollision
       
       ;test point posX+13,posY+24
       ld d,13;deltaX in d
       ld e,24;deltaY in e
       call RocketPos2vramTiles
-      call TestCollision
+;      call TestCollision
       
       ;test point posX+4,posY+12
       ld d,4;deltaX in d
       ld e,12;deltaY in e
       call RocketPos2vramTiles
-      call TestCollision
+;      call TestCollision
       
       ;test point posX+11,posY+12
       ld d,11;deltaX in d
       ld e,12;deltaY in e
       call RocketPos2vramTiles
-      call TestCollision
+;      call TestCollision
       
     ret
 
@@ -1748,11 +1754,91 @@ TestCollision:;use tilemap collision data
       ld (gameStatus),a
     +:
       
-    TestCollisionDbg1:
-      ld l,a;just debug
       
-      ;tilemap data is in hl
       
+    TestCollision_end:
+    pop hl
+    pop bc
+    pop af
+    ret
+
+
+;posX MSB in b ;TODO: use bc to get mod 8 part of positions
+;posY MSB in c
+;x in h (in tiles)
+;y in l (in tiles)
+TestLanding:;use tilemap collision data
+    push af
+    push bc
+    push hl
+    
+      ;compute tile number
+      ld b,0
+      ld c,h;x in bc
+      call Multby32 ;hl=l*32
+      add hl,bc
+      add hl,hl;multiply by 2
+      ld b,l
+      ld c,h
+      ;tile number in bc
+      
+      ;try to read data in vram
+      ; 1. Set VRAM read address to name table index 0
+      ; by outputting $0000 ORed with $3800+bc
+      ld a,b
+      out ($bf),a
+      ld a,$38
+      add a,c
+      out ($bf),a
+      ; 2. get tilemap data
+      in a,($be)
+      ld h,a
+      in a,($be)
+      ld l,a
+      
+      ;collision data is in l & %11100000
+      
+      ld a,l
+      and %11100000
+      cp %11100000
+      jr nz,TestLanding_end
+      
+      TestLanding_debug:
+        ;touches=> test if speed is low enought
+        ;in x:
+        ld hl,(speedX)  
+        ld bc,(speedX_tolerance);h must be < 1
+        xor a
+        cp h
+        jr nz,TestLanding_explode
+        ;in y:
+        ld hl,(speedY)  
+        ld bc,(speedY_tolerance)
+        add hl,bc ;h must be < 1
+        xor a
+        cp h
+        jr nz,TestLanding_explode
+
+      ;win
+      ld hl,0
+      ld (gameStatusCnt),hl
+      ld a,3 ;won
+      ld (gameStatus),a
+      jr TestLanding_end
+      
+    TestLanding_explode:
+      ld a,2
+      ld (rocket_status),a
+      ld hl,0
+      ld (gameStatusCnt),hl
+      ld a,2 ;lost
+      ld (gameStatus),a
+      
+      ;refill!
+      ld hl,$FF0F
+      ld (rocket_fuel),hl
+      ld a,1
+      ld (already_lost),a
       
 ;      
 ;      ;load tilemap of current level
@@ -1872,7 +1958,7 @@ TestCollision:;use tilemap collision data
 ;        ld de,TextLostStart;text pointer in de
 ;        call PrintTextStatic
 ;        
-    TestCollision_end:
+    TestLanding_end:
     pop hl
     pop bc
     pop af

@@ -1,4 +1,5 @@
 add other collisions models
+in fact speed tolrance is more a complementary to $100...
 
 when too fast add a sound and show bubble
 

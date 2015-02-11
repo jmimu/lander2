@@ -206,7 +206,7 @@ DoLost:
     ;draw lost text
     ld bc,TextLostEnd-TextLostStart
     ld b,c;text length in b
-    ld c,7;col (tiles) in c
+    ld c,1;col (tiles) in c
     ld l,10;line (tiles) in l
     ld de,TextLostStart;text pointer in de
     ld a,1;have to write slowly ?????????
@@ -267,7 +267,7 @@ DoWon:
     ;draw won text
     ld bc,TextWonEnd-TextWonStart
     ld b,c;text length in b
-    ld c,7;col (tiles) in c
+    ld c,1;col (tiles) in c
     ld l,10;line (tiles) in l
     ld de,TextWonStart;text pointer in de
     ld a,1;have to write slowly ?????????
