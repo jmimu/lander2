@@ -54,7 +54,6 @@
 .define bike_pedal_anim_steps $4
 
 ;game
-.define number_of_empty_tiles 13;tile 13 and more make collisions
 .define digits_tile_number $10 ;position of "0" in vram
 .define fire_tile_number $5F
 .define explosion_tile_number $63

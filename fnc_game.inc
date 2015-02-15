@@ -785,25 +785,25 @@ ReadButtonsPlay:
         and %00000001
         cp  %00000000
         jr nz,+
-        call OnButtonUp;Dbg
+        call OnButtonUp
     +:  
         in a,($dc)
         and %00000010
         cp  %00000000
         jr nz,+
-        call OnButtonDown;Dbg
+        call OnButtonDown
     +:  
         in a,($dc)
         and %00000100
         cp  %00000000
         jr nz,+
-        call OnButtonLeft;Dbg
+        call OnButtonLeft
     +:  
         in a,($dc)
         and %00001000
         cp  %00000000
         jr nz,+
-        call OnButtonRight;Dbg
+        call OnButtonRight
     +:
     pop af
 ret
@@ -948,52 +948,6 @@ OnButtonRight:
     pop af
 ret
 
-;------------------ debug
-
-OnButtonUpDbg:
-    push bc
-    push hl
-        ld bc,$100 ;
-        ld hl,(speedY)
-        add hl,bc
-        ld (speedY),hl
-    +:
-    pop hl
-    pop bc
-ret
-OnButtonDownDbg:
-    push bc
-    push hl
-        ld bc,-$100 ;
-        ld hl,(speedY)
-        add hl,bc
-        ld (speedY),hl
-    +:
-    pop hl
-    pop bc
-ret
-OnButtonLeftDbg:
-    push bc
-    push hl
-        ld bc,$100 ;
-        ld hl,(speedX)
-        add hl,bc
-        ld (speedX),hl
-    +:
-    pop hl
-    pop bc
-ret
-OnButtonRightDbg:
-    push bc
-    push hl
-        ld bc,-$100 ;
-        ld hl,(speedX)
-        add hl,bc
-        ld (speedX),hl
-    +:
-    pop hl
-    pop bc
-ret
 ;----------------- end debug
 
 WaitForVBlankLava:
@@ -1420,16 +1374,6 @@ DoGameLogicDbg:
   +:
     
     
-    ;y scroll depending on speedY
-    ;ld hl, (speedY)
-    ;ld c,h
-    ;call VScrollManager
-    ;ld hl, (YScrollTotal)
-    ;add hl,hl
-    ;add hl,hl
-    ;ld (YLava),hl
-
-    
     ;set speed to 0
     ;ld hl,0
     ;ld (speedX),hl
@@ -1472,63 +1416,6 @@ DoGameLogicDbg:
 
     ret
 
-DoGameLogic:
-    push af
-  
-    push bc
-    push de
-    push hl
-  
-    call ResetSprites
-    
-    ;mechanics
-    ;increment Y-speed (gravity)
-    ld hl,(speedY)
-    inc hl
-    inc hl
-    ld (speedY),hl    
-    
-    ;update x pos
-    ld bc,(posX)
-    ld hl, (speedX)
-    add hl,bc
-    ld (posX),hl
-    ;update y pos
-    ld bc,(posY)
-    ld hl, (speedY)
-    add hl,bc
-    ld (posY),hl
-    
-    call ReadButtonsPlay
-    
-    ;draw rocket sprites
-    ld bc,(posX)    
-    ld h,b;x in h
-    ld bc,(posY)    
-    ld l,b;y in l
-    ld e,$0;sprite index in e, here these are the first sprites used
-    call DrawRocket
-
-    ;draw texts
-    ld hl,(rocket_fuel)
-    ld e,h;value (8bit) in e
-    ld c,1 ;col (tiles) in c
-    ld l,0 ;line (tiles) in l
-    call PrintInt10Sprite
-    
-    call drawWarning
-    call TestAllCollisions
-
-
-    ;hide other sprites
-    call SetLastSprite
-
-    pop hl
-    pop de
-    pop bc
-    pop af
-
-    ret
 
 ;check if speed is too big, write a warning
 drawWarning:
@@ -1872,124 +1759,6 @@ TestLanding:;use tilemap collision data
       ld a,1
       ld (already_lost),a
       
-;      
-;      ;load tilemap of current level
-;      ld hl,Tilemap1Start
-;      ld a,(current_level)
-;      ld bc,level_mem_size
-;    -:
-;      dec a
-;      cp 0
-;      jr z,+
-;      add hl,bc
-;      jr -
-;    +:;hl is where the tilemap of the level starts
-;    
-;      pop bc
-;      ;ld hl,Tilemap1Start
-;      add hl,bc
-;      add hl,bc ;hl is the pointer to the tile number
-;      
-;      
-;      ;if (hl)>number_of_empty_tiles
-;      ld a, number_of_empty_tiles
-;      ld b,a
-;      ld a,(hl)
-;      cp b
-;      jp c,end_TestCollision
-;      ;it's not and emprty tile... check if it is a landing zone
-;      ld b,landing_tile_number
-;      cp b
-;      jr z,try_to_land
-;      ;check if it is a full tile
-;      ld a,(hl)
-;      ld b,a
-;      ld a, last_full_tile
-;      cp b
-;      jp c,end_TestCollision
-;      jr destroy
-;      
-;   try_to_land:   
-;      ;good place, now check speeds
-;      ;in x: TODO : use speedX_tolerance
-;      ld hl,(speedX)  
-;      ;ld bc,(speedX_tolerance)
-;      ;add hl,bc ;hl must be < speedX_tolerance*2
-;      ld bc,$80
-;      add hl,bc ;h must be < 1
-;      xor a
-;      cp h
-;      jr nz,destroy
-;      ;in y: TODO : use speedY_tolerance
-;      ld hl,(speedY)  
-;      ld bc,$80
-;      add hl,bc ;h must be < 1
-;      xor a
-;      cp h
-;      jr nz,destroy
-;      
-;      
-;      ;draw lander ; maybe draw it as a background ?
-;      ld bc,(posX)    
-;      ld h,b;x in h
-;      ld bc,(posY)    
-;      ld l,b;y in l
-;      ld bc,$0808
-;      add hl,bc ;draw the guy a little further
-;      ld d,guy_tile_number;number of the tile in VRAM in d
-;      ld e,$6;sprite index in e, 6 because we draw the rocket too
-;      call SpriteSet16x16
-;      ;next level
-;      ld a,(current_level)
-;      inc a
-;      ld (goto_level),a
-;      ;draw text
-;      ld bc,TextWonEnd-TextWonStart
-;      ld b,c;text length in b
-;      ld c,2;col (tiles) in c
-;      ld l,3;line (tiles) in l
-;      ld de,TextWonStart;text pointer in de
-;      call PrintTextStatic
-;      
-;      jp end_TestCollision
-;      
-;    destroy:
-;        ;return to correct yellow
-;        ld a,$1C
-;        out ($bf),a
-;        ld a,$c0
-;        out ($bf),a
-;        ; 2. Output colour data
-;        ld a,$0f
-;        out ($be),a
-;    
-;        ;show explosion
-;        ld bc,(posX)    
-;        ld h,b;x in h
-;        ld bc,(posY)    
-;        ld l,b;y in l
-;        ld d,explosion_tile_number;number of the tile in VRAM in d
-;        ld e,$0;sprite index in e, 0 because we replace the rocket
-;        call SpriteSet16x24
-;      
-;        ld a,(current_level)
-;        ;ld a,1 ;return to first level
-;        ld (goto_level),a
-;        
-;        ;refill!
-;        ld hl,$FF0F
-;        ld (rocket_fuel),hl
-;        ld a,1
-;        ld (already_lost),a
-;        
-;        ;draw text
-;        ld bc,TextLostEnd-TextLostStart
-;        ld b,c;text length in b
-;        ld c,2;col (tiles) in c
-;        ld l,3;line (tiles) in l
-;        ld de,TextLostStart;text pointer in de
-;        call PrintTextStatic
-;        
     TestLanding_end:
     pop hl
     pop bc
