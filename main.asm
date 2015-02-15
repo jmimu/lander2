@@ -62,6 +62,11 @@
 .define normal_rocket_tile_number $69 ;big rocket starts at rocket_tile_number, small at rocket_tile_number+2
 .define fire_rocket_tile_number $71 ;big rocket starts at rocket_tile_number, small at rocket_tile_number+2
 .define guy_tile_number $79
+.define bubble_bottom_tile_number $7F
+.define bubble_left_tile_number $83
+.define bubble_right_tile_number $85
+.define bubble_down_tile_number $81
+
 .define diff_tile_ascii 32 ;difference between index in tiles and in ascii ("A" tile number -65)
 .define number_of_levels 5
 
@@ -96,8 +101,8 @@
   
   ;difficulty settings
   fuel_use dw;$-70
-  speedX_tolerance dw;$40 ;must be < $80 !
-  speedY_tolerance dw;$40
+  speed_pos_tolerance dw;$40
+  speed_neg_tolerance dw;-$40
   Xdumping         dw;0
   refuel           db;0=no, 1=true
   big_rocket     db;0=no, 1=true

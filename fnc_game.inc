@@ -270,9 +270,9 @@ SetDifficulty:
     ld hl,-$10;0
     ld (fuel_use),hl;$-70
     ld hl,$60
-    ld (speedX_tolerance),hl;$40
-    ld hl,$60
-    ld (speedY_tolerance),hl;$40
+    ld (speed_pos_tolerance),hl;$40
+    ld hl,-$60
+    ld (speed_neg_tolerance),hl;$40
     ld hl,$-10
     ld (Xdumping),hl;$0
     ld a,1
@@ -288,9 +288,9 @@ SetDifficulty:
     ld hl,$-10
     ld (fuel_use),hl;$-70
     ld hl,$60
-    ld (speedX_tolerance),hl;$40
-    ld hl,$60
-    ld (speedY_tolerance),hl;$40
+    ld (speed_pos_tolerance),hl;$40
+    ld hl,-$60
+    ld (speed_neg_tolerance),hl;$40
     ld hl,$-10
     ld (Xdumping),hl;$0
     ld a,1
@@ -305,10 +305,10 @@ SetDifficulty:
     ;difficulty 2
     ld hl,$-20
     ld (fuel_use),hl;$-70
-    ld hl,$50
-    ld (speedX_tolerance),hl;$40
-    ld hl,$50
-    ld (speedY_tolerance),hl;$40
+    ld hl,$60
+    ld (speed_pos_tolerance),hl;$40
+    ld hl,-$60
+    ld (speed_neg_tolerance),hl;$40
     ld hl,$-5
     ld (Xdumping),hl;$0
     ld a,1
@@ -323,10 +323,10 @@ SetDifficulty:
     ;difficulty 3
     ld hl,$-40
     ld (fuel_use),hl;$-70
-    ld hl,$40
-    ld (speedX_tolerance),hl;$40
-    ld hl,$40
-    ld (speedY_tolerance),hl;$40
+    ld hl,$50
+    ld (speed_pos_tolerance),hl;$40
+    ld hl,-$50
+    ld (speed_neg_tolerance),hl;$40
     ld hl,$0
     ld (Xdumping),hl;$0
     ld a,1
@@ -341,10 +341,10 @@ SetDifficulty:
     ;difficulty 4
     ld hl,$-50
     ld (fuel_use),hl;$-70
-    ld hl,$40
-    ld (speedX_tolerance),hl;$40
-    ld hl,$40
-    ld (speedY_tolerance),hl;$40
+    ld hl,$50
+    ld (speed_pos_tolerance),hl;$40
+    ld hl,-$50
+    ld (speed_neg_tolerance),hl;$40
     ld hl,$0
     ld (Xdumping),hl;$0
     ld a,0
@@ -360,9 +360,9 @@ SetDifficulty:
     ld hl,$-70
     ld (fuel_use),hl;$-70
     ld hl,$40
-    ld (speedX_tolerance),hl;$40
-    ld hl,$40
-    ld (speedY_tolerance),hl;$40
+    ld (speed_pos_tolerance),hl;$40
+    ld hl,-$40
+    ld (speed_neg_tolerance),hl;$40
     ld hl,$0
     ld (Xdumping),hl;$0
     ld a,0
@@ -1459,6 +1459,7 @@ DoGameLogicDbg:
     ld l,8 ;line (pix) in l
     call PrintInt10Sprite
     
+    call drawWarning
     call TestAllCollisions
 
     ;hide other sprites
@@ -1535,45 +1536,51 @@ drawWarning:
     push bc
     push hl
 
-        ;clear text
-        ld bc,TextNoWarnEnd-TextNoWarnStart
-        ld b,c;text length in b
-        ld c,4;col (tiles) in c
-        ld l,1;line (tiles) in l
-        ld de,TextNoWarnStart;text pointer in de
-        call PrintText
-
-      ld hl,(speedX)  
-      ;ld bc,(speedX_tolerance)
-      ;add hl,bc ;hl must be < speedX_tolerance*2
-      ld bc,$80
-      add hl,bc ;h must be < 1
-      xor a
-      cp h
-      jr z,+
-        ;draw text
-        ld bc,TextWarnXEnd-TextWarnXStart
-        ld b,c;text length in b
-        ld c,4;col (tiles) in c
-        ld l,1;line (tiles) in l
-        ld de,TextWarnXStart;text pointer in de
-        call PrintText
-     +:
-      ;in y: TODO : use speedY_tolerance
-      ld hl,(speedY)  
-      ld bc,$80
-      add hl,bc ;h must be < 1
-      xor a
-      cp h
-      jr z,+
-        ;draw text
-        ld bc,TextWarnYEnd-TextWarnYStart
-        ld b,c;text length in b
-        ld c,4;col (tiles) in c
-        ld l,1;line (tiles) in l
-        ld de,TextWarnYStart;text pointer in de
-        call PrintText
-     +:
+    ;TODO: draw warning in hz too?
+    ;in y:
+    ld hl,(speedY)
+    ;test if speed positive (h<$80)
+    ld a,h
+    cp $80
+    jr nc,drawWarning_end
+    
+    ;test if h==0
+    cp 0
+    jr nz,drawWarning_down
+    ;then test if l<speed_pos_tolerance
+    ld bc,(speed_pos_tolerance)
+    ld a,l
+    cp c
+    jr nc,drawWarning_down
+    jr drawWarning_end
+    
+    drawWarning_down:
+      ;draw bubble top 
+      ld bc,(posX)
+      ld a,b
+      add a,12
+      ld h,a;col (pix) in h
+      ld bc,(posY)
+      ld a,b
+      add a,-8
+      ld l,a;line (pix) in l
+      ld d,bubble_down_tile_number
+      call SpriteSet16x8
+    
+    drawWarning_bubble_bottom:
+      ;draw bubble bottom
+      ld bc,(posX)
+      ld a,b
+      add a,12
+      ld h,a;col (pix) in h
+      ld bc,(posY)
+      ld a,b
+      add a,0
+      ld l,a;line (pix) in l
+      ld d,bubble_bottom_tile_number
+      call SpriteSet16x8
+    
+    drawWarning_end:
     pop hl
     pop bc
     pop af
@@ -1806,18 +1813,43 @@ TestLanding:;use tilemap collision data
       TestLanding_debug:
         ;touches=> test if speed is low enought
         ;in x:
-        ld hl,(speedX)  
-        ld bc,(speedX_tolerance);h must be < 1
-        xor a
-        cp h
-        jr nz,TestLanding_explode
+        ld hl,(speedX)
+        ;test if speed >0
+        ld a,h
+        cp 0
+        jr z,+
+        cp 255
+        jr z,+
+        jp TestLanding_explode ;if h!=0 and h!=255, explode
+      +:
+        ;first, test if h==0
+        cp 0
+        jr nz,+
+        ;positive hz speed
+        ;test if l<speed_pos_tolerance
+        ld bc,(speed_pos_tolerance)
+        ld a,l
+        cp c
+        jr nc,TestLanding_explode
+       +:
+        ;negative hz speed
+        ;test if l>speed_neg_tolerance
+        ld bc,(speed_neg_tolerance)
+        ld a,l
+        cp c
+        jr c,TestLanding_explode ;TODO: speed_neg_tolerance must be -(speed_pos_tolerance)-1?
+        
         ;in y:
-        ld hl,(speedY)  
-        ld bc,(speedY_tolerance)
-        add hl,bc ;h must be < 1
-        xor a
-        cp h
+        ld hl,(speedY)
+        ;first, test if h==0
+        ld a,h
+        cp 0
         jr nz,TestLanding_explode
+        ;then test if l<speed_pos_tolerance
+        ld bc,(speed_pos_tolerance)
+        ld a,l
+        cp c
+        jr nc,TestLanding_explode
 
       ;win
       ld hl,0
