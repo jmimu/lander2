@@ -116,7 +116,7 @@ for row in all_values:
   for val in row:
     j+=1
     #str+=' $%04x'%(val-1)
-    str+=" %{0:016b}".format(int(val))
+    str+=" %{0:016b}".format(val)
     if (j==8)or(j==16)or(j==24):
       str+="\n.dw"
     if (j==32):
