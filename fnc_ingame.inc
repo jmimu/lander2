@@ -211,6 +211,8 @@ DoLost:
     ld de,TextLostStart;text pointer in de
     ld a,1;have to write slowly ?????????
     call PrintTextMiddleVScroll
+    
+    call drawWarning;to see what went wrong
 
     ;hide other sprites
     call SetLastSprite

@@ -1,13 +1,8 @@
-show bubbles if hz too fast?
-
-
 add other collisions models
-in fact speed tolrance is more a complementary to $100...
-make a positive and negative speed tolerance
-
-
 
 when too fast add a sound and show bubble
+
+make a first level only for take off ?
 
 --------------------------------
 

@@ -1423,8 +1423,90 @@ drawWarning:
     push bc
     push hl
 
-    ;TODO: draw warning in hz too?
-    ;in y:
+
+    ;in x:
+    ld hl,(speedX)
+    ;test if speed >0
+    ld a,h
+    cp $80
+    jr c,drawWarning_hz_pos
+    
+    ;here speedX<0
+    cp 255
+    jr z,+
+    jp drawWarning_right
+  +: ;has to test tolerance
+    ;test if l>speed_neg_tolerance
+    ld bc,(speed_neg_tolerance)
+    ld a,l
+    cp c
+    jr c,drawWarning_right
+    jp drawWarning_test_Y
+  
+  drawWarning_hz_pos:
+    ;here speedX>0
+    ld a,h
+    cp 0
+    jr z,+
+    jp drawWarning_left
+  +: ;has to test tolerance
+    ;test if l<speed_pos_tolerance
+    ld bc,(speed_pos_tolerance)
+    ld a,l
+    cp c
+    jr nc,drawWarning_left
+    jp drawWarning_test_Y
+    
+  drawWarning_left:
+    ;draw bubble left
+    ld bc,(posX)
+    ld a,b
+    add a,10
+    ld h,a;col (pix) in h
+    ld bc,(posY)
+    ld a,b
+    add a,-12
+    ld l,a;line (pix) in l
+    ld d,bubble_left_tile_number
+    call SpriteSet16x8
+    ;draw bubble bottom
+    ld bc,(posX)
+    ld a,b
+    add a,10
+    ld h,a;col (pix) in h
+    ld bc,(posY)
+    ld a,b
+    add a,-4
+    ld l,a;line (pix) in l
+    ld d,bubble_bottom_tile_number
+    call SpriteSet16x8
+    jp drawWarning_test_Y
+  drawWarning_right:
+    ;draw bubble left
+    ld bc,(posX)
+    ld a,b
+    add a,10
+    ld h,a;col (pix) in h
+    ld bc,(posY)
+    ld a,b
+    add a,-12
+    ld l,a;line (pix) in l
+    ld d,bubble_right_tile_number
+    call SpriteSet16x8
+    ;draw bubble bottom
+    ld bc,(posX)
+    ld a,b
+    add a,10
+    ld h,a;col (pix) in h
+    ld bc,(posY)
+    ld a,b
+    add a,-4
+    ld l,a;line (pix) in l
+    ld d,bubble_bottom_tile_number
+    call SpriteSet16x8
+    
+  drawWarning_test_Y:
+    ;Test in y:
     ld hl,(speedY)
     ;test if speed positive (h<$80)
     ld a,h
@@ -1445,11 +1527,11 @@ drawWarning:
       ;draw bubble top 
       ld bc,(posX)
       ld a,b
-      add a,12
+      add a,14
       ld h,a;col (pix) in h
       ld bc,(posY)
       ld a,b
-      add a,-8
+      add a,-4
       ld l,a;line (pix) in l
       ld d,bubble_down_tile_number
       call SpriteSet16x8
@@ -1458,11 +1540,11 @@ drawWarning:
       ;draw bubble bottom
       ld bc,(posX)
       ld a,b
-      add a,12
+      add a,14
       ld h,a;col (pix) in h
       ld bc,(posY)
       ld a,b
-      add a,0
+      add a,4
       ld l,a;line (pix) in l
       ld d,bubble_bottom_tile_number
       call SpriteSet16x8
@@ -1698,7 +1780,7 @@ TestLanding:;use tilemap collision data
       jr nz,TestLanding_end
       
       TestLanding_debug:
-        ;touches=> test if speed is low enought
+        ;touches=> test if speed is low enough
         ;in x:
         ld hl,(speedX)
         ;test if speed >0
@@ -1718,6 +1800,7 @@ TestLanding:;use tilemap collision data
         ld a,l
         cp c
         jr nc,TestLanding_explode
+        jp TestLanding_y
        +:
         ;negative hz speed
         ;test if l>speed_neg_tolerance
@@ -1726,6 +1809,7 @@ TestLanding:;use tilemap collision data
         cp c
         jr c,TestLanding_explode ;TODO: speed_neg_tolerance must be -(speed_pos_tolerance)-1?
         
+      TestLanding_y:  
         ;in y:
         ld hl,(speedY)
         ;first, test if h==0
