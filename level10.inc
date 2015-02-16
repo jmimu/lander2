@@ -59,7 +59,6 @@ SetupLevel10:
     ld a,$38|$40
     out ($bf),a
     ; 2. Output tilemap data
-    ;ld hl,Tilemap1Start
     ld bc,$600+$40; Counter for number of bytes to write
     -:
         ld a,(hl)    ; Get data byte

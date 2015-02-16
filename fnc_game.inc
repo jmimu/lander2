@@ -652,7 +652,7 @@ RunGame:
     ld a,$81
     out ($bf),a    
     
-    call SetupLevel10
+    call SetupLevel1
     
     
     ; Turn screen on
@@ -1388,7 +1388,6 @@ DoGameLogicDbg:
     ld h,b;x in h
     ld bc,(posY)    
     ld l,b;y in l
-    ld e,$0;sprite index in e, here these are the first sprites used
     call DrawRocket
     
     ;draw fuel logo

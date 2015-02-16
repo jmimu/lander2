@@ -86,7 +86,6 @@
   speedY                     dw ; multiplied by 2^8
   ;posX                     dw ; multiplied by 2^8
   ;posY                     dw ; multiplied by 2^8
-  ;number_of_sprites     db ; number of sprites to draw this frame
   rocket_fuel         dw 
   rocket_status      db ;0: normal, 1: bottom fire, 2: destroyed
   current_level db
@@ -157,9 +156,9 @@
 .include "fnc_demo.inc"
 .include "fnc_text.inc"
 .ends
-.include "fnc_sprites.inc"
+
 .include "fnc_game.inc"
-.include "level10.inc"
+.include "fnc_sprites.inc"
 
 .section "main" free
 ;==============================================================
@@ -231,5 +230,7 @@ IsButtonPressed:
 .include "data_game.inc"
 .ends
 
+.include "level10.inc"
+.include "level1.inc"
 
 
