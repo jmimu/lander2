@@ -94,6 +94,169 @@ SetupLevel10:
 ret
 
 
+WaitForVBlankLava:
+    push af
+    push bc
+    
+      ;compute lava y in screen
+      ld hl,(YLava)
+      ld bc,(YScrollTotal)
+      ;want (YLava)-(YScrollTotal)
+      or a ; reset carry flag (see http://www.smspower.org/Development/Z80ProgrammingTechniques#SubHlde)
+      sbc hl,bc
+      ;ld a,b
+      ;neg
+      ;ld b,a
+      ;ld a,c
+      ;neg
+      ;ld c,a
+      ;add hl,bc ;hl=(YLava)-(YScrollTotal)
+      
+      ;put the 3 lava lines in screen in b,d,e 
+      ld b,l
+      ld a,b
+      add a,$10
+      jr nc,+
+      ld d,$FF ;out of screen
+      ld e,$FF ;out of screen
+    +:
+      ld d,a
+      add a,$2
+      jr nc,+
+      ld e,$FF ;out of screen
+    +:
+      ld e,a
+      
+      ld a,h;test if hl in screen (<256)
+      cp 0
+      jr nz,+
+      ld b,$C0 ;out of screen
+      ld d,$C0 ;out of screen
+      ld e,$C0 ;out of screen
+    +:
+      
+    
+    -:
+      ;check for lava level:
+      ;read scan line counter
+      in a,($7E)
+      ld c,a
+      cp b;if == b, change palette
+      jr nz,+
+      ;==============================================================
+      ; Update palette
+      ;==============================================================
+      ; 1. Set VRAM write address to CRAM (palette) address 0 (for palette index 0)
+      ; by outputting $c000 ORed with $0006 (number of the color to change)
+      ld a,$06
+      out ($bf),a
+      ld a,$c0
+      out ($bf),a
+      ld a,$20
+      out ($be),a
+      jr -
+    +:
+      ld a,c ;get line counter back
+      cp d
+      jr nz,+
+      ;==============================================================
+      ; Update palette
+      ;==============================================================
+      ; 1. Set VRAM write address to CRAM (palette) address 0 (for palette index 0)
+      ; by outputting $c000 ORed with $0006 (number of the color to change)
+      ld a,$06
+      out ($bf),a
+      ld a,$c0
+      out ($bf),a
+      ld a,$03
+      out ($be),a
+      ;change color 9
+      ld a,$09
+      out ($bf),a
+      ld a,$c0
+      out ($bf),a
+      ld a,$03
+      out ($be),a
+      ;change color A
+      ld a,$0A
+      out ($bf),a
+      ld a,$c0
+      out ($bf),a
+      ld a,$03
+      out ($be),a
+      jr -
+    +:    
+      ld a,c ;get line counter back
+      cp e
+      jr nz,+
+      ;==============================================================
+      ; Update palette
+      ;==============================================================
+      ; 1. Set VRAM write address to CRAM (palette) address 0 (for palette index 0)
+      ; by outputting $c000 ORed with $0006 (number of the color to change)
+      ld a,$06
+      out ($bf),a
+      ld a,$c0
+      out ($bf),a
+      ld a,$01
+      out ($be),a
+      ;change color 9
+      ld a,$09
+      out ($bf),a
+      ld a,$c0
+      out ($bf),a
+      ld a,$01
+      out ($be),a
+      ;change color A
+      ld a,$0A
+      out ($bf),a
+      ld a,$c0
+      out ($bf),a
+      ld a,$01
+      out ($be),a
+      jr -
+    +:    
+      ;check if end of frame
+      ld a,(new_frame)
+      cp 0
+      jr z,-
+
+      xor a
+      ld (new_frame),a
+      
+      
+      ;get back to original color...
+      ;==============================================================
+      ; Update palette
+      ;==============================================================
+      ; 1. Set VRAM write address to CRAM (palette) address 0 (for palette index 0)
+      ; by outputting $c000 ORed with $0006 (number of the color to change)
+      ld a,$06
+      out ($bf),a
+      ld a,$c0
+      out ($bf),a
+      ld a,$10
+      out ($be),a
+      ;change color 9
+      ld a,$09
+      out ($bf),a
+      ld a,$c0
+      out ($bf),a
+      ld a,$3a
+      out ($be),a
+      ;change color A
+      ld a,$0A
+      out ($bf),a
+      ld a,$c0
+      out ($bf),a
+      ld a,$00
+      out ($be),a
+    pop bc
+    pop af
+  
+  ret
+
+
 ;==============================================================
 ; Data
 ;==============================================================

@@ -31,7 +31,7 @@
  "tilesets":[
         {
          "firstgid":1,
-         "image":"tree4_tiles.bmp",
+         "image":"tree4_tiles.png",
          "imageheight":512,
          "imagewidth":16,
          "margin":0,

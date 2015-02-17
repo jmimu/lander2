@@ -374,71 +374,7 @@ SetDifficulty:
   pop af
   ret
 
-
-RunGame:
-    ; setup screen (VDP register 0)
-    ld a,%01000110
-;         |||||||`- External Sync.
-;         ||||||`-- 1
-;         |||||`--- 1
-;         ||||`---- Sprite Shift
-;         |||`----- Line Interrupt Enable
-;         ||`------ Left Column Blank
-;         |`------- Horizontal Scroll Inhibit (top 2 char rows)
-;         `-------- Vertical Scroll Inhibit (right 8 char columns).
-
-    out ($bf),a
-    ld a,$80
-    out ($bf),a
-
-    ;init music
-    ld hl,brahms1_start
-    ld hl,demo_music_4_start
-    call InitMusic1
-    ld hl,brahms2_start
-    call InitMusic2
-    ld hl,brahms3_start
-    call InitMusic3
-
-    ;disable scrolling
-    xor a
-    out ($bf),a
-    ld a,%10001000 ;x scroll
-    out ($bf),a
-    
-    xor a
-    out ($bf),a
-    ld a,%10001001 ;y scroll
-    out ($bf),a
-    
-    ld a,1
-    ld (current_level),a
-    
-
-    ld hl,$FF0F
-    ld (rocket_fuel),hl
-    
-    ld hl,$0000
-    ld (star_color1),hl
-    ld hl,$2000
-    ld (star_color2),hl
-    
-    xor a
-    ld (landing_zone_color),a
-    
-    ld b,0;debug mode
-    call SetDifficulty
-    
-  game_start:
-    call CutAllSound
-
-    ;check if end of game
-    ld a,(current_level)
-    dec a
-    cp number_of_levels
-    jr nz,end_endgame_message
-
-    
+endGame:
     ;draw congratulations text
     ld bc,TextCongratEnd-TextCongratStart
     ld b,c;text length in b
@@ -467,18 +403,9 @@ RunGame:
   +:
     
     call WaitForButton
-   end_endgame_message:
+ret
 
-    ;if first level, fill fuel
-    ld a,(current_level)
-    cp 1
-    jr nz,+
-    ld hl,$FF0F
-    ld (rocket_fuel),hl
-    xor a
-    ld (already_lost),a
-  +:
-  
+showLevel:
     ;disable interrupts and turn off screen before writing to it. Will it fix tiles issues?
     di  ; disable interrupts
     ; Turn screen off
@@ -629,8 +556,84 @@ RunGame:
     ei  ; enable interrupts
     
     call WaitForButton
+    ret
 
+RunGame:
+    ; setup screen (VDP register 0)
+    ld a,%01000110
+;         |||||||`- External Sync.
+;         ||||||`-- 1
+;         |||||`--- 1
+;         ||||`---- Sprite Shift
+;         |||`----- Line Interrupt Enable
+;         ||`------ Left Column Blank
+;         |`------- Horizontal Scroll Inhibit (top 2 char rows)
+;         `-------- Vertical Scroll Inhibit (right 8 char columns).
 
+    out ($bf),a
+    ld a,$80
+    out ($bf),a
+
+    ;init music
+    ld hl,brahms1_start
+    ld hl,demo_music_4_start
+    call InitMusic1
+    ld hl,brahms2_start
+    call InitMusic2
+    ld hl,brahms3_start
+    call InitMusic3
+
+    ;disable scrolling
+    xor a
+    out ($bf),a
+    ld a,%10001000 ;x scroll
+    out ($bf),a
+    
+    xor a
+    out ($bf),a
+    ld a,%10001001 ;y scroll
+    out ($bf),a
+    
+    ld a,1
+    ld (current_level),a
+    
+
+    ld hl,$FF0F
+    ld (rocket_fuel),hl
+    
+    ld hl,$0000
+    ld (star_color1),hl
+    ld hl,$2000
+    ld (star_color2),hl
+    
+    xor a
+    ld (landing_zone_color),a
+    
+    ld b,0;debug mode
+    call SetDifficulty
+    
+  game_start:
+    call CutAllSound
+
+    ;check if end of game
+    ld a,(current_level)
+    dec a
+    cp number_of_levels
+    jr nz,+
+    call endGame
+   +:
+
+    ;if first level, fill fuel
+    ld a,(current_level)
+    cp 1
+    jr nz,+
+    ld hl,$FF0F
+    ld (rocket_fuel),hl
+    xor a
+    ld (already_lost),a
+  +:
+  
+    call showLevel
 
     ;disable interrupts and turn off screen before writing to it. Will it fix tiles issues?
     di  ; disable interrupts
@@ -942,170 +945,6 @@ OnButtonRight:
     pop af
 ret
 
-;----------------- end debug
-
-WaitForVBlankLava:
-    push af
-    push bc
-    
-      ;compute lava y in screen
-      ld hl,(YLava)
-      ld bc,(YScrollTotal)
-      ;want (YLava)-(YScrollTotal)
-      or a ; reset carry flag (see http://www.smspower.org/Development/Z80ProgrammingTechniques#SubHlde)
-      sbc hl,bc
-      ;ld a,b
-      ;neg
-      ;ld b,a
-      ;ld a,c
-      ;neg
-      ;ld c,a
-      ;add hl,bc ;hl=(YLava)-(YScrollTotal)
-      
-      ;put the 3 lava lines in screen in b,d,e 
-      ld b,l
-      ld a,b
-      add a,$10
-      jr nc,+
-      ld d,$FF ;out of screen
-      ld e,$FF ;out of screen
-    +:
-      ld d,a
-      add a,$2
-      jr nc,+
-      ld e,$FF ;out of screen
-    +:
-      ld e,a
-      
-      ld a,h;test if hl in screen (<256)
-      cp 0
-      jr nz,+
-      ld b,$C0 ;out of screen
-      ld d,$C0 ;out of screen
-      ld e,$C0 ;out of screen
-    +:
-      
-    
-    -:
-      ;check for lava level:
-      ;read scan line counter
-      in a,($7E)
-      ld c,a
-      cp b;if == b, change palette
-      jr nz,+
-      ;==============================================================
-      ; Update palette
-      ;==============================================================
-      ; 1. Set VRAM write address to CRAM (palette) address 0 (for palette index 0)
-      ; by outputting $c000 ORed with $0006 (number of the color to change)
-      ld a,$06
-      out ($bf),a
-      ld a,$c0
-      out ($bf),a
-      ld a,$20
-      out ($be),a
-      jr -
-    +:
-      ld a,c ;get line counter back
-      cp d
-      jr nz,+
-      ;==============================================================
-      ; Update palette
-      ;==============================================================
-      ; 1. Set VRAM write address to CRAM (palette) address 0 (for palette index 0)
-      ; by outputting $c000 ORed with $0006 (number of the color to change)
-      ld a,$06
-      out ($bf),a
-      ld a,$c0
-      out ($bf),a
-      ld a,$03
-      out ($be),a
-      ;change color 9
-      ld a,$09
-      out ($bf),a
-      ld a,$c0
-      out ($bf),a
-      ld a,$03
-      out ($be),a
-      ;change color A
-      ld a,$0A
-      out ($bf),a
-      ld a,$c0
-      out ($bf),a
-      ld a,$03
-      out ($be),a
-      jr -
-    +:    
-      ld a,c ;get line counter back
-      cp e
-      jr nz,+
-      ;==============================================================
-      ; Update palette
-      ;==============================================================
-      ; 1. Set VRAM write address to CRAM (palette) address 0 (for palette index 0)
-      ; by outputting $c000 ORed with $0006 (number of the color to change)
-      ld a,$06
-      out ($bf),a
-      ld a,$c0
-      out ($bf),a
-      ld a,$01
-      out ($be),a
-      ;change color 9
-      ld a,$09
-      out ($bf),a
-      ld a,$c0
-      out ($bf),a
-      ld a,$01
-      out ($be),a
-      ;change color A
-      ld a,$0A
-      out ($bf),a
-      ld a,$c0
-      out ($bf),a
-      ld a,$01
-      out ($be),a
-      jr -
-    +:    
-      ;check if end of frame
-      ld a,(new_frame)
-      cp 0
-      jr z,-
-
-      xor a
-      ld (new_frame),a
-      
-      
-      ;get back to original color...
-      ;==============================================================
-      ; Update palette
-      ;==============================================================
-      ; 1. Set VRAM write address to CRAM (palette) address 0 (for palette index 0)
-      ; by outputting $c000 ORed with $0006 (number of the color to change)
-      ld a,$06
-      out ($bf),a
-      ld a,$c0
-      out ($bf),a
-      ld a,$10
-      out ($be),a
-      ;change color 9
-      ld a,$09
-      out ($bf),a
-      ld a,$c0
-      out ($bf),a
-      ld a,$3a
-      out ($be),a
-      ;change color A
-      ld a,$0A
-      out ($bf),a
-      ld a,$c0
-      out ($bf),a
-      ld a,$00
-      out ($be),a
-    pop bc
-    pop af
-  
-  ret
-
 
 WaitForVBlankSimple:
     push af
@@ -1151,157 +990,7 @@ PSGMOD_Play:
 
     ret
     
-UpdatePalette:
-   push af
-   push bc
-   push hl
-    ;update star color
-    ld hl,(star_color1)
-    ld bc,$100 ;color change speed
-    add hl,bc
-    ld (star_color1),hl
-    ld hl,(star_color2)
-    ld bc,$100 ;color change speed
-    add hl,bc
-    ld (star_color2),hl
-    ;==============================================================
-    ; Update palette
-    ;==============================================================
-    ; 1. Set VRAM write address to CRAM (palette) address 0 (for palette index 0)
-    ; by outputting $c000 ORed with number of the color to change
-    ld a,$0F
-    out ($bf),a
-    ld a,$c0
-    out ($bf),a
-    ; 2. Output colour data
-    ld hl,(star_color1)
-    ld a,h
-    and %00110000 ;use only bright colors (let only blue byte change)
-    or  %00001111 ; R and G are at max
-    out ($be),a
-    
-    ;update fire color 1
-    ld a,$1A
-    out ($bf),a
-    ld a,$c0
-    out ($bf),a
-    ; 2. Output colour data
-    ld hl,(star_color1)
-    ld a,h
-    and %00110101 ;use only bright colors (let only blue byte change)
-    or  %00001010 ; R and G are at max
-    out ($be),a
-    
-    ;update fire color 2
-    ld a,$1B
-    out ($bf),a
-    ld a,$c0
-    out ($bf),a
-    ; 2. Output colour data
-    ld hl,(star_color2)
-    ld a,h
-    and %00110101 ;use only bright colors (let only blue byte change)
-    or  %00001010 ; R and G are at max
-    out ($be),a
-    
-    ;if level>1, landing zone color loop
-    ld a,(current_level)
-    cp 1
-    jp z,UpdatePalette_end
-    
-    ;-----------------------------landing zone part-----------------------------
-    ;loop on landing_zone_color, to change colors 11-14 of palette
-    ;looking at values in LandingColorLoop
-    
-    ;inc landing_zone_color
-    ld hl,(landing_zone_color)
-    ld bc,$20 ;color loop speed
-    add hl,bc
-    ;test if end of loop
-    ld a,h
-    cp 4
-    jr nz,+
-    ld hl,0
-  +:
-    ld (landing_zone_color),hl
-    ; landing_zone_color is updated
-    
-    
-    ld bc,(landing_zone_color)
-    ld a,b
-    ld hl,LandingColorLoop
-    ;inc hl while a>0
-  -:
-    cp 0
-    jr z,+
-    inc hl
-    dec a
-    jr -
-  +: ;hl is the correct starting address
-    
-    ; 1. Set VRAM write address to CRAM (palette) address 0 (for palette index 0)
-    ; by outputting $c000 ORed with number of the color to change
-    ld a,11 ;change color 11
-    out ($bf),a
-    ld a,$c0
-    out ($bf),a
-    ; 2. Output colour data
-    ld a,(hl)
-    out ($be),a
-    
-    inc hl
-    inc b
-    ld a,b
-    cp 4
-    jr nz,+
-    ;end of the color array, loop
-    ld hl,LandingColorLoop    
-  +:
-    ld a,12 ;change color 12
-    out ($bf),a
-    ld a,$c0
-    out ($bf),a
-    ; 2. Output colour data
-    ld a,(hl)
-    out ($be),a
-    
-    inc hl
-    inc b
-    ld a,b
-    cp 4
-    jr nz,+
-    ;end of the color array
-    ld hl,LandingColorLoop    
-  +:
-    ld a,13 ;change color 13
-    out ($bf),a
-    ld a,$c0
-    out ($bf),a
-    ; 2. Output colour data
-    ld a,(hl)
-    out ($be),a    
 
-    inc hl
-    inc b
-    ld a,b
-    cp 4
-    jr nz,+
-    ;end of the color array
-    ld hl,LandingColorLoop    
-  +:
-    ld a,14 ;change color 14
-    out ($bf),a
-    ld a,$c0
-    out ($bf),a
-    ; 2. Output colour data
-    ld a,(hl)
-    out ($be),a   
-    
-  UpdatePalette_end:
-   pop hl
-   pop bc
-   pop af    
-   ret 
 
 UpdateScreen:
     ret
@@ -1415,144 +1104,6 @@ DoGameLogicDbg:
 
     ret
 
-
-;check if speed is too big, write a warning
-drawWarning:
-    push af
-    push bc
-    push hl
-
-
-    ;in x:
-    ld hl,(speedX)
-    ;test if speed >0
-    ld a,h
-    cp $80
-    jr c,drawWarning_hz_pos
-    
-    ;here speedX<0
-    cp 255
-    jr z,+
-    jp drawWarning_right
-  +: ;has to test tolerance
-    ;test if l>speed_neg_tolerance
-    ld bc,(speed_neg_tolerance)
-    ld a,l
-    cp c
-    jr c,drawWarning_right
-    jp drawWarning_test_Y
-  
-  drawWarning_hz_pos:
-    ;here speedX>0
-    ld a,h
-    cp 0
-    jr z,+
-    jp drawWarning_left
-  +: ;has to test tolerance
-    ;test if l<speed_pos_tolerance
-    ld bc,(speed_pos_tolerance)
-    ld a,l
-    cp c
-    jr nc,drawWarning_left
-    jp drawWarning_test_Y
-    
-  drawWarning_left:
-    ;draw bubble left
-    ld bc,(posX)
-    ld a,b
-    add a,10
-    ld h,a;col (pix) in h
-    ld bc,(posY)
-    ld a,b
-    add a,-12
-    ld l,a;line (pix) in l
-    ld d,bubble_right_tile_number
-    call SpriteSet16x8
-    ;draw bubble bottom
-    ld bc,(posX)
-    ld a,b
-    add a,10
-    ld h,a;col (pix) in h
-    ld bc,(posY)
-    ld a,b
-    add a,-4
-    ld l,a;line (pix) in l
-    ld d,bubble_bottom_tile_number
-    call SpriteSet16x8
-    jp drawWarning_test_Y
-  drawWarning_right:
-    ;draw bubble left
-    ld bc,(posX)
-    ld a,b
-    add a,10
-    ld h,a;col (pix) in h
-    ld bc,(posY)
-    ld a,b
-    add a,-12
-    ld l,a;line (pix) in l
-    ld d,bubble_left_tile_number
-    call SpriteSet16x8
-    ;draw bubble bottom
-    ld bc,(posX)
-    ld a,b
-    add a,10
-    ld h,a;col (pix) in h
-    ld bc,(posY)
-    ld a,b
-    add a,-4
-    ld l,a;line (pix) in l
-    ld d,bubble_bottom_tile_number
-    call SpriteSet16x8
-    
-  drawWarning_test_Y:
-    ;Test in y:
-    ld hl,(speedY)
-    ;test if speed positive (h<$80)
-    ld a,h
-    cp $80
-    jr nc,drawWarning_end
-    
-    ;test if h==0
-    cp 0
-    jr nz,drawWarning_down
-    ;then test if l<speed_pos_tolerance
-    ld bc,(speed_pos_tolerance)
-    ld a,l
-    cp c
-    jr nc,drawWarning_down
-    jr drawWarning_end
-    
-    drawWarning_down:
-      ;draw bubble top 
-      ld bc,(posX)
-      ld a,b
-      add a,14
-      ld h,a;col (pix) in h
-      ld bc,(posY)
-      ld a,b
-      add a,-4
-      ld l,a;line (pix) in l
-      ld d,bubble_down_tile_number
-      call SpriteSet16x8
-    
-    drawWarning_bubble_bottom:
-      ;draw bubble bottom
-      ld bc,(posX)
-      ld a,b
-      add a,14
-      ld h,a;col (pix) in h
-      ld bc,(posY)
-      ld a,b
-      add a,4
-      ld l,a;line (pix) in l
-      ld d,bubble_bottom_tile_number
-      call SpriteSet16x8
-    
-    drawWarning_end:
-    pop hl
-    pop bc
-    pop af
-    ret
 
 ;convert posX,posY (in pixel) and deltaX deltaY (in pixels)
 ;to number of tiles in VRAM (with scrolling)

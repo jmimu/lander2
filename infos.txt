@@ -2,9 +2,7 @@ add other collisions models
 
 when too fast add a sound and show bubble
 
-make a first level only for take off ?
-=> change demo palette to be compatible with color loop ?
-
+make first level only for take off
 
 
 --------------------------------

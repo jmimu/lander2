@@ -279,6 +279,296 @@ DoWon:
 
     ret
 
+UpdatePalette:
+   push af
+   push bc
+   push hl
+    ;update star color
+    ld hl,(star_color1)
+    ld bc,$100 ;color change speed
+    add hl,bc
+    ld (star_color1),hl
+    ld hl,(star_color2)
+    ld bc,$100 ;color change speed
+    add hl,bc
+    ld (star_color2),hl
+    ;==============================================================
+    ; Update palette
+    ;==============================================================
+    ; 1. Set VRAM write address to CRAM (palette) address 0 (for palette index 0)
+    ; by outputting $c000 ORed with number of the color to change
+    ld a,$0F
+    out ($bf),a
+    ld a,$c0
+    out ($bf),a
+    ; 2. Output colour data
+    ld hl,(star_color1)
+    ld a,h
+    and %00110000 ;use only bright colors (let only blue byte change)
+    or  %00001111 ; R and G are at max
+    out ($be),a
+    
+    ;update fire color 1
+    ld a,$1A
+    out ($bf),a
+    ld a,$c0
+    out ($bf),a
+    ; 2. Output colour data
+    ld hl,(star_color1)
+    ld a,h
+    and %00110101 ;use only bright colors (let only blue byte change)
+    or  %00001010 ; R and G are at max
+    out ($be),a
+    
+    ;update fire color 2
+    ld a,$1B
+    out ($bf),a
+    ld a,$c0
+    out ($bf),a
+    ; 2. Output colour data
+    ld hl,(star_color2)
+    ld a,h
+    and %00110101 ;use only bright colors (let only blue byte change)
+    or  %00001010 ; R and G are at max
+    out ($be),a
+    
+    ;if level>1, landing zone color loop
+    ld a,(current_level)
+    cp 1
+    jp z,UpdatePalette_end
+    
+    ;-----------------------------landing zone part-----------------------------
+    ;loop on landing_zone_color, to change colors 11-14 of palette
+    ;looking at values in LandingColorLoop
+    
+    ;inc landing_zone_color
+    ld hl,(landing_zone_color)
+    ld bc,$20 ;color loop speed
+    add hl,bc
+    ;test if end of loop
+    ld a,h
+    cp 4
+    jr nz,+
+    ld hl,0
+  +:
+    ld (landing_zone_color),hl
+    ; landing_zone_color is updated
+    
+    
+    ld bc,(landing_zone_color)
+    ld a,b
+    ld hl,LandingColorLoop
+    ;inc hl while a>0
+  -:
+    cp 0
+    jr z,+
+    inc hl
+    dec a
+    jr -
+  +: ;hl is the correct starting address
+    
+    ; 1. Set VRAM write address to CRAM (palette) address 0 (for palette index 0)
+    ; by outputting $c000 ORed with number of the color to change
+    ld a,11 ;change color 11
+    out ($bf),a
+    ld a,$c0
+    out ($bf),a
+    ; 2. Output colour data
+    ld a,(hl)
+    out ($be),a
+    
+    inc hl
+    inc b
+    ld a,b
+    cp 4
+    jr nz,+
+    ;end of the color array, loop
+    ld hl,LandingColorLoop    
+  +:
+    ld a,12 ;change color 12
+    out ($bf),a
+    ld a,$c0
+    out ($bf),a
+    ; 2. Output colour data
+    ld a,(hl)
+    out ($be),a
+    
+    inc hl
+    inc b
+    ld a,b
+    cp 4
+    jr nz,+
+    ;end of the color array
+    ld hl,LandingColorLoop    
+  +:
+    ld a,13 ;change color 13
+    out ($bf),a
+    ld a,$c0
+    out ($bf),a
+    ; 2. Output colour data
+    ld a,(hl)
+    out ($be),a    
+
+    inc hl
+    inc b
+    ld a,b
+    cp 4
+    jr nz,+
+    ;end of the color array
+    ld hl,LandingColorLoop    
+  +:
+    ld a,14 ;change color 14
+    out ($bf),a
+    ld a,$c0
+    out ($bf),a
+    ; 2. Output colour data
+    ld a,(hl)
+    out ($be),a   
+    
+  UpdatePalette_end:
+   pop hl
+   pop bc
+   pop af    
+   ret 
+
+
+;check if speed is too big, write a warning
+drawWarning:
+    push af
+    push bc
+    push hl
+
+
+    ;in x:
+    ld hl,(speedX)
+    ;test if speed >0
+    ld a,h
+    cp $80
+    jr c,drawWarning_hz_pos
+    
+    ;here speedX<0
+    cp 255
+    jr z,+
+    jp drawWarning_right
+  +: ;has to test tolerance
+    ;test if l>speed_neg_tolerance
+    ld bc,(speed_neg_tolerance)
+    ld a,l
+    cp c
+    jr c,drawWarning_right
+    jp drawWarning_test_Y
+  
+  drawWarning_hz_pos:
+    ;here speedX>0
+    ld a,h
+    cp 0
+    jr z,+
+    jp drawWarning_left
+  +: ;has to test tolerance
+    ;test if l<speed_pos_tolerance
+    ld bc,(speed_pos_tolerance)
+    ld a,l
+    cp c
+    jr nc,drawWarning_left
+    jp drawWarning_test_Y
+    
+  drawWarning_left:
+    ;draw bubble left
+    ld bc,(posX)
+    ld a,b
+    add a,10
+    ld h,a;col (pix) in h
+    ld bc,(posY)
+    ld a,b
+    add a,-12
+    ld l,a;line (pix) in l
+    ld d,bubble_right_tile_number
+    call SpriteSet16x8
+    ;draw bubble bottom
+    ld bc,(posX)
+    ld a,b
+    add a,10
+    ld h,a;col (pix) in h
+    ld bc,(posY)
+    ld a,b
+    add a,-4
+    ld l,a;line (pix) in l
+    ld d,bubble_bottom_tile_number
+    call SpriteSet16x8
+    jp drawWarning_test_Y
+  drawWarning_right:
+    ;draw bubble left
+    ld bc,(posX)
+    ld a,b
+    add a,10
+    ld h,a;col (pix) in h
+    ld bc,(posY)
+    ld a,b
+    add a,-12
+    ld l,a;line (pix) in l
+    ld d,bubble_left_tile_number
+    call SpriteSet16x8
+    ;draw bubble bottom
+    ld bc,(posX)
+    ld a,b
+    add a,10
+    ld h,a;col (pix) in h
+    ld bc,(posY)
+    ld a,b
+    add a,-4
+    ld l,a;line (pix) in l
+    ld d,bubble_bottom_tile_number
+    call SpriteSet16x8
+    
+  drawWarning_test_Y:
+    ;Test in y:
+    ld hl,(speedY)
+    ;test if speed positive (h<$80)
+    ld a,h
+    cp $80
+    jr nc,drawWarning_end
+    
+    ;test if h==0
+    cp 0
+    jr nz,drawWarning_down
+    ;then test if l<speed_pos_tolerance
+    ld bc,(speed_pos_tolerance)
+    ld a,l
+    cp c
+    jr nc,drawWarning_down
+    jr drawWarning_end
+    
+    drawWarning_down:
+      ;draw bubble top 
+      ld bc,(posX)
+      ld a,b
+      add a,14
+      ld h,a;col (pix) in h
+      ld bc,(posY)
+      ld a,b
+      add a,-4
+      ld l,a;line (pix) in l
+      ld d,bubble_down_tile_number
+      call SpriteSet16x8
+    
+    drawWarning_bubble_bottom:
+      ;draw bubble bottom
+      ld bc,(posX)
+      ld a,b
+      add a,14
+      ld h,a;col (pix) in h
+      ld bc,(posY)
+      ld a,b
+      add a,4
+      ld l,a;line (pix) in l
+      ld d,bubble_bottom_tile_number
+      call SpriteSet16x8
+    
+    drawWarning_end:
+    pop hl
+    pop bc
+    pop af
+    ret
 
 
 

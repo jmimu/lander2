@@ -86,13 +86,62 @@ SetupLevel1:
     ld hl,500
     ld (YLava),hl
     
-    ld hl,WaitForVBlankSimple
+    ld hl,WaitForVBlankWind
     ld (WaitForVBlankFunction),hl
     
     ld hl,32
     ld (LevelMapWidth),hl
 ret
 
+
+WaitForVBlankWind:
+    push af
+    push hl
+    
+    ld hl,(Xscroll)
+    ld bc,$50
+    add hl,bc
+    ld (Xscroll),hl
+    
+    ;no scroll at screen top
+    xor a
+    out ($bf),a
+    ld a,%10001000
+    out ($bf),a
+    
+    -:
+      ;read scan line counter
+      in a,($7E)
+      ld c,a
+      cp 36-1;if > 36, scroll quarter speed
+      jr nz,+
+      ld hl,(Xscroll)
+      ld a,h
+      out ($bf),a
+      ld a,%10001000
+      out ($bf),a
+      
+      +:
+      ld a,c
+      cp 68-1;if > 68, no scroll
+      jr nz,+
+      xor a
+      out ($bf),a
+      ld a,%10001000
+      out ($bf),a
+
+      +:
+      
+      ld a,(new_frame)
+      cp 0
+      jr z,-
+
+      xor a
+      ld (new_frame),a      
+      
+    pop hl
+    pop af
+  ret
 
 ;==============================================================
 ; Data
@@ -101,7 +150,7 @@ ret
 Level1Start:
 
 Palette1Start:
-.db $10,$00,$00,$00,$14,$06,$05,$04,$08,$15,$07,$16,$29,$0b,$1a,$3f
+.db %00010100,$07,$00,$04,$06,$08,$0b,$10,$14,$15,$16,$1a,$29,$3f,$15,$0f
 .db $3b,$3f,$00,$20,$38,$01,$02,$03,$15,$2a,$1f,$2f,$3a,$36,$01,$0a
 Palette1End:
 
