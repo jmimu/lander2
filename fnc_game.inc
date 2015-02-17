@@ -411,12 +411,9 @@ RunGame:
     ld a,%10001001 ;y scroll
     out ($bf),a
     
-
-    ;game init
     ld a,1
     ld (current_level),a
     
-
 
     ld hl,$FF0F
     ld (rocket_fuel),hl
@@ -456,9 +453,6 @@ RunGame:
     ld l,6;line (tiles) in l
     ld e,h;value (8bit) in e
     call PrintInt8
-    
-    ld a,1
-    ld (current_level),a
     
     ld a,(already_lost)
     cp 0
@@ -1210,6 +1204,11 @@ UpdatePalette:
     or  %00001010 ; R and G are at max
     out ($be),a
     
+    ;if level>1, landing zone color loop
+    ld a,(current_level)
+    cp 1
+    jp z,UpdatePalette_end
+    
     ;-----------------------------landing zone part-----------------------------
     ;loop on landing_zone_color, to change colors 11-14 of palette
     ;looking at values in LandingColorLoop
@@ -1297,7 +1296,8 @@ UpdatePalette:
     ; 2. Output colour data
     ld a,(hl)
     out ($be),a   
-        
+    
+  UpdatePalette_end:
    pop hl
    pop bc
    pop af    
