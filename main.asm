@@ -225,12 +225,16 @@ IsButtonPressed:
 .include "data_demo.inc"
 .ends
 
+.include "level1.inc"
+
+;we have to skip the $7ff0-$7fff area
+.org $8000
 ;.bank 2 slot 0
-.section "assets_game" free
+.section "assets_game" force
 .include "data_game.inc"
 .ends
 
 .include "level10.inc"
-.include "level1.inc"
+
 
 

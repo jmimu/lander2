@@ -1,4 +1,4 @@
-.section "level10" free
+.section "level10" force
 
 
 SetupLevel10:

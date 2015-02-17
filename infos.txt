@@ -5,10 +5,6 @@ when too fast add a sound and show bubble
 make a first level only for take off ?
 => change demo palette to be compatible with color loop ?
 
-bug: 
-main.o: MEM_INSERT: Overwrite at $7ffa (old $5c new $bf).
-main.o: MEM_INSERT: Overwrite at $7ffb (old $c0 new $24).
-main.o: MEM_INSERT: Overwrite at $7fff (old $c0 new $4c).
 
 
 --------------------------------

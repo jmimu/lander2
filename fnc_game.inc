@@ -1466,7 +1466,7 @@ drawWarning:
     ld a,b
     add a,-12
     ld l,a;line (pix) in l
-    ld d,bubble_left_tile_number
+    ld d,bubble_right_tile_number
     call SpriteSet16x8
     ;draw bubble bottom
     ld bc,(posX)
@@ -1490,7 +1490,7 @@ drawWarning:
     ld a,b
     add a,-12
     ld l,a;line (pix) in l
-    ld d,bubble_right_tile_number
+    ld d,bubble_left_tile_number
     call SpriteSet16x8
     ;draw bubble bottom
     ld bc,(posX)
