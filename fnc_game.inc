@@ -11,11 +11,12 @@
   LevelMapWidth            dw    ; tilemap width start (in tiles)
   YLava                    dw    ; total Y lava in level (in pixels)
   
-  OnLandFunction           dw    ; pointer to function called when touching the ground
+  OnLandRightFunction      dw    ; pointer to function called when touching the ground
+  OnLandLeftFunction       dw    ; pointer to function called when touching the ground
   OnOutFunction            dw    ; pointer to function called when out of screen
   WaitForVBlankFunction    dw    ; pointer to function WaitForVBlank
   
-  gameStatus               db    ; 0: start, 1: play, 2: lost, 3: landed, 4: out of screen
+  gameStatus               db    ; 0: start, 1: play, 2: lost, 3: landed left, 4: landed right, 5: out of screen
   gameStatusCnt            dw    ; counter of game status
 .ends
 
@@ -817,43 +818,7 @@ UpdateScreen:
     ret
 
 
-DoGameLogicDbg:
-    push af
-  
-    push bc
-    push de
-    push hl
-    
-  
-    call ResetSprites
-    ;TODO: make it better
-    ;update rocket status
-    ;if 1, set to 0
-    ld a,(rocket_status)
-    cp 1
-    jr nz,+
-    xor a
-    ld (rocket_status),a
-  +:
-    
-    ;mechanics
-    ;increment Y-speed (gravity)
-    ld hl,(speedY)
-    inc hl
-    inc hl
-    ld (speedY),hl
-    
-    ;update x pos
-    ld bc,(posX)
-    ld hl, (speedX)
-    add hl,bc
-    ld (posX),hl
-    ;update y pos
-    ld bc,(posY)
-    ld hl, (speedY)
-    add hl,bc
-    ld (posY),hl
-    
+UpdateVScroll:
     ;y scroll depending on posY
     ;if posY<60, scroll up
     ;if posY>100, scroll down
@@ -882,17 +847,56 @@ DoGameLogicDbg:
     ld c,1
     call VScrollManager
   +:
+    ret
+
+DoGameLogicDbg:
+    push af
+  
+    push bc
+    push de
+    push hl
     
+    call ResetSprites
+    ;TODO: make it better
+    ;update rocket status
+    ;if 1, set to 0
+    ld a,(rocket_status)
+    cp 1
+    jr nz,+
+    xor a
+    ld (rocket_status),a
+  +:
     
-    ;set speed to 0
-    ;ld hl,0
-    ;ld (speedX),hl
-    ;ld (speedY),hl
+    call drawWarning
+    call TestAllCollisions
+    ;if game status changed, quit this function
+    ld a,(gameStatus)
+    cp 1
+    jp nz,DoGameLogicDbg_end
     
+    ;mechanics
+    ;increment Y-speed (gravity)
+    ld hl,(speedY)
+    inc hl
+    inc hl
+    ld (speedY),hl
+    
+    ;update x pos
+    ld bc,(posX)
+    ld hl, (speedX)
+    add hl,bc
+    ld (posX),hl
+    ;update y pos
+    ld bc,(posY)
+    ld hl, (speedY)
+    add hl,bc
+    ld (posY),hl
+            
     call ReadButtonsPlay
     
+  DoGameLogicDbg_end:
+    call UpdateVScroll
 
-    
     ;draw rocket sprites
     ld bc,(posX)    
     ld h,b;x in h
@@ -912,9 +916,6 @@ DoGameLogicDbg:
     ld l,8 ;line (pix) in l
     call PrintInt10Sprite
     
-    call drawWarning
-    call TestAllCollisions
-
     ;hide other sprites
     call SetLastSprite
     
@@ -1002,9 +1003,10 @@ TestAllCollisions:
       ;test if out of screen
       ld hl,(posY)
       ld a,h
+      add a,24;bottom of the rocket
       cp 224
       jr c,+
-      ld a,4 ;out of screen
+      ld a,5 ;out of screen
       ld (gameStatus),a
       jp TestAllCollisions_end
     +:
@@ -1128,6 +1130,7 @@ TestCollision:;use tilemap collision data
 TestLanding:;use tilemap collision data
     push af
     push bc
+    push de
     push hl
     
       ;compute tile number
@@ -1155,7 +1158,7 @@ TestLanding:;use tilemap collision data
       ld l,a
       
       ;collision data is in l & %11100000
-      
+      ld d,a;keep tile data in d
       ld a,l
       and %11100000
       cp %11100000
@@ -1209,11 +1212,19 @@ TestLanding:;use tilemap collision data
         cp c
         jr nc,TestLanding_explode
 
-      ;win
+      ;landed!
       ld hl,0
       ld (gameStatusCnt),hl
-      ld a,3 ;landed
+      ld a,3 ;landed left
       ld (gameStatus),a
+      ;check hz flip
+      ld a,d;keep tile data in d
+      and %00000010 ;test hz flip flag
+      cp  %00000010
+      jr z,+
+        ld a,4 ;landed right
+        ld (gameStatus),a
+    +:
       jr TestLanding_end
       
     TestLanding_explode:
@@ -1232,6 +1243,7 @@ TestLanding:;use tilemap collision data
       
     TestLanding_end:
     pop hl
+    pop de
     pop bc
     pop af
     ret

@@ -1,9 +1,8 @@
 add other collisions models
 
-change DoWait into WaitForTakeOff, where only down button is allowed
+add string terminator?
 
-make a new function fo DoWin when out of screen
-
+be able not to reload the level ? how to be able to start far in the scrolling?
 
 ** Vertical scrolling :
 variable Yscroll represents the position of the camera in the level (in pixels).

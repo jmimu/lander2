@@ -35,7 +35,7 @@ TextLostStart:
 TextLostEnd:
 
 TextWonStart:
-.db "GREAT LANDING! PRESS 1 TO CONTINUE"
+.db "GREAT! PRESS 1 TO CONTINUE"
 TextWonEnd:
 
 TextCongratStart:

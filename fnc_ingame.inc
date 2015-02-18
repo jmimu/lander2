@@ -106,7 +106,7 @@ PrintTextMiddleVScroll:
 
 
 ;update game status
-;gameStatus= 0: start, 1: play, 2: lost, 3: landed, 4: out of screen
+;gameStatus= 0: start, 1: play, 2: lost, 3: landed left, 4: landed right, 5: out of screen
 GameStatusUpdate:
     ld hl,(gameStatusCnt)
     ld a,(gameStatus)
@@ -150,16 +150,25 @@ GameStatusUpdate:
     ld a,(gameStatus)
     cp 3 ;test on gameStatus
     jp nz,GameStatusUpdate_sup3
-    ;if gameStatus==3 (landed)
-      ld hl,(OnLandFunction)
+    ;if gameStatus==3 (landed left)
+      ld hl,(OnLandLeftFunction)
       call CallFunctionHL;act as "call (hl)"
       jp GameStatusUpdate_end
 
   GameStatusUpdate_sup3:
     ld a,(gameStatus)
     cp 4 ;test on gameStatus
+    jp nz,GameStatusUpdate_sup4
+    ;if gameStatus==4 (landed right)
+      ld hl,(OnLandRightFunction)
+      call CallFunctionHL;act as "call (hl)"
+      jp GameStatusUpdate_end
+
+  GameStatusUpdate_sup4:
+    ld a,(gameStatus)
+    cp 5 ;test on gameStatus
     jp nz,GameStatusUpdate_end
-    ;if gameStatus==4 (out of screen)
+    ;if gameStatus==5 (out of screen)
       ld hl,(OnOutFunction)
       call CallFunctionHL;act as "call (hl)"
       jp GameStatusUpdate_end
@@ -259,6 +268,8 @@ DoWait:
     ld hl,0
     ld (speedY),hl
    +:
+    ld hl,0
+    ld (speedX),hl
     
     ;update x pos
     ld bc,(posX)

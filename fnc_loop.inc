@@ -82,7 +82,7 @@ NewLevel:
     ld a,$81
     out ($bf),a    
     
-    call SetupLevel1
+    call SetupLevel10
     
     ; Turn screen on
     ld a,%11100000
