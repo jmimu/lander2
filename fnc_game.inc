@@ -10,10 +10,12 @@
   NextMapDataStart         dw    ; pointer to tilemap new part to load due to scrolling (in bytes)
   LevelMapWidth            dw    ; tilemap width start (in tiles)
   YLava                    dw    ; total Y lava in level (in pixels)
-  SpecialTileFunction      dw    ; pointer to function called when touching a special tile
+  
+  OnLandFunction           dw    ; pointer to function called when touching the ground
+  OnOutFunction            dw    ; pointer to function called when out of screen
   WaitForVBlankFunction    dw    ; pointer to function WaitForVBlank
   
-  gameStatus               db    ; 0: start, 1: play, 2: lost, 3: won
+  gameStatus               db    ; 0: start, 1: play, 2: lost, 3: landed, 4: out of screen
   gameStatusCnt            dw    ; counter of game status
 .ends
 
@@ -997,6 +999,16 @@ RocketPos2vramTiles:
   ret
 
 TestAllCollisions:
+      ;test if out of screen
+      ld hl,(posY)
+      ld a,h
+      cp 224
+      jr c,+
+      ld a,4 ;out of screen
+      ld (gameStatus),a
+      jp TestAllCollisions_end
+    +:
+      
       ;test point posX+8,posY
       ld bc,(posX);posX in b
       ld hl,(posY)
@@ -1011,7 +1023,7 @@ TestAllCollisions:
       inc e
     +:
       call RocketPos2vramTiles
-;      call TestCollision
+      call TestCollision
       
       ;test landing point posX+8,posY+25
       ld d,8;deltaX in d
@@ -1023,32 +1035,33 @@ TestAllCollisions:
       ld d,2;deltaX in d
       ld e,24;deltaY in e
       call RocketPos2vramTiles
-;      call TestCollision
+      call TestCollision
       
       ;test point posX+8,posY+24
       ld d,8;deltaX in d
       ld e,24;deltaY in e
       call RocketPos2vramTiles
-;      call TestCollision
+      call TestCollision
       
       ;test point posX+13,posY+24
       ld d,13;deltaX in d
       ld e,24;deltaY in e
       call RocketPos2vramTiles
-;      call TestCollision
+      call TestCollision
       
       ;test point posX+4,posY+12
       ld d,4;deltaX in d
       ld e,12;deltaY in e
       call RocketPos2vramTiles
-;      call TestCollision
+      call TestCollision
       
       ;test point posX+11,posY+12
       ld d,11;deltaX in d
       ld e,12;deltaY in e
       call RocketPos2vramTiles
-;      call TestCollision
-      
+      call TestCollision
+    
+    TestAllCollisions_end:
     ret
 
 ;posX MSB in b ;TODO: use bc to get mod 8 part of positions
@@ -1181,7 +1194,12 @@ TestLanding:;use tilemap collision data
       TestLanding_y:  
         ;in y:
         ld hl,(speedY)
-        ;first, test if h==0
+        ;if speed negative=> nothing happens
+        ld a,h
+        cp $80
+        jp nc,TestLanding_end
+        
+        ;test if h==0
         ld a,h
         cp 0
         jr nz,TestLanding_explode
@@ -1194,7 +1212,7 @@ TestLanding:;use tilemap collision data
       ;win
       ld hl,0
       ld (gameStatusCnt),hl
-      ld a,3 ;won
+      ld a,3 ;landed
       ld (gameStatus),a
       jr TestLanding_end
       

@@ -106,9 +106,15 @@ SetupLevel10:
     ld hl,500
     ld (YLava),hl
     
+
+    ;functers
     ld hl,WaitForVBlankSimple
     ;ld hl,WaitForVBlankLava
     ld (WaitForVBlankFunction),hl
+    ld hl,DoWon
+    ld (OnLandFunction),hl
+    ld hl,DoLost
+    ld (OnOutFunction),hl
     
     ld hl,32
     ld (LevelMapWidth),hl

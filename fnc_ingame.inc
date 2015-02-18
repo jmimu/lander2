@@ -106,7 +106,7 @@ PrintTextMiddleVScroll:
 
 
 ;update game status
-;gameStatus= 0: start, 1: play, 2: lost, 3: won
+;gameStatus= 0: start, 1: play, 2: lost, 3: landed, 4: out of screen
 GameStatusUpdate:
     ld hl,(gameStatusCnt)
     ld a,(gameStatus)
@@ -149,11 +149,20 @@ GameStatusUpdate:
   GameStatusUpdate_sup2:
     ld a,(gameStatus)
     cp 3 ;test on gameStatus
-    jp nz,GameStatusUpdate_end
-    ;if gameStatus==3 (won)
-      call DoWon
+    jp nz,GameStatusUpdate_sup3
+    ;if gameStatus==3 (landed)
+      ld hl,(OnLandFunction)
+      call CallFunctionHL;act as "call (hl)"
       jp GameStatusUpdate_end
-  
+
+  GameStatusUpdate_sup3:
+    ld a,(gameStatus)
+    cp 4 ;test on gameStatus
+    jp nz,GameStatusUpdate_end
+    ;if gameStatus==4 (out of screen)
+      ld hl,(OnOutFunction)
+      call CallFunctionHL;act as "call (hl)"
+      jp GameStatusUpdate_end
   
   GameStatusUpdate_end:
     ret
@@ -219,6 +228,83 @@ DoLost:
 
     ret
 
+;-------------------------------------------------------------------------------
+DoWait:
+    push af
+  
+    push bc
+    push de
+    push hl
+    
+    ld a,1 ;start
+    ld (gameStatus),a
+    
+    call ResetSprites
+    
+    ;update rocket status
+    ;if 1, set to 0
+    ld a,(rocket_status)
+    cp 1
+    jr nz,+
+    xor a
+    ld (rocket_status),a
+  +:
+    
+    ;mechanics
+    ;forbid speedY to be positive
+    ld hl,(speedY)
+    ld a,h
+    cp 0
+    jr nz,+;if speed positive, set it to zero
+    ld hl,0
+    ld (speedY),hl
+   +:
+    
+    ;update x pos
+    ld bc,(posX)
+    ld hl, (speedX)
+    add hl,bc
+    ld (posX),hl
+    ;update y pos
+    ld bc,(posY)
+    ld hl, (speedY)
+    add hl,bc
+    ld (posY),hl
+    
+    
+    call ReadButtonsPlay
+    
+    ;draw rocket sprites
+    ld bc,(posX)    
+    ld h,b;x in h
+    ld bc,(posY)    
+    ld l,b;y in l
+    call DrawRocket
+    
+    ;draw fuel logo
+    ld h,8 ;col (pix) in h
+    ld l,8 ;line (pix) in l
+    ld d,fuel_tile_number
+    call SpriteSet8x8
+    ;fuel value
+    ld hl,(rocket_fuel)
+    ld e,h;value (8bit) in e
+    ld h,16 ;col (pix) in h
+    ld l,8 ;line (pix) in l
+    call PrintInt10Sprite
+    
+    ;call drawWarning
+    ;call TestAllCollisions
+
+    ;hide other sprites
+    call SetLastSprite
+    
+    pop hl
+    pop de
+    pop bc
+    pop af
+
+    ret
 
 ;-------------------------------------------------------------------------------
 DoWon:
@@ -279,7 +365,6 @@ DoWon:
     ;hide other sprites
     call SetLastSprite
     
-
     ret
 
 UpdatePalette:

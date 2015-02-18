@@ -1,19 +1,9 @@
 add other collisions models
 
-when too fast add a sound and show bubble
+change DoWait into WaitForTakeOff, where only down button is allowed
 
-make first level only for take off
+make a new function fo DoWin when out of screen
 
-
---------------------------------
-
-main loop :
-  have a function variable for logic (game, lost, won...)
-  remove change level part
-
-add a new game status for game finished
-
---------------------------------
 
 ** Vertical scrolling :
 variable Yscroll represents the position of the camera in the level (in pixels).

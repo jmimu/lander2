@@ -108,8 +108,13 @@ SetupLevel1:
     ld hl,500
     ld (YLava),hl
     
+    ;functers
     ld hl,WaitForVBlankWind
     ld (WaitForVBlankFunction),hl
+    ld hl,DoWait
+    ld (OnLandFunction),hl
+    ld hl,DoWon
+    ld (OnOutFunction),hl
     
     ld hl,32
     ld (LevelMapWidth),hl
