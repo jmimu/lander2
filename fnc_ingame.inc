@@ -171,7 +171,7 @@ DoLost:
     cp  %00000000
     jr nz,+
         ld sp, $dff0 ;clear stack
-        jp game_start
+        jp NewLevel
   +:  
     
     ;read button 2
@@ -180,7 +180,7 @@ DoLost:
     cp  %00000000
     jr nz,+
         ld sp, $dff0 ;clear stack
-        jp RunGame
+        jp StartGame
   +:
     
     ;draw rocket sprites
@@ -229,8 +229,11 @@ DoWon:
     and %00010000
     cp  %00000000
     jr nz,+
-        ;ld sp, $dff0 ;clear stack
-        jp game_start
+        ld sp, $dff0 ;clear stack
+        ld a,(current_level)
+        inc a
+        ld (current_level),a
+        jp NewLevel
   +:  
     
     

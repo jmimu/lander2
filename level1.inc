@@ -70,6 +70,28 @@ SetupLevel1:
         or c
         jr nz,-
     
+    
+    ;init music
+    ld hl,brahms1_start
+    ld hl,demo_music_4_start
+    call InitMusic1
+    ld hl,brahms2_start
+    call InitMusic2
+    ld hl,brahms3_start
+    call InitMusic3
+    
+    ;variables initialization
+    ld hl,$0
+    ld (speedX),hl
+    ld hl,$0
+    ld (speedY),hl
+    ld hl,$8000
+    ld (posX),hl
+    ld hl,$8800
+    ld (posY),hl
+    xor a
+    ld (rocket_status),a
+    
     ;initialize scroll variables
     ld hl,Tilemap1Start
     ld (LevelMapStart),hl

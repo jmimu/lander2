@@ -155,6 +155,7 @@
 .include "fnc_init.inc"
 .include "fnc_demo.inc"
 .include "fnc_text.inc"
+.include "fnc_loop.inc"
 .ends
 
 .include "fnc_game.inc"
@@ -194,7 +195,7 @@ main:
     out ($bf),a
     
     ;run game
-    call RunGame
+    jp StartGame
 end:
   jr end
 
