@@ -2,7 +2,9 @@ add other collisions models
 
 add string terminator?
 
-be able not to reload the level ? how to be able to start far in the scrolling?
+how to be able to start far in the scrolling?
+
+why in fnc_loop:105 gameStatus can't be 0 at level start ? remove 0 value?
 
 ** Vertical scrolling :
 variable Yscroll represents the position of the camera in the level (in pixels).

@@ -57,14 +57,6 @@ NewLevel:
     jr nz,+
     call endGame
    +:
-   
-    ;check if fuel reset
-    ld a,(refuel)
-    cp 0
-    jr z,+
-      ld hl,$FF0F
-      ld (rocket_fuel),hl
-   +: 
     
     call showLevel
     
@@ -82,7 +74,7 @@ NewLevel:
     ld a,$81
     out ($bf),a    
     
-    call SetupLevel10
+    call SelectLevel
     
     ; Turn screen on
     ld a,%11100000
@@ -101,8 +93,16 @@ NewLevel:
 
     ei;enable interruption (for vblank)    
 
+    ;check if fuel reset
+    ld a,(refuel)
+    cp 0
+    jr z,+
+      ld hl,$FF0F
+      ld (rocket_fuel),hl
+   +: 
+
     ;set game status to level start
-    xor a
+    ld a,1
     ld (gameStatus),a
     ld hl,0
     ld (gameStatusCnt),hl
@@ -129,3 +129,62 @@ GameLoop:
     ;call PSGMOD_Play
     
     jp GameLoop
+
+
+;-----------------------------------------------------------------------
+SelectLevel:
+    ;TODO: add end of game check and show level here?
+    ld a,(current_level)
+    cp 1
+    jr nz,+
+      call SetupLevel1
+      jp SelectLevel_end
+  +:
+    cp 2
+    jr nz,+
+      call SetupLevel10
+      jp SelectLevel_end
+  +:
+    cp 3
+    jr nz,+
+      call SetupLevel11
+      jp SelectLevel_end
+  +:
+    
+  SelectLevel_end:
+    ret
+
+;-----------------------------------------------------------------------
+endGame:
+    ;draw congratulations text
+    ld bc,TextCongratEnd-TextCongratStart
+    ld b,c;text length in b
+    ld c,2;col (tiles) in c
+    ld l,5;line (tiles) in l
+    ld de,TextCongratStart;text pointer in de
+    call PrintTextStatic
+    
+    ;draw final fuel
+    ld hl,(rocket_fuel)
+    ld c,24;col (tiles) in c
+    ld l,6;line (tiles) in l
+    ld e,h;value (8bit) in e
+    call PrintInt8
+    
+    ld a,(already_lost)
+    cp 0
+    jr z,+
+    ;game finished, but not perfect
+    ld bc,TextNotPerfectEnd-TextNotPerfectStart
+    ld b,c;text length in b
+    ld c,2;col (tiles) in c
+    ld l,7;line (tiles) in l
+    ld de,TextNotPerfectStart;text pointer in de
+    call PrintTextStatic
+  +:
+    
+    call WaitForButton
+    ld sp, $dff0 ;clear stack
+    jp main
+
+    

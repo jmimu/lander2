@@ -90,7 +90,7 @@
   rocket_status      db ;0: normal, 1: bottom fire, 2: destroyed
   current_level db
   already_lost db ;0 if not, 1 if lost at least 1 time
-  goto_level db ;0 if no need to change level, n to enter level n
+;  goto_level db ;0 if no need to change level, n to enter level n
   star_color1 dw ;color used: bright and yellow
   star_color2 dw ;color used: bright and yellow
   landing_zone_color dw; loop between 4 colors (hi-byte is color index)

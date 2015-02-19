@@ -377,36 +377,7 @@ SetDifficulty:
   pop af
   ret
 
-endGame:
-    ;draw congratulations text
-    ld bc,TextCongratEnd-TextCongratStart
-    ld b,c;text length in b
-    ld c,2;col (tiles) in c
-    ld l,5;line (tiles) in l
-    ld de,TextCongratStart;text pointer in de
-    call PrintTextStatic
-    
-    ;draw final fuel
-    ld hl,(rocket_fuel)
-    ld c,24;col (tiles) in c
-    ld l,6;line (tiles) in l
-    ld e,h;value (8bit) in e
-    call PrintInt8
-    
-    ld a,(already_lost)
-    cp 0
-    jr z,+
-    ;game finished, but not perfect
-    ld bc,TextNotPerfectEnd-TextNotPerfectStart
-    ld b,c;text length in b
-    ld c,2;col (tiles) in c
-    ld l,7;line (tiles) in l
-    ld de,TextNotPerfectStart;text pointer in de
-    call PrintTextStatic
-  +:
-    
-    call WaitForButton
-ret
+
 
 showLevel:
     ;disable interrupts and turn off screen before writing to it. Will it fix tiles issues?

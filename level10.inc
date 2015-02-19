@@ -83,6 +83,129 @@ SetupLevel10:
     ld (speedX),hl
     ld hl,$0
     ld (speedY),hl
+    ld hl,$8000
+    ld (posX),hl
+    ld hl,$0800
+    ld (posY),hl
+    xor a
+    ld (rocket_status),a
+    
+    ;initialize scroll variables
+    ld hl,Tilemap10Start
+    ld (LevelMapStart),hl
+    xor a
+    ld (XScrollVDP),a
+    ld (YScrollVDP),a
+    ld hl,0
+    ld (YScrollTotal),hl
+    
+    ;compute max y scroll value (here scroll not allowed)
+    ;ld hl,((Tilemap10End-Tilemap10Start)/64-24)*8
+    ld hl,0
+    ld (YScrollTotalMax),hl
+    
+    ld hl,500
+    ld (YLava),hl
+    
+
+    ;functers
+    ld hl,WaitForVBlankSimple
+    ;ld hl,WaitForVBlankLava
+    ld (WaitForVBlankFunction),hl
+    ld hl,DoWait
+    ld (OnLandRightFunction),hl
+    ld hl,DoWon
+    ld (OnLandLeftFunction),hl
+    ld hl,DoLost
+    ld (OnOutFunction),hl
+    
+    ld hl,32
+    ld (LevelMapWidth),hl
+ret
+
+
+SetupLevel11:
+    ;==============================================================
+    ; Load palette
+    ;==============================================================
+    ; 1. Set VRAM write address to CRAM (palette) address 0 (for palette index 0)
+    ; by outputting $c000 ORed with $0000
+    ld a,$00
+    out ($bf),a
+    ld a,$c0
+    out ($bf),a
+    ; 2. Output colour data
+    ld hl,Palette10Start
+    ld b,(Palette10End-Palette10Start)
+    ld c,$be
+    otir
+    
+    
+    ld hl,(tiles_vram_used)
+    ;==============================================================
+    ; Load level tiles
+    ;==============================================================
+    ; 1. Set VRAM write address to tile index 0
+    ; by outputting $4000 ORed with (tiles_vram_used)
+    ld a,l
+    out ($bf),a
+    ld a,h
+    add a,$40
+    out ($bf),a
+    ; 2. Output tile data
+    ld bc,Tiles_bg10_End-Tiles_bg10_Start  ; Counter for number of bytes to write
+    ld hl,Tiles_bg10_Start              ; Location of tile data
+    
+    -:
+        ld a,(hl)        ; Get data byte
+        out ($be),a
+        inc hl           ; Add one to hl so it points to the next data byte
+        dec bc
+        ld a,b
+        or c
+        jp nz,-
+    ld hl,(tiles_vram_used)
+    ld bc,Tiles_bg10_End-Tiles_bg10_Start
+    add hl,bc
+    ld (tiles_vram_used),hl
+
+    ;load tilemap of current level
+    ld hl,Tilemap10Start
+    ;hl is where the tilemap of the level starts
+    ;==============================================================
+    ; Write tilemap data
+    ;==============================================================
+    ; 1. Set VRAM write address to name table index 0
+    ; by outputting $4000 ORed with $3800+0
+    ld a,$00
+    out ($bf),a
+    ld a,$38|$40
+    out ($bf),a
+    ; 2. Output tilemap data
+    ld bc,$600+$40; Counter for number of bytes to write
+    -:
+        ld a,(hl)    ; Get data byte
+        out ($be),a
+        inc hl       ; Point to next tile
+        dec bc
+        ld a,b
+        or c
+        jr nz,-
+    
+    ;init music
+    ld hl,brahms1_start
+    ld hl,demo_music_4_start
+    call InitMusic1
+    ld hl,brahms2_start
+    call InitMusic2
+    ld hl,brahms3_start
+    call InitMusic3
+    
+    ;variables initialization
+    ld hl,$0
+    ld (speedX),hl
+    ld hl,$0
+    ld (speedY),hl
     ld hl,$D800
     ld (posX),hl
     ld hl,$6700
@@ -122,6 +245,126 @@ SetupLevel10:
     ld (LevelMapWidth),hl
 ret
 
+;start at bottom, has to leave the screen (TODO: disable upper scroll limit and enable any scroll init)
+SetupLevel12:
+    ;==============================================================
+    ; Load palette
+    ;==============================================================
+    ; 1. Set VRAM write address to CRAM (palette) address 0 (for palette index 0)
+    ; by outputting $c000 ORed with $0000
+    ld a,$00
+    out ($bf),a
+    ld a,$c0
+    out ($bf),a
+    ; 2. Output colour data
+    ld hl,Palette10Start
+    ld b,(Palette10End-Palette10Start)
+    ld c,$be
+    otir
+    
+    
+    ld hl,(tiles_vram_used)
+    ;==============================================================
+    ; Load level tiles
+    ;==============================================================
+    ; 1. Set VRAM write address to tile index 0
+    ; by outputting $4000 ORed with (tiles_vram_used)
+    ld a,l
+    out ($bf),a
+    ld a,h
+    add a,$40
+    out ($bf),a
+    ; 2. Output tile data
+    ld bc,Tiles_bg10_End-Tiles_bg10_Start  ; Counter for number of bytes to write
+    ld hl,Tiles_bg10_Start              ; Location of tile data
+    
+    -:
+        ld a,(hl)        ; Get data byte
+        out ($be),a
+        inc hl           ; Add one to hl so it points to the next data byte
+        dec bc
+        ld a,b
+        or c
+        jp nz,-
+    ld hl,(tiles_vram_used)
+    ld bc,Tiles_bg10_End-Tiles_bg10_Start
+    add hl,bc
+    ld (tiles_vram_used),hl
+
+    ;load tilemap of current level
+    ld hl,Tilemap10Start
+    ;hl is where the tilemap of the level starts
+    ;==============================================================
+    ; Write tilemap data
+    ;==============================================================
+    ; 1. Set VRAM write address to name table index 0
+    ; by outputting $4000 ORed with $3800+0
+    ld a,$00
+    out ($bf),a
+    ld a,$38|$40
+    out ($bf),a
+    ; 2. Output tilemap data
+    ld bc,$600+$40; Counter for number of bytes to write
+    -:
+        ld a,(hl)    ; Get data byte
+        out ($be),a
+        inc hl       ; Point to next tile
+        dec bc
+        ld a,b
+        or c
+        jr nz,-
+    
+    ;init music
+    ld hl,brahms1_start
+    ld hl,demo_music_4_start
+    call InitMusic1
+    ld hl,brahms2_start
+    call InitMusic2
+    ld hl,brahms3_start
+    call InitMusic3
+    
+    ;variables initialization
+    ld hl,$0
+    ld (speedX),hl
+    ld hl,$0
+    ld (speedY),hl
+    ld hl,$D800
+    ld (posX),hl
+    ld hl,$6700
+    ld (posY),hl
+    xor a
+    ld (rocket_status),a
+    
+    ;initialize scroll variables
+    ld hl,Tilemap10Start
+    ld (LevelMapStart),hl
+    xor a
+    ld (XScrollVDP),a
+    ld (YScrollVDP),a
+    ld hl,0
+    ld (YScrollTotal),hl
+    
+    ;compute max y scroll value
+    ld hl,((Tilemap10End-Tilemap10Start)/64-24)*8
+    ld (YScrollTotalMax),hl
+    
+    ld hl,500
+    ld (YLava),hl
+    
+
+    ;functers
+    ld hl,WaitForVBlankLava
+    ld (WaitForVBlankFunction),hl
+    ld hl,DoWait
+    ld (OnLandRightFunction),hl
+    ld hl,DoWait
+    ld (OnLandLeftFunction),hl
+    ld hl,DoWon
+    ld (OnOutFunction),hl
+    
+    ld hl,32
+    ld (LevelMapWidth),hl
+ret
 
 WaitForVBlankLava:
     push af
