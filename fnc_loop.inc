@@ -50,6 +50,29 @@ StartGame:
 NewLevel:
     call CutAllSound
 
+    ;reset scrolling
+    xor a
+    ld (XScrollVDP),a
+    ld (YScrollVDP),a
+    ld hl,0
+    ld (XScrollTotal),hl
+    ld (YScrollTotal),hl
+    
+    xor a
+    ld (XScrollVDP),a
+    ;VDP hz scrolling
+    out ($bf),a
+    ld a,%10001000
+    out ($bf),a
+    
+    xor a
+    ld (YScrollVDP),a
+    ;VDP vertical scrolling
+    out ($bf),a
+    ld a,%10001001
+    out ($bf),a
+    
+
     ;check if end of game
     ld a,(current_level)
     dec a
@@ -101,6 +124,7 @@ NewLevel:
       ld (rocket_fuel),hl
    +: 
 
+    
     ;set game status to level start
     ld a,1
     ld (gameStatus),a
@@ -150,6 +174,11 @@ SelectLevel:
       call SetupLevel11
       jp SelectLevel_end
   +:
+    cp 4
+    jr nz,+
+      call SetupLevel12
+      jp SelectLevel_end
+  +:
     
   SelectLevel_end:
     ret
@@ -187,4 +216,44 @@ endGame:
     ld sp, $dff0 ;clear stack
     jp main
 
+
+;-----------------------------------------------------------------------
+SetVScrollTo:
+    ;input: target VScroll value in de (de must be positive)
     
+    ;while YScrollTotal < de, incremente Vscroll
+    ld hl,(YScrollTotal)
+    ld a,h
+    cp d
+    jr z,SetVScrollTo_unit
+    jr nc,+
+      ;has to increment v scroll
+      ld c,+1
+      call VScrollManager
+      jp SetVScrollTo ;recursive call
+  +:
+    ;has to decrement v scroll
+    ld c,-1
+    call VScrollManager
+    jp SetVScrollTo ;recursive call
+    
+  SetVScrollTo_unit: ;less than 256 diff
+    ld a,l
+    cp e
+    jr z,SetVScrollTo_end
+    jr nc,+
+      ;has to increment v scroll
+      ld c,+1
+      call VScrollManager
+      jp SetVScrollTo ;recursive call
+  +:
+    ;has to decrement v scroll
+    ld c,-1
+    call VScrollManager
+    jp SetVScrollTo ;recursive call
+  
+  SetVScrollTo_end:
+    ret
+
+
+

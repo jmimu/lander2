@@ -322,33 +322,32 @@ SetupLevel12:
     call InitMusic2
     ld hl,brahms3_start
     call InitMusic3
+
+    ;initialize scroll variables
+    ld hl,Tilemap10Start
+    ld (LevelMapStart),hl
+    
+    ;compute max y scroll value
+    ld hl,((Tilemap10End-Tilemap10Start)/64-24)*8
+    ld (YScrollTotalMax),hl
+    
+    ld de,408
+    call SetVScrollTo
     
     ;variables initialization
     ld hl,$0
     ld (speedX),hl
     ld hl,$0
     ld (speedY),hl
-    ld hl,$D800
+    ld hl,$7B00
     ld (posX),hl
-    ld hl,$6700
+    ld hl,$8F00
     ld (posY),hl
     xor a
     ld (rocket_status),a
     
-    ;initialize scroll variables
-    ld hl,Tilemap10Start
-    ld (LevelMapStart),hl
-    xor a
-    ld (XScrollVDP),a
-    ld (YScrollVDP),a
-    ld hl,0
-    ld (YScrollTotal),hl
     
-    ;compute max y scroll value
-    ld hl,((Tilemap10End-Tilemap10Start)/64-24)*8
-    ld (YScrollTotalMax),hl
-    
-    ld hl,500
+    ld hl,600
     ld (YLava),hl
     
 

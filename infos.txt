@@ -1,7 +1,9 @@
 add other collisions models
 
 add string terminator?
+make lava work on level 12
 
+do not clear all data for showLevel
 how to be able to start far in the scrolling?
 
 why in fnc_loop:105 gameStatus can't be 0 at level start ? remove 0 value?
