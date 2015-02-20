@@ -382,6 +382,22 @@ UpdatePalette:
    push af
    push bc
    push hl
+   
+   ;update lava position
+   ;only 1/4 frames
+   ld hl,(landing_zone_color)
+   ld a,l
+   cp 0
+   ;or l
+   jr nz,+
+   ld hl,(YLava)
+   dec hl
+   dec hl
+   dec hl
+   ld (YLava),hl
+  +:
+   
+   
     ;update star color
     ld hl,(star_color1)
     ld bc,$100 ;color change speed
@@ -433,7 +449,7 @@ UpdatePalette:
     
     ;if level>1, landing zone color loop
     ld a,(current_level)
-    cp 1
+    cp 0
     jp z,UpdatePalette_end
     
     ;-----------------------------landing zone part-----------------------------
