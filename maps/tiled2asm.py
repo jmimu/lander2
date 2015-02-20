@@ -117,10 +117,14 @@ for row in all_values:
     j+=1
     #str+=' $%04x'%(val-1)
     str+=" %{0:016b}".format(val)
-    if (j==8)or(j==16)or(j==24):
-      str+="\n.dw"
-    if (j==32):
+    #if (j==8)or(j==16)or(j==24):
+    #  str+="\n.dw"
+    #if (j==32):
+    #  str+="\n"
+    if (j==width):
       str+="\n"
+    elif (j%8==0):
+      str+="\n.dw"
   print(str)
 print("_TilemapEnd:")
 

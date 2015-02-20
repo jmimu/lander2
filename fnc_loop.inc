@@ -166,15 +166,20 @@ SelectLevel:
   +:
     cp 2
     jr nz,+
-      call SetupLevel10
+      call SetupLevel5
       jp SelectLevel_end
   +:
     cp 3
     jr nz,+
-      call SetupLevel11
+      call SetupLevel10
       jp SelectLevel_end
   +:
     cp 4
+    jr nz,+
+      call SetupLevel11
+      jp SelectLevel_end
+  +:
+    cp 5
     jr nz,+
       call SetupLevel12
       jp SelectLevel_end

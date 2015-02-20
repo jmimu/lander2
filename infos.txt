@@ -3,6 +3,8 @@ add other collisions models
 add string terminator?
 make lava work on level 12
 
+have 5 lives (small rocket sprites vertically arranged)
+
 do not clear all data for showLevel
 how to be able to start far in the scrolling?
 
@@ -18,7 +20,7 @@ level mechanics, and what happends when hit special blocks
 
 make a generic load data function using pile to get all adresses
 
-for vertical level, frist step is on the top-right landing zone.
+for vertical level, first step is on the top-right landing zone.
 The tile is hz-flipped so collision detection can understand if we are on one
 or the orther landing zone (bottom is no hz-flipped).
 Use this on each zone where we have to go from one to the other landing zone.

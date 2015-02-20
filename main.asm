@@ -227,6 +227,7 @@ IsButtonPressed:
 .ends
 
 .include "level1.inc"
+.include "level5.inc"
 
 ;we have to skip the $7ff0-$7fff area
 .org $8000
