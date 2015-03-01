@@ -99,6 +99,21 @@ NewLevel:
     
     call SelectLevel
     
+    ; setup screen (VDP register 0)
+    ld a,%00100110
+;         |||||||`- External Sync.
+;         ||||||`-- 1
+;         |||||`--- 1
+;         ||||`---- Sprite Shift
+;         |||`----- Line Interrupt Enable
+;         ||`------ Left Column Blank
+;         |`------- Horizontal Scroll Inhibit (top 2 char rows)
+;         `-------- Vertical Scroll Inhibit (right 8 char columns).
+
+    out ($bf),a
+    ld a,$80
+    out ($bf),a
+    
     ; Turn screen on
     ld a,%11100000
 ;          |||| |`- Zoomed sprites -> 16x16 pixels

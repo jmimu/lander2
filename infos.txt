@@ -1,3 +1,7 @@
+call UpdateHScroll
+était après DoGameLogicDbg_end:
+
+
 add other collisions models
 
 add string terminator?

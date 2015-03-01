@@ -31,7 +31,138 @@ CallFunctionHL:
   ;PC was already pushed by "call CallFunctionHL" !
   jp (hl)
 
+;update h scroll (only for 24-tile height tilemaps)
+;input : c=add to h scroll (values can be -1,0,+1)
+HScrollManager:
+  push af
+  push bc
+  push hl
+    ld a,c
+    cp 0
+    jp z,HScrollManager_end
+    ld a,c
+    cp 1
+    jp z,HScrollManager_right
+    ld a,c
+    cp -1
+    jp z,HScrollManager_left
+    
+  HScrollManager_right:
+    ld hl,(XScrollTotal)
 
+    ;check that XScrollTotal is not at XScrollTotalMax
+    ld bc,(XScrollTotalMax)
+    ld a,h
+    cp b
+    jr nz,+
+    ld a,l
+    cp c
+    jr nz,+
+    ;we are at max, stop scrolling
+    jp z,HScrollManager_end
+  +:
+    ;update XScrollTotal
+    inc hl
+    ld (XScrollTotal),hl
+    ;update posX
+    ld hl,(posX)
+    dec h
+    ld (posX),hl
+    
+    ;update XScrollVDP
+    ld a,(XScrollVDP)
+    dec a
+    ld (XScrollVDP),a
+    ;VDP hz scrolling
+    out ($bf),a
+    ld a,%10001000
+    out ($bf),a
+    
+    ;test if new tilemap row to load
+    ld a,(XScrollVDP)
+    and %00000111
+    cp %00000111
+    jp nz,HScrollManager_end
+    
+    ;new row to load
+    
+    ;compute where the new data is in rom
+    ;(LevelMapStart)+(XScrollTotal)/4+64
+    ld hl,(XScrollTotal)
+    srl h
+    rr l
+    srl h
+    rr l ;hl=(XScrollTotal)/4
+    ld bc,64
+    add hl,bc
+    ld bc, (LevelMapStart)
+    add hl,bc    
+    ld (NextMapDataStart),hl;(NextMapDataStart)=(LevelMapStart)+(XScrollTotal)/4+64
+    
+    ;compute where to add it in vram : ((-XScrollVDP/8)%32)*2)
+    ld a,(XScrollVDP)
+    ld b,a
+    xor a
+    sub b
+    dec a
+    srl a
+    srl a
+    srl a
+    and %00011111
+    ld h,0
+    ld l,a
+    add hl,hl
+    ld b,h
+    ld c,l ;bc is where to add in vram
+    
+    ld hl,(LevelMapWidth);compute how much to add to get next line
+    add hl,hl
+    ld de,-1
+    add hl,de
+    
+    ld d,h
+    ld e,l ;de is how much bytes to complete a line
+
+  -:
+    ; Set VRAM write address to name table index 0
+    ; by outputting $4000 ORed with $3800+bc
+    ld a,c
+    out ($bf),a
+    ld a,$38|$40
+    add a,b
+    out ($bf),a
+    ; 2. Output tilemap data
+    
+    ld hl,(NextMapDataStart)
+    ld a,(hl)    ; Get data byte
+    out ($be),a
+    inc hl
+    ld a,(hl)    ; Get data byte
+    out ($be),a
+    add hl,de ;update NextMapDataStart
+    ld (NextMapDataStart),hl
+    ;update bc (where to add in vram)
+    ld h,b
+    ld l,c
+    ld bc,64
+    add hl,bc
+    ld b,h
+    ld c,l
+    
+    ;test if end of screen: bc>$600
+    ld a,b
+    cp 6
+    jr c,-
+    jp HScrollManager_end
+;!!!!!!!!!!!!!!!!
+  HScrollManager_left:
+  HScrollManager_end:
+  pop hl
+  pop bc
+  pop af
+ret
+
+;-------------------------------------------------------------------------------
 
 ;update v scroll (only for 32-tile wide tilemaps)
 ;input : c=add to v scroll (values can be -1,0,+1)
@@ -789,6 +920,38 @@ UpdateScreen:
     ret
 
 
+UpdateHScroll:
+    ;x scroll depending on posX
+    ;if posX<60, scroll up
+    ;if posX>195, scroll down
+    ld hl, (posX)
+    ld a,h ;a is the entire part of posX
+    cp 60
+    jr nc,+
+    ld c,-1
+    call HScrollManager
+    ;once again to have a 2-speed scrolling
+    ld hl, (posX)
+    ld a,h ;a is the entire part of posX
+    cp 60
+    jr nc,+
+    ld c,-1
+    call HScrollManager
+  +:
+    cp 195
+    jr c,+
+    ld c,1
+    call HScrollManager
+    ld hl, (posX)
+    ld a,h ;a is the entire part of posX
+    cp 195
+    jr c,+
+    ld c,1
+    call HScrollManager
+  +:
+    ret
+
+
 UpdateVScroll:
     ;y scroll depending on posY
     ;if posY<60, scroll up
@@ -863,10 +1026,11 @@ DoGameLogicDbg:
     add hl,bc
     ld (posY),hl
             
+    call UpdateHScroll
+    call UpdateVScroll
     call ReadButtonsPlay
     
   DoGameLogicDbg_end:
-    call UpdateVScroll
 
     ;draw rocket sprites
     ld bc,(posX)    
