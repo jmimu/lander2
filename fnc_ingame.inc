@@ -449,7 +449,7 @@ UpdatePalette:
     
     ;if level>1, landing zone color loop
     ld a,(current_level)
-    cp 0
+    cp 1
     jp z,UpdatePalette_end
     
     ;-----------------------------landing zone part-----------------------------

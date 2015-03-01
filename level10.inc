@@ -97,11 +97,13 @@ SetupLevel10:
     ld (XScrollVDP),a
     ld (YScrollVDP),a
     ld hl,0
+    ld (XScrollTotal),hl
     ld (YScrollTotal),hl
     
     ;compute max y scroll value (here scroll not allowed)
     ;ld hl,((Tilemap10End-Tilemap10Start)/64-24)*8
     ld hl,0
+    ld (XScrollTotalMax),hl
     ld (YScrollTotalMax),hl
     
     ld hl,600
@@ -220,11 +222,14 @@ SetupLevel11:
     ld (XScrollVDP),a
     ld (YScrollVDP),a
     ld hl,0
+    ld (XScrollTotal),hl
     ld (YScrollTotal),hl
     
     ;compute max y scroll value
     ld hl,((Tilemap10End-Tilemap10Start)/64-24)*8
     ld (YScrollTotalMax),hl
+    ld hl,0
+    ld (XScrollTotalMax),hl
     
     ld hl,500
     ld (YLava),hl
@@ -327,9 +332,18 @@ SetupLevel12:
     ld hl,Tilemap10Start
     ld (LevelMapStart),hl
     
+    xor a
+    ld (XScrollVDP),a
+    ld (YScrollVDP),a
+    ld hl,0
+    ld (XScrollTotal),hl
+    ld (YScrollTotal),hl
+    
     ;compute max y scroll value
     ld hl,((Tilemap10End-Tilemap10Start)/64-24)*8
     ld (YScrollTotalMax),hl
+    ld hl,0
+    ld (XScrollTotalMax),hl
     
     ld de,408
     call SetVScrollTo

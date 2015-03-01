@@ -161,7 +161,7 @@ SelectLevel:
     ld a,(current_level)
     cp 1
     jr nz,+
-      call SetupLevel12
+      call SetupLevel1
       jp SelectLevel_end
   +:
     cp 2

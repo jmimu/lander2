@@ -87,7 +87,7 @@ SetupLevel1:
     ld (speedY),hl
     ld hl,$7C00
     ld (posX),hl
-    ld hl,$8800
+    ld hl,$8700
     ld (posY),hl
     xor a
     ld (rocket_status),a
@@ -99,10 +99,12 @@ SetupLevel1:
     ld (XScrollVDP),a
     ld (YScrollVDP),a
     ld hl,0
+    ld (XScrollTotal),hl
     ld (YScrollTotal),hl
     
     ;compute max y scroll value
     ld hl,0
+    ld (XScrollTotalMax),hl
     ld (YScrollTotalMax),hl
     
     ld hl,500
