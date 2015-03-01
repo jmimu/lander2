@@ -1,11 +1,10 @@
-call UpdateHScroll
-était après DoGameLogicDbg_end:
-
+collisions don't work with hz scroll
+text write don't work with hz scroll
 
 add other collisions models
 
 add string terminator?
-make lava work on level 12
+make lava work on level 12 (try speed=4/5 frame)
 
 have 5 lives (small rocket sprites vertically arranged)
 
