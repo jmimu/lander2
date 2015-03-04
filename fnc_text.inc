@@ -264,6 +264,22 @@ PrintText:
       inc hl;move pointer on screen
       inc hl;move pointer on screen
       
+      ;chek if out of VDP line (useful when H scroll)
+      inc c
+      ld a,c
+      cp 32
+      jr nz,+
+      ;has to go back to screen line start
+      push bc
+      push hl
+      ld hl,-64
+      ld b,h
+      ld c,l
+      pop hl
+      add hl,bc
+      pop bc
+      
+    +:
       dec b
       jr nz,-
     

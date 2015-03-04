@@ -31,7 +31,7 @@ TextLevelStart:
 TextLevelEnd:
 
 TextLostStart:
-.db "YOU LOST! PRESS 1 TO TRY AGAIN  OR 2 TO RESTART GAME"
+.db "YOU LOST! PRESS 1 TO TRY AGAIN";  OR 2 TO RESTART GAME"
 TextLostEnd:
 
 TextWonStart:

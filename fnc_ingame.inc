@@ -79,14 +79,14 @@ DrawRocket
   pop af
   ret
   
-;Print a text in the middle of the screen when vertical scroll
-PrintTextMiddleVScroll:
+;Print a text in the middle of the screen when scrolling
+PrintTextMiddleScroll:
     ;col (tiles) in c
     ;line relative to screen top (tiles) in l
     ;text pointer in de
     ;text length in b
     ;the constant "diff_tile_ascii"  must represent difference between index in tiles and in ascii
-    ;YScrollVDP variable is used
+    ;XScrollVDP YScrollVDP variable is used
     
     ld a,(YScrollVDP)
     srl a
@@ -100,6 +100,16 @@ PrintTextMiddleVScroll:
       sub 28
   +:
     ld l,a
+    
+    ;hz part
+    ld a,(XScrollVDP)
+    neg
+    srl a
+    srl a
+    srl a
+    add a,c;add XScrollVDP/8 to line number
+    ld c,a
+    
     call PrintText
 
     ret
@@ -223,11 +233,11 @@ DoLost:
     ;draw lost text
     ld bc,TextLostEnd-TextLostStart
     ld b,c;text length in b
-    ld c,1;col (tiles) in c
+    ld c,2;col (tiles) in c
     ld l,10;line (tiles) in l
     ld de,TextLostStart;text pointer in de
     ld a,1;have to write slowly ?????????
-    call PrintTextMiddleVScroll
+    call PrintTextMiddleScroll
     
     call drawWarning;to see what went wrong
 
@@ -371,7 +381,7 @@ DoWon:
     ld l,10;line (tiles) in l
     ld de,TextWonStart;text pointer in de
     ld a,1;have to write slowly ?????????
-    call PrintTextMiddleVScroll
+    call PrintTextMiddleScroll
 
     ;hide other sprites
     call SetLastSprite
