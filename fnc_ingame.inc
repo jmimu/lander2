@@ -231,11 +231,15 @@ DoLost:
     call PrintInt10Sprite
     
     ;draw lost text
-    ld bc,TextLostEnd-TextLostStart
-    ld b,c;text length in b
     ld c,2;col (tiles) in c
     ld l,10;line (tiles) in l
-    ld de,TextLostStart;text pointer in de
+    ld de,TextLost1Start;text pointer in de
+    ld a,1;have to write slowly ?????????
+    call PrintTextMiddleScroll
+    
+    ld c,2;col (tiles) in c
+    ld l,11;line (tiles) in l
+    ld de,TextLost2Start;text pointer in de
     ld a,1;have to write slowly ?????????
     call PrintTextMiddleScroll
     
@@ -375,8 +379,6 @@ DoWon:
     call PrintInt10Sprite
     
     ;draw won text
-    ld bc,TextWonEnd-TextWonStart
-    ld b,c;text length in b
     ld c,1;col (tiles) in c
     ld l,10;line (tiles) in l
     ld de,TextWonStart;text pointer in de

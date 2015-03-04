@@ -206,8 +206,6 @@ SelectLevel:
 ;-----------------------------------------------------------------------
 endGame:
     ;draw congratulations text
-    ld bc,TextCongratEnd-TextCongratStart
-    ld b,c;text length in b
     ld c,2;col (tiles) in c
     ld l,5;line (tiles) in l
     ld de,TextCongratStart;text pointer in de
@@ -224,8 +222,6 @@ endGame:
     cp 0
     jr z,+
     ;game finished, but not perfect
-    ld bc,TextNotPerfectEnd-TextNotPerfectStart
-    ld b,c;text length in b
     ld c,2;col (tiles) in c
     ld l,7;line (tiles) in l
     ld de,TextNotPerfectStart;text pointer in de

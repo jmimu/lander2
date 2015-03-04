@@ -623,16 +623,12 @@ showLevel:
     
     ;draw texts before turning on screen to avoid problems
     ;draw hello text
-    ld bc,TextHelloEnd-TextHelloStart
-    ld b,c;text length in b
     ld c,2;col (tiles) in c
     ld l,6;line (tiles) in l
     ld de,TextHelloStart;text pointer in de
     call PrintText
     
     ;draw level text
-    ld bc,TextLevelEnd-TextLevelStart
-    ld b,c;text length in b
     ld c,7;col (tiles) in c
     ld l,10;line (tiles) in l
     ld de,TextLevelStart;text pointer in de

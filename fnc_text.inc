@@ -211,8 +211,7 @@ PrintInt8: ;print an int in octal...
 PrintText:
     ;col (tiles) in c
     ;line (tiles) in l
-    ;text pointer in de
-    ;text length in b
+    ;text pointer in de (the text ends then ascii=0)
     ;the constant "diff_tile_ascii"  must represent difference between index in tiles and in ascii
     
     ;push bc
@@ -256,6 +255,9 @@ PrintText:
       
       ; 2. Output tilemap data   
       ld a,(de);the char
+      cp 0
+      jr z,PrintText_end ;end of loop if value=0
+      
       sub diff_tile_ascii
       out ($be),a
       xor a ;one zero
@@ -280,24 +282,22 @@ PrintText:
       pop bc
       
     +:
-      dec b
-      jr nz,-
+      jr -
     
     
+  PrintText_end:
     pop af
     pop hl
     pop de
     pop bc
-    
-        
+
     ret
     
     
 PrintTextStatic: ;for static screens (turn off screen to avoid missing letters)
     ;col (tiles) in c
     ;line (tiles) in l
-    ;text pointer in de
-    ;text length in b
+    ;text pointer in de (the text ends then ascii=0)
     ;the constant "diff_tile_ascii"  must represent difference between index in tiles and in ascii
     
     ;push bc
@@ -353,6 +353,9 @@ PrintTextStatic: ;for static screens (turn off screen to avoid missing letters)
       
       ; 2. Output tilemap data   
       ld a,(de);the char
+      cp 0
+      jr z,PrintTextStatic_end ;end of loop if value=0
+      
       sub diff_tile_ascii
       out ($be),a
       xor a ;one zero
@@ -361,9 +364,9 @@ PrintTextStatic: ;for static screens (turn off screen to avoid missing letters)
       inc hl;move pointer on screen
       inc hl;move pointer on screen
       
-      dec b
-      jr nz,-
+      jr -
     
+  PrintTextStatic_end:
 
     ; Turn screen on
     ld a,%11100000

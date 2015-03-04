@@ -23,40 +23,27 @@ demo_music_4_end:
 
 
 TextHelloStart:
-.db "GET READY! PRESS 1 TO START"
-TextHelloEnd:
+.db "GET READY! PRESS 1 TO START",0
 
 TextLevelStart:
-.db "ENTERING LEVEL"
-TextLevelEnd:
+.db "ENTERING LEVEL",0
 
-TextLostStart:
-.db "YOU LOST! PRESS 1 TO TRY AGAIN";  OR 2 TO RESTART GAME"
-TextLostEnd:
+TextLost1Start:
+.db "YOU LOST! PRESS 1 TO TRY AGAIN",0
+TextLost2Start:
+.db "OR 2 TO RESTART GAME",0
 
 TextWonStart:
-.db "GREAT! PRESS 1 TO CONTINUE"
-TextWonEnd:
+.db "GREAT! PRESS 1 TO CONTINUE",0
 
 TextCongratStart:
-.db "CONGRATULATIONS, YOU FINISHED THE GAME!  FINAL SCORE: "
-TextCongratEnd:
+.db "CONGRATULATIONS, YOU FINISHED THE GAME!",0
+TextCongrat2Start:
+.db "FINAL SCORE: ",0
 
 TextNotPerfectStart:
-.db "TRY NOT TO LOOSE NEXT TIME!"
-TextNotPerfectEnd:
+.db "TRY NOT TO LOOSE NEXT TIME!",0
 
-TextNoWarnStart:
-.db "                 "
-TextNoWarnEnd:
-
-TextWarnXStart:
-.db "HZ TOO FAST!"
-TextWarnXEnd:
-
-TextWarnYStart:
-.db "FALLING TOO FAST!"
-TextWarnYEnd:
 
 
 LandingColorLoop:
