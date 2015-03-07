@@ -186,15 +186,35 @@ SelectLevel:
   +:
     cp 3
     jr nz,+
-      call SetupLevel10
+      call SetupLevel6
       jp SelectLevel_end
   +:
     cp 4
     jr nz,+
-      call SetupLevel11
+      call SetupLevel7
       jp SelectLevel_end
   +:
     cp 5
+    jr nz,+
+      call SetupLevel8
+      jp SelectLevel_end
+  +:
+    cp 6
+    jr nz,+
+      call SetupLevel9
+      jp SelectLevel_end
+  +:
+    cp 7
+    jr nz,+
+      call SetupLevel10
+      jp SelectLevel_end
+  +:
+    cp 8
+    jr nz,+
+      call SetupLevel11
+      jp SelectLevel_end
+  +:
+    cp 9
     jr nz,+
       call SetupLevel12
       jp SelectLevel_end
@@ -269,6 +289,44 @@ SetVScrollTo:
     jp SetVScrollTo ;recursive call
   
   SetVScrollTo_end:
+    ret
+
+;-----------------------------------------------------------------------
+SetHScrollTo:
+    ;input: target HScroll value in de (de must be positive)
+    
+    ;while XScrollTotal < de, incremente Hscroll
+    ld hl,(XScrollTotal)
+    ld a,h
+    cp d
+    jr z,SetHScrollTo_unit
+    jr nc,+
+      ;has to increment h scroll
+      ld c,+1
+      call HScrollManager
+      jp SetHScrollTo ;recursive call
+  +:
+    ;has to decrement h scroll
+    ld c,-1
+    call HScrollManager
+    jp SetHScrollTo ;recursive call
+    
+  SetHScrollTo_unit: ;less than 256 diff
+    ld a,l
+    cp e
+    jr z,SetHScrollTo_end
+    jr nc,+
+      ;has to increment h scroll
+      ld c,+1
+      call HScrollManager
+      jp SetHScrollTo ;recursive call
+  +:
+    ;has to decrement h scroll
+    ld c,-1
+    call HScrollManager
+    jp SetHScrollTo ;recursive call
+  
+  SetHScrollTo_end:
     ret
 
 

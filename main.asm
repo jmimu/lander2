@@ -67,7 +67,7 @@
 .define bubble_down_tile_number $81
 
 .define diff_tile_ascii 32 ;difference between index in tiles and in ascii ("A" tile number -65)
-.define number_of_levels 5
+.define number_of_levels 9
 
 ;==============================================================
 ; RAM section

@@ -1,32 +1,14 @@
-collisions don't work with hz scroll
-text write don't work with hz scroll
+forbid hz out of screen ?
+fix lava out of screen
+make 2 variables for lava speed change (set by difficulty?)
 
 add other collisions models
-
-add string terminator?
-make lava work on level 12 (try speed=4/5 frame)
 
 have 5 lives (small rocket sprites vertically arranged)
 
 do not clear all data for showLevel
-how to be able to start far in the scrolling?
 
-why in fnc_loop:105 gameStatus can't be 0 at level start ? remove 0 value?
-
-** Vertical scrolling :
-variable Yscroll represents the position of the camera in the level (in pixels).
-From 0 to 416 => 16 bit
-VDP v-scroll value must be in [0;223]
-
-make one inc file per level to declaire data and specific functions like init,
-level mechanics, and what happends when hit special blocks
-
-make a generic load data function using pile to get all adresses
-
-for vertical level, first step is on the top-right landing zone.
-The tile is hz-flipped so collision detection can understand if we are on one
-or the orther landing zone (bottom is no hz-flipped).
-Use this on each zone where we have to go from one to the other landing zone.
+make a generic load data function using pile to get all adresses ?
 
 Double every landing zone for 2-player game?
 

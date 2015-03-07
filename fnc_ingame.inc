@@ -396,19 +396,17 @@ UpdatePalette:
    push hl
    
    ;update lava position
-   ;only 1/4 frames
-   ld hl,(landing_zone_color)
-   ld a,l
-   cp 0
-   ;or l
-   jr nz,+
+   ld a,(YLava_count)
+   inc a
    ld hl,(YLava)
    dec hl
-   dec hl
-   dec hl
-   ld (YLava),hl
+   cp 3
+   jr nz,+
+   xor a
+   inc hl
   +:
-   
+   ld (YLava_count),a
+   ld (YLava),hl
    
     ;update star color
     ld hl,(star_color1)

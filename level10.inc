@@ -363,7 +363,8 @@ SetupLevel12:
     
     ld hl,600
     ld (YLava),hl
-    
+    xor a
+    ld (YLava_count),a
 
     ;functers
     ld hl,WaitForVBlankLava

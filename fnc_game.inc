@@ -10,6 +10,7 @@
   NextMapDataStart         dw    ; pointer to tilemap new part to load due to scrolling (in bytes)
   LevelMapWidth            dw    ; tilemap width start (in tiles)
   YLava                    dw    ; total Y lava in level (in pixels)
+  YLava_count              db    ; Y lava increase counter
   
   OnLandRightFunction      dw    ; pointer to function called when touching the ground
   OnLandLeftFunction       dw    ; pointer to function called when touching the ground
@@ -36,6 +37,7 @@ CallFunctionHL:
 HScrollManager:
   push af
   push bc
+  push de
   push hl
     ld a,c
     cp 0
@@ -158,6 +160,7 @@ HScrollManager:
   HScrollManager_left:
   HScrollManager_end:
   pop hl
+  pop de
   pop bc
   pop af
 ret
@@ -918,29 +921,29 @@ UpdateScreen:
 
 UpdateHScroll:
     ;x scroll depending on posX
-    ;if posX<60, scroll up
-    ;if posX>195, scroll down
+    ;if posX<108, scroll left
+    ;if posX>148, scroll right
     ld hl, (posX)
     ld a,h ;a is the entire part of posX
-    cp 60
+    cp 108
     jr nc,+
     ld c,-1
     call HScrollManager
     ;once again to have a 2-speed scrolling
     ld hl, (posX)
     ld a,h ;a is the entire part of posX
-    cp 60
+    cp 108
     jr nc,+
     ld c,-1
     call HScrollManager
   +:
-    cp 195
+    cp 148
     jr c,+
     ld c,1
     call HScrollManager
     ld hl, (posX)
     ld a,h ;a is the entire part of posX
-    cp 195
+    cp 148
     jr c,+
     ld c,1
     call HScrollManager
@@ -1080,8 +1083,10 @@ RocketPos2vramTiles:
     add hl,bc
     
     ld a,(XScrollVDP)
-    ld c,a
-    add hl,bc;add scrolling value
+    neg
+    add a,l
+    ld l,a
+    ;sub scrolling value
     
     ld h,l
     srl h;divide by 8

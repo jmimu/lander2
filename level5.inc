@@ -120,7 +120,7 @@ SetupLevel5:
     ;compute max scroll value
     ld hl,0
     ld (YScrollTotalMax),hl
-    ld hl,((Tilemap5End-Tilemap5Start)/48)*8
+    ;ld hl,((Tilemap5End-Tilemap5Start)/48)*8
     ld (XScrollTotalMax),hl
     
     ld hl,500
@@ -134,6 +134,574 @@ SetupLevel5:
     ld hl,DoWait
     ld (OnLandLeftFunction),hl
     ld hl,DoLost
+    ld (OnOutFunction),hl
+    
+ret
+
+
+SetupLevel6:
+    ;==============================================================
+    ; Load palette
+    ;==============================================================
+    ; 1. Set VRAM write address to CRAM (palette) address 0 (for palette index 0)
+    ; by outputting $c000 ORed with $0000
+    ld a,$00
+    out ($bf),a
+    ld a,$c0
+    out ($bf),a
+    ; 2. Output colour data
+    ld hl,Palette5Start
+    ld b,(Palette5End-Palette5Start)
+    ld c,$be
+    otir
+    
+    
+    ld hl,(tiles_vram_used)
+    ;==============================================================
+    ; Load level tiles
+    ;==============================================================
+    ; 1. Set VRAM write address to tile index 0
+    ; by outputting $4000 ORed with (tiles_vram_used)
+    ld a,l
+    out ($bf),a
+    ld a,h
+    add a,$40
+    out ($bf),a
+    ; 2. Output tile data
+    ld bc,Tiles_bg10_End-Tiles_bg10_Start  ; Counter for number of bytes to write
+    ld hl,Tiles_bg10_Start              ; Location of tile data
+    -:
+        ld a,(hl)        ; Get data byte
+        out ($be),a
+        inc hl           ; Add one to hl so it points to the next data byte
+        dec bc
+        ld a,b
+        or c
+        jp nz,-
+    ld hl,(tiles_vram_used)
+    ld bc,Tiles_bg10_End-Tiles_bg10_Start
+    add hl,bc
+    ld (tiles_vram_used),hl
+
+    ;big horizontal tilemap
+    ld hl,128
+    ld (LevelMapWidth),hl
+    ld hl,Tilemap5Start
+    ld (LevelMapStart),hl
+    
+    ;load tilemap of current level
+    ;==============================================================
+    ; Write tilemap data
+    ;==============================================================
+    ; 1. Set VRAM write address to name table index 0
+    ; by outputting $4000 ORed with $3800+0
+    ld a,$00
+    out ($bf),a
+    ld a,$38|$40
+    out ($bf),a
+    ; 2. Output tilemap data
+    ld hl,(LevelMapWidth);compute how much to add to get next line
+    ld de,-32
+    add hl,de
+    add hl,hl
+    ld d,h
+    ld e,l ;de is how much bytes to complete a line
+    ld hl,(LevelMapStart)
+    ld c,24;line counter
+    SetupLevel6_line_loop:
+      ld b,32*2; Counter for number of bytes to write
+      -:
+          ld a,(hl)    ; Get data byte
+          out ($be),a
+          inc hl       ; Point to next tile
+          dec b
+          ld a,b
+          cp 0
+          jr nz,-
+      add hl,de
+      dec c
+      ld a,c
+      cp 0
+      jr nz,SetupLevel6_line_loop
+    
+    
+    ;init music
+    ld hl,brahms1_start
+    ld hl,demo_music_4_start
+    call InitMusic1
+    ld hl,brahms2_start
+    call InitMusic2
+    ld hl,brahms3_start
+    call InitMusic3
+    
+    ;variables initialization
+    ld hl,$0
+    ld (speedX),hl
+    ld hl,$0
+    ld (speedY),hl
+    ld hl,$4800
+    ld (posX),hl
+    ld hl,$6800-1
+    ld (posY),hl
+    xor a
+    ld (rocket_status),a
+    
+    ;initialize scroll variables
+    xor a
+    ld (XScrollVDP),a
+    ld (YScrollVDP),a
+    ld hl,0
+    ld (XScrollTotal),hl
+    ld (YScrollTotal),hl
+    
+    
+    ;compute max scroll value
+    ld hl,0
+    ld (YScrollTotalMax),hl
+    ld hl,160
+    ld (XScrollTotalMax),hl
+    
+    ld hl,500
+    ld (YLava),hl
+    
+    ;functers
+    ld hl,WaitForVBlankSimple
+    ld (WaitForVBlankFunction),hl
+    ld hl,DoWon
+    ld (OnLandLeftFunction),hl
+    ld hl,DoWait
+    ld (OnLandRightFunction),hl
+    ld hl,DoLost
+    ld (OnOutFunction),hl
+    
+ret
+
+
+SetupLevel7:
+    ;==============================================================
+    ; Load palette
+    ;==============================================================
+    ; 1. Set VRAM write address to CRAM (palette) address 0 (for palette index 0)
+    ; by outputting $c000 ORed with $0000
+    ld a,$00
+    out ($bf),a
+    ld a,$c0
+    out ($bf),a
+    ; 2. Output colour data
+    ld hl,Palette5Start
+    ld b,(Palette5End-Palette5Start)
+    ld c,$be
+    otir
+    
+    
+    ld hl,(tiles_vram_used)
+    ;==============================================================
+    ; Load level tiles
+    ;==============================================================
+    ; 1. Set VRAM write address to tile index 0
+    ; by outputting $4000 ORed with (tiles_vram_used)
+    ld a,l
+    out ($bf),a
+    ld a,h
+    add a,$40
+    out ($bf),a
+    ; 2. Output tile data
+    ld bc,Tiles_bg10_End-Tiles_bg10_Start  ; Counter for number of bytes to write
+    ld hl,Tiles_bg10_Start              ; Location of tile data
+    -:
+        ld a,(hl)        ; Get data byte
+        out ($be),a
+        inc hl           ; Add one to hl so it points to the next data byte
+        dec bc
+        ld a,b
+        or c
+        jp nz,-
+    ld hl,(tiles_vram_used)
+    ld bc,Tiles_bg10_End-Tiles_bg10_Start
+    add hl,bc
+    ld (tiles_vram_used),hl
+
+    ;big horizontal tilemap
+    ld hl,128
+    ld (LevelMapWidth),hl
+    ld hl,Tilemap5Start
+    ld (LevelMapStart),hl
+    
+    ;load tilemap of current level
+    ;==============================================================
+    ; Write tilemap data
+    ;==============================================================
+    ; 1. Set VRAM write address to name table index 0
+    ; by outputting $4000 ORed with $3800+0
+    ld a,$00
+    out ($bf),a
+    ld a,$38|$40
+    out ($bf),a
+    ; 2. Output tilemap data
+    ld hl,(LevelMapWidth);compute how much to add to get next line
+    ld de,-32
+    add hl,de
+    add hl,hl
+    ld d,h
+    ld e,l ;de is how much bytes to complete a line
+    ld hl,(LevelMapStart)
+    ld c,24;line counter
+    SetupLevel7_line_loop:
+      ld b,32*2; Counter for number of bytes to write
+      -:
+          ld a,(hl)    ; Get data byte
+          out ($be),a
+          inc hl       ; Point to next tile
+          dec b
+          ld a,b
+          cp 0
+          jr nz,-
+      add hl,de
+      dec c
+      ld a,c
+      cp 0
+      jr nz,SetupLevel7_line_loop
+    
+    
+    ;init music
+    ld hl,brahms1_start
+    ld hl,demo_music_4_start
+    call InitMusic1
+    ld hl,brahms2_start
+    call InitMusic2
+    ld hl,brahms3_start
+    call InitMusic3
+    
+    ;initialize scroll variables
+    xor a
+    ld (XScrollVDP),a
+    ld (YScrollVDP),a
+    ld hl,0
+    ld (XScrollTotal),hl
+    ld (YScrollTotal),hl
+    
+    
+    ;compute max scroll value
+    ld hl,0
+    ld (YScrollTotalMax),hl
+    ;ld hl,((Tilemap5End-Tilemap5Start)/48)*8
+    ld hl,600
+    ld (XScrollTotalMax),hl
+    
+    ld de,180
+    call SetHScrollTo
+    
+    ;variables initialization
+    ld hl,$0
+    ld (speedX),hl
+    ld hl,$0
+    ld (speedY),hl
+    ld hl,$9000
+    ld (posX),hl
+    ld hl,$8000 -1
+    ld (posY),hl
+    xor a
+    ld (rocket_status),a
+    
+
+    
+    ld hl,500
+    ld (YLava),hl
+    
+    ;functers
+    ld hl,WaitForVBlankSimple
+    ld (WaitForVBlankFunction),hl
+    ld hl,DoWon
+    ld (OnLandRightFunction),hl
+    ld hl,DoWait
+    ld (OnLandLeftFunction),hl
+    ld hl,DoLost
+    ld (OnOutFunction),hl
+    
+ret
+
+
+SetupLevel8:
+    ;==============================================================
+    ; Load palette
+    ;==============================================================
+    ; 1. Set VRAM write address to CRAM (palette) address 0 (for palette index 0)
+    ; by outputting $c000 ORed with $0000
+    ld a,$00
+    out ($bf),a
+    ld a,$c0
+    out ($bf),a
+    ; 2. Output colour data
+    ld hl,Palette5Start
+    ld b,(Palette5End-Palette5Start)
+    ld c,$be
+    otir
+    
+    
+    ld hl,(tiles_vram_used)
+    ;==============================================================
+    ; Load level tiles
+    ;==============================================================
+    ; 1. Set VRAM write address to tile index 0
+    ; by outputting $4000 ORed with (tiles_vram_used)
+    ld a,l
+    out ($bf),a
+    ld a,h
+    add a,$40
+    out ($bf),a
+    ; 2. Output tile data
+    ld bc,Tiles_bg10_End-Tiles_bg10_Start  ; Counter for number of bytes to write
+    ld hl,Tiles_bg10_Start              ; Location of tile data
+    -:
+        ld a,(hl)        ; Get data byte
+        out ($be),a
+        inc hl           ; Add one to hl so it points to the next data byte
+        dec bc
+        ld a,b
+        or c
+        jp nz,-
+    ld hl,(tiles_vram_used)
+    ld bc,Tiles_bg10_End-Tiles_bg10_Start
+    add hl,bc
+    ld (tiles_vram_used),hl
+
+    ;big horizontal tilemap
+    ld hl,128
+    ld (LevelMapWidth),hl
+    ld hl,Tilemap5Start
+    ld (LevelMapStart),hl
+    
+    ;load tilemap of current level
+    ;==============================================================
+    ; Write tilemap data
+    ;==============================================================
+    ; 1. Set VRAM write address to name table index 0
+    ; by outputting $4000 ORed with $3800+0
+    ld a,$00
+    out ($bf),a
+    ld a,$38|$40
+    out ($bf),a
+    ; 2. Output tilemap data
+    ld hl,(LevelMapWidth);compute how much to add to get next line
+    ld de,-32
+    add hl,de
+    add hl,hl
+    ld d,h
+    ld e,l ;de is how much bytes to complete a line
+    ld hl,(LevelMapStart)
+    ld c,24;line counter
+    SetupLevel8_line_loop:
+      ld b,32*2; Counter for number of bytes to write
+      -:
+          ld a,(hl)    ; Get data byte
+          out ($be),a
+          inc hl       ; Point to next tile
+          dec b
+          ld a,b
+          cp 0
+          jr nz,-
+      add hl,de
+      dec c
+      ld a,c
+      cp 0
+      jr nz,SetupLevel8_line_loop
+    
+    
+    ;init music
+    ld hl,brahms1_start
+    ld hl,demo_music_4_start
+    call InitMusic1
+    ld hl,brahms2_start
+    call InitMusic2
+    ld hl,brahms3_start
+    call InitMusic3
+    
+    ;initialize scroll variables
+    xor a
+    ld (XScrollVDP),a
+    ld (YScrollVDP),a
+    ld hl,0
+    ld (XScrollTotal),hl
+    ld (YScrollTotal),hl
+    
+    
+    ;compute max scroll value
+    ld hl,0
+    ld (YScrollTotalMax),hl
+    ld hl,768
+    ld (XScrollTotalMax),hl
+    
+    ld de,600
+    call SetHScrollTo
+    
+    ;variables initialization
+    ld hl,$0
+    ld (speedX),hl
+    ld hl,$0
+    ld (speedY),hl
+    ld hl,$8800
+    ld (posX),hl
+    ld hl,$6000 -1
+    ld (posY),hl
+    xor a
+    ld (rocket_status),a
+    
+
+    
+    ld hl,500
+    ld (YLava),hl
+    
+    ;functers
+    ld hl,WaitForVBlankSimple
+    ld (WaitForVBlankFunction),hl
+    ld hl,DoWon
+    ld (OnLandLeftFunction),hl
+    ld hl,DoWait
+    ld (OnLandRightFunction),hl
+    ld hl,DoLost
+    ld (OnOutFunction),hl
+    
+ret
+
+
+SetupLevel9:
+    ;==============================================================
+    ; Load palette
+    ;==============================================================
+    ; 1. Set VRAM write address to CRAM (palette) address 0 (for palette index 0)
+    ; by outputting $c000 ORed with $0000
+    ld a,$00
+    out ($bf),a
+    ld a,$c0
+    out ($bf),a
+    ; 2. Output colour data
+    ld hl,Palette5Start
+    ld b,(Palette5End-Palette5Start)
+    ld c,$be
+    otir
+    
+    
+    ld hl,(tiles_vram_used)
+    ;==============================================================
+    ; Load level tiles
+    ;==============================================================
+    ; 1. Set VRAM write address to tile index 0
+    ; by outputting $4000 ORed with (tiles_vram_used)
+    ld a,l
+    out ($bf),a
+    ld a,h
+    add a,$40
+    out ($bf),a
+    ; 2. Output tile data
+    ld bc,Tiles_bg10_End-Tiles_bg10_Start  ; Counter for number of bytes to write
+    ld hl,Tiles_bg10_Start              ; Location of tile data
+    -:
+        ld a,(hl)        ; Get data byte
+        out ($be),a
+        inc hl           ; Add one to hl so it points to the next data byte
+        dec bc
+        ld a,b
+        or c
+        jp nz,-
+    ld hl,(tiles_vram_used)
+    ld bc,Tiles_bg10_End-Tiles_bg10_Start
+    add hl,bc
+    ld (tiles_vram_used),hl
+
+    ;big horizontal tilemap
+    ld hl,128
+    ld (LevelMapWidth),hl
+    ld hl,Tilemap5Start
+    ld (LevelMapStart),hl
+    
+    ;load tilemap of current level
+    ;==============================================================
+    ; Write tilemap data
+    ;==============================================================
+    ; 1. Set VRAM write address to name table index 0
+    ; by outputting $4000 ORed with $3800+0
+    ld a,$00
+    out ($bf),a
+    ld a,$38|$40
+    out ($bf),a
+    ; 2. Output tilemap data
+    ld hl,(LevelMapWidth);compute how much to add to get next line
+    ld de,-32
+    add hl,de
+    add hl,hl
+    ld d,h
+    ld e,l ;de is how much bytes to complete a line
+    ld hl,(LevelMapStart)
+    ld c,24;line counter
+    SetupLevel9_line_loop:
+      ld b,32*2; Counter for number of bytes to write
+      -:
+          ld a,(hl)    ; Get data byte
+          out ($be),a
+          inc hl       ; Point to next tile
+          dec b
+          ld a,b
+          cp 0
+          jr nz,-
+      add hl,de
+      dec c
+      ld a,c
+      cp 0
+      jr nz,SetupLevel9_line_loop
+    
+    
+    ;init music
+    ld hl,brahms1_start
+    ld hl,demo_music_4_start
+    call InitMusic1
+    ld hl,brahms2_start
+    call InitMusic2
+    ld hl,brahms3_start
+    call InitMusic3
+    
+    ;initialize scroll variables
+    xor a
+    ld (XScrollVDP),a
+    ld (YScrollVDP),a
+    ld hl,0
+    ld (XScrollTotal),hl
+    ld (YScrollTotal),hl
+    
+    
+    ;compute max scroll value
+    ld hl,0
+    ld (YScrollTotalMax),hl
+    ld hl,768
+    ld (XScrollTotalMax),hl
+    
+    ld de,768
+    call SetHScrollTo
+    
+    ;variables initialization
+    ld hl,$0
+    ld (speedX),hl
+    ld hl,$0
+    ld (speedY),hl
+    ld hl,$EB00
+    ld (posX),hl
+    ld hl,$7800 -1
+    ld (posY),hl
+    xor a
+    ld (rocket_status),a
+    
+
+    
+    ld hl,500
+    ld (YLava),hl
+    
+    ;functers
+    ld hl,WaitForVBlankSimple
+    ld (WaitForVBlankFunction),hl
+    ld hl,DoWait
+    ld (OnLandRightFunction),hl
+    ld hl,DoWait
+    ld (OnLandLeftFunction),hl
+    ld hl,DoWon
     ld (OnOutFunction),hl
     
 ret
