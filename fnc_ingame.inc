@@ -459,8 +459,8 @@ UpdatePalette:
     
     ;if level>1, landing zone color loop
     ld a,(current_level)
-    cp 1
-    jp z,UpdatePalette_end
+    cp 3
+    jp c,UpdatePalette_end
     
     ;-----------------------------landing zone part-----------------------------
     ;loop on landing_zone_color, to change colors 11-14 of palette

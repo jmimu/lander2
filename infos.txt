@@ -1,3 +1,7 @@
+add level 2: inspace, no obstacle, with instructions and all the time to learn
+how to play (press 1+2) to quit
+add a neww step on level 5, with a very big landing zone close to the first one
+
 forbid hz out of screen ?
 fix lava out of screen
 make 2 variables for lava speed change (set by difficulty?)

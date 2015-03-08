@@ -106,8 +106,6 @@ SetupLevel10:
     ld (XScrollTotalMax),hl
     ld (YScrollTotalMax),hl
     
-    ld hl,600
-    ld (YLava),hl
     
 
     ;functers
@@ -230,9 +228,6 @@ SetupLevel11:
     ld (YScrollTotalMax),hl
     ld hl,0
     ld (XScrollTotalMax),hl
-    
-    ld hl,500
-    ld (YLava),hl
     
 
     ;functers

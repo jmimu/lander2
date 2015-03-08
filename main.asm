@@ -236,6 +236,7 @@ IsButtonPressed:
 .include "data_game.inc"
 .ends
 
+.include "level2.inc"
 .include "level10.inc"
 
 

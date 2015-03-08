@@ -123,9 +123,6 @@ SetupLevel5:
     ;ld hl,((Tilemap5End-Tilemap5Start)/48)*8
     ld (XScrollTotalMax),hl
     
-    ld hl,500
-    ld (YLava),hl
-    
     ;functers
     ld hl,WaitForVBlankSimple
     ld (WaitForVBlankFunction),hl
@@ -261,8 +258,6 @@ SetupLevel6:
     ld hl,160
     ld (XScrollTotalMax),hl
     
-    ld hl,500
-    ld (YLava),hl
     
     ;functers
     ld hl,WaitForVBlankSimple
@@ -405,9 +400,6 @@ SetupLevel7:
     
 
     
-    ld hl,500
-    ld (YLava),hl
-    
     ;functers
     ld hl,WaitForVBlankSimple
     ld (WaitForVBlankFunction),hl
@@ -548,9 +540,6 @@ SetupLevel8:
     
 
     
-    ld hl,500
-    ld (YLava),hl
-    
     ;functers
     ld hl,WaitForVBlankSimple
     ld (WaitForVBlankFunction),hl
@@ -689,10 +678,6 @@ SetupLevel9:
     xor a
     ld (rocket_status),a
     
-
-    
-    ld hl,500
-    ld (YLava),hl
     
     ;functers
     ld hl,WaitForVBlankSimple
