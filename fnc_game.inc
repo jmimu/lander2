@@ -690,36 +690,37 @@ WaitForButton:
 ReadButtonsPlay:
     push af
         in a,($dc)
+        ld (buttons),a
         and %00010000
         cp  %00000000
         jr nz,+
         call OnButton1
     +:  
-        in a,($dc)
+        ld a,(buttons)
         and %00100000
         cp  %00000000
         jr nz,+
         call OnButton2
     +:  
-        in a,($dc)
+        ld a,(buttons)
         and %00000001
         cp  %00000000
         jr nz,+
         call OnButtonUp
     +:  
-        in a,($dc)
+        ld a,(buttons)
         and %00000010
         cp  %00000000
         jr nz,+
         call OnButtonDown
     +:  
-        in a,($dc)
+        ld a,(buttons)
         and %00000100
         cp  %00000000
         jr nz,+
         call OnButtonLeft
     +:  
-        in a,($dc)
+        ld a,(buttons)
         and %00001000
         cp  %00000000
         jr nz,+

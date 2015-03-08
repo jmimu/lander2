@@ -1,5 +1,7 @@
-add level 2: inspace, no obstacle, with instructions and all the time to learn
-how to play (press 1+2) to quit
+if left and down is pressed when hz scroll, graph bug in emukon
+
+add a message in level 1, and in other levels ?
+
 add a neww step on level 5, with a very big landing zone close to the first one
 
 forbid hz out of screen ?

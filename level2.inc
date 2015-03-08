@@ -112,6 +112,8 @@ SetupLevel2:
     ld (XScrollTotalMax),hl
     ld (YScrollTotalMax),hl
     
+    ld hl,0
+    ld (TutoCnt),hl
     
     ;functers
     ld hl,TutorialFunction
@@ -133,8 +135,17 @@ TutorialFunction:;replace WaitForVBlankSimple for tutorial
   ld hl,$ffff
   ld (rocket_fuel),hl
   
+  ;test if leaving tutorial
+  ld a,(buttons)
+  and %00110000 ;if 1+2 pressed
+  cp  %00000000
+  jr nz,+
+    call DoWon
+  +:
+  
   ;increment counter
   ld hl,(TutoCnt)
+  inc hl
   inc hl
   ld (TutoCnt),hl
   

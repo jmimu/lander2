@@ -67,7 +67,7 @@
 .define bubble_down_tile_number $81
 
 .define diff_tile_ascii 32 ;difference between index in tiles and in ascii ("A" tile number -65)
-.define number_of_levels 9
+.define number_of_levels 11
 
 ;==============================================================
 ; RAM section
@@ -88,6 +88,7 @@
   ;posY                     dw ; multiplied by 2^8
   rocket_fuel         dw 
   rocket_status      db ;0: normal, 1: bottom fire, 2: destroyed
+  buttons      db ; keep a copy of the buttons pressed
   current_level db
   already_lost db ;0 if not, 1 if lost at least 1 time
 ;  goto_level db ;0 if no need to change level, n to enter level n
