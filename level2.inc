@@ -1,5 +1,6 @@
 .ramsection "Tutorial variables" slot 1
   TutoCnt             dw    ; tutorial counter
+  AutoDown            db   ;0: not pressing down, 1: pressing down
 .ends
 
 
@@ -88,11 +89,11 @@ SetupLevel2:
     ;variables initialization
     ld hl,$0
     ld (speedX),hl
-    ld hl,$0
+    ld hl,-$01A0
     ld (speedY),hl
     ld hl,$7C00
     ld (posX),hl
-    ld hl,$8700
+    ld hl,$E000
     ld (posY),hl
     xor a
     ld (rocket_status),a
@@ -114,6 +115,8 @@ SetupLevel2:
     
     ld hl,0
     ld (TutoCnt),hl
+    xor a
+    ld (AutoDown),a
     
     ;functers
     ld hl,TutorialFunction
@@ -143,11 +146,41 @@ TutorialFunction:;replace WaitForVBlankSimple for tutorial
     call DoWon
   +:
   
+  ;if yspeed too big, auto press down
+  ld a,(AutoDown)
+  cp 1
+  jr z,TutorialFunctionCurrentlyDown
+    ;not currently pressing down
+    ld hl,(speedY)
+    ld a,h
+    cp $01
+    jr nz,+
+      ld a,1
+      ld (AutoDown),a
+    +:
+    jr TutorialFunctionEndDown
+
+     
+  TutorialFunctionCurrentlyDown:
+    call OnButtonDown
+    ld hl,(speedY)
+    ld a,h
+    cp $FE
+    jr nz,+
+      ld a,0
+      ld (AutoDown),a
+    +:
+  
+  TutorialFunctionEndDown:
+  
   ;increment counter
   ld hl,(TutoCnt)
   inc hl
   inc hl
+  inc hl
   ld (TutoCnt),hl
+  
+
   
   ;show messages
   ld a,h
@@ -218,11 +251,11 @@ TutoText3:
 TutoText4:                      
 .db "TO CHANGE YOUR SPEED       ",0
 TutoText5:                      
-.db "HOLD DOWN TO GO UP         ",0
+.db "HOLD \"DOWN\" TO GO UP         ",0
 TutoText6:                      
-.db "HOLD LEFT TO GO RIGHT      ",0
+.db "HOLD \"LEFT\" TO GO RIGHT      ",0
 TutoText7:                      
-.db "HOLD RIGHT TO GO LEFT      ",0
+.db "HOLD \"RIGHT\" TO GO LEFT      ",0
 TutoText8:                      
 .db "WATCH YOUR OIL COUNTER     ",0
 TutoText9:                      

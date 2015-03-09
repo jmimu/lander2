@@ -1,8 +1,10 @@
 if left and down is pressed when hz scroll, graph bug in emukon
 
-add a message in level 1, and in other levels ?
+level 2 graph bug
 
-add a neww step on level 5, with a very big landing zone close to the first one
+add a message in some levels
+
+add a new step on level 5, with a very big landing zone close to the first one
 
 forbid hz out of screen ?
 fix lava out of screen
