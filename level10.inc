@@ -1,5 +1,12 @@
 .section "level10" force
 
+Level10Message:
+ .db "LAND ON THE RIGHT ZONE",0
+Level11Message:
+ .db "EXPLORE THE CRATER!",0
+
+
+
 
 SetupLevel10:
     ;==============================================================
@@ -121,6 +128,14 @@ SetupLevel10:
     
     ld hl,32
     ld (LevelMapWidth),hl
+    
+    
+    ;show level message
+    ld de,Level10Message;text pointer in de
+    ld c,5;col (tiles) in c
+    ld l,3;line (tiles) in l
+    ld a,1;have to write slowly
+    call PrintText
 ret
 
 
@@ -243,6 +258,13 @@ SetupLevel11:
     
     ld hl,32
     ld (LevelMapWidth),hl
+    
+    ;show level message
+    ld de,Level11Message;text pointer in de
+    ld c,5;col (tiles) in c
+    ld l,3;line (tiles) in l
+    ld a,1;have to write slowly
+    call PrintText
 ret
 
 ;start at bottom, has to leave the screen (TODO: disable upper scroll limit and enable any scroll init)

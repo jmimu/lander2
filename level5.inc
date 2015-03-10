@@ -3,6 +3,9 @@
 Level5Message:
  .db "LAND GENTLY ON THE MARK",0
 
+Level6Message:
+ .db "GO RIGHT TO NEXT LANDING ZONE",0
+
 SetupLevel5:
     ;==============================================================
     ; Load palette
@@ -277,6 +280,12 @@ SetupLevel6:
     ld hl,DoLost
     ld (OnOutFunction),hl
     
+    ;show level message
+    ld de,Level6Message;text pointer in de
+    ld c,1;col (tiles) in c
+    ld l,3;line (tiles) in l
+    ld a,1;have to write slowly
+    call PrintText
 ret
 
 
