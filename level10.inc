@@ -1,7 +1,7 @@
 .section "level10" force
 
 Level10Message:
- .db "LAND ON THE RIGHT ZONE",0
+ .db "LAND ON RIGHT ZONE",0
 Level11Message:
  .db "EXPLORE THE CRATER!",0
 

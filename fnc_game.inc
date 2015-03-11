@@ -1109,6 +1109,12 @@ RocketPos2vramTiles:
     ld c,a
     ld b,0
     add hl,bc
+    
+    ;only if vscroll has to check carry
+    ld a,(YScrollVDP)
+    cp 0
+    jp z,RocketPos2vramTiles_VcarryOK
+    
     ;have to check if hl>=224
     ;first test if >255
     ld a,h
