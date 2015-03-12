@@ -13,6 +13,8 @@ ret
 
 ;--------------------------------------------------------------------
 SetLastSprite:
+  push af
+  push de
   ld a,(number_of_sprites)
   ld e,a;sprite index in e
   ld a, e
@@ -23,6 +25,8 @@ SetLastSprite:
   
   ld a, $D0 ;set $D0 to the y of sprite e+1 = e is the last sprite to print
   out ($be), a
+  pop de
+  pop af
 ret
 
 ;--------------------------------------------------------------------

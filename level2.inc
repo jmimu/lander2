@@ -163,6 +163,8 @@ TutorialFunction:;replace WaitForVBlankSimple for tutorial
      
   TutorialFunctionCurrentlyDown:
     call OnButtonDown
+    ;hide other sprites
+    call SetLastSprite
     ld hl,(speedY)
     ld a,h
     cp $FE

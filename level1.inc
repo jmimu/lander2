@@ -72,13 +72,10 @@ SetupLevel1:
     
     
     ;init music
-    ld hl,brahms1_start
-    ld hl,demo_music_4_start
+    ld hl,end_music_ch1_start
     call InitMusic1
-    ld hl,brahms2_start
+    ld hl,end_music_ch2_start
     call InitMusic2
-    ld hl,brahms3_start
-    call InitMusic3
     
     ;variables initialization
     ld hl,$0

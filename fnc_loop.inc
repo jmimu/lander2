@@ -165,7 +165,7 @@ GameLoop:
     
     call UpdatePalette
     call UpdateScreen
-    ;call PSGMOD_Play
+    call PSGMOD_Play
     
     jp GameLoop
 

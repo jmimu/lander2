@@ -909,7 +909,7 @@ PSGMOD_Play:
     ;ret
     ;+:
     call PlayMusic1
-    ;call PlayMusic2
+    call PlayMusic2
     ;call PlayMusic3
 
     ret
