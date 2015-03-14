@@ -198,13 +198,17 @@ if __name__ == '__main__':
     #~ 
     
     
-    music=MidiMusic("lander2_fin.mid",0,"A")
+    music=MidiMusic("lander2_fin8.mid",0,"A")
     #print music.pattern
     text_track0=music.convertToJMMusic()
 
-    music=MidiMusic("lander2_fin.mid",1,"7")
+    music=MidiMusic("lander2_fin8.mid",1,"7")
     #print music.pattern
     text_track1=music.convertToJMMusic()
+
+    music=MidiMusic("lander2_fin8.mid",2,"7")
+    #print music.pattern
+    text_track2=music.convertToJMMusic()
 
     #music=MidiMusic("lander2_fin.mid",2)
     #print music.pattern
@@ -212,7 +216,7 @@ if __name__ == '__main__':
     
     print text_track0
     print text_track1
-    #print text_track2
+    print text_track2
     
     #music=MidiMusic("musescore/test5.mid",0)
     #print music.pattern

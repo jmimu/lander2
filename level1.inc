@@ -76,6 +76,8 @@ SetupLevel1:
     call InitMusic1
     ld hl,end_music_ch2_start
     call InitMusic2
+    ld hl,end_music_ch3_start
+    call InitMusic3
     
     ;variables initialization
     ld hl,$0
