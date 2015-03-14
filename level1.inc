@@ -128,6 +128,9 @@ SetupLevel1:
     ld l,8;line (tiles) in l
     ld a,1;have to write slowly
     call PrintText
+    
+    ld a,1
+    ld (first_frame_on_end_status),a
 ret
 
 Level1Message:

@@ -191,6 +191,19 @@ GameStatusUpdate:
 
 ;-------------------------------------------------------------------------------
 DoLost:
+    ld a,(first_frame_on_end_status)
+    cp 1
+    jr nz,+
+      ld hl,lost_music_ch1_start
+      call InitMusic1
+      ld hl,nosound_start
+      call InitMusic2
+      ld hl,nosound_start
+      call InitMusic3
+      xor a
+      ld (first_frame_on_end_status),a
+    +:
+
     call ResetSprites
     
     ;read button 1
@@ -333,6 +346,19 @@ DoWait:
 
 ;-------------------------------------------------------------------------------
 DoWon:
+    ld a,(first_frame_on_end_status)
+    cp 1
+    jr nz,+
+      ld hl,win_music_ch1_start
+      call InitMusic1
+      ld hl,nosound_start
+      call InitMusic2
+      ld hl,nosound_start
+      call InitMusic3
+      xor a
+      ld (first_frame_on_end_status),a
+    +:
+
     call ResetSprites
     
     ;read button 1

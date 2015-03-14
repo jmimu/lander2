@@ -1,10 +1,4 @@
-if left and down is pressed when hz scroll, graph bug in emukon
-
-level 2 graph bug
-
-add a message in some levels
-
-add a new step on level 5, with a very big landing zone close to the first one
+make a function called only once when win and loose for music
 
 forbid hz out of screen ?
 fix lava out of screen

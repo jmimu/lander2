@@ -79,12 +79,11 @@ SetupLevel10:
         jr nz,-
     
     ;init music
-    ld hl,brahms1_start
     ld hl,demo_music_4_start
     call InitMusic1
-    ld hl,brahms2_start
+    ld hl,nosound_start
     call InitMusic2
-    ld hl,brahms3_start
+    ld hl,nosound_start
     call InitMusic3
     
     ;variables initialization
@@ -138,6 +137,9 @@ SetupLevel10:
     ld l,3;line (tiles) in l
     ld a,1;have to write slowly
     call PrintText
+    
+    ld a,1
+    ld (first_frame_on_end_status),a
 ret
 
 
@@ -210,12 +212,11 @@ SetupLevel11:
         jr nz,-
     
     ;init music
-    ld hl,brahms1_start
     ld hl,demo_music_4_start
     call InitMusic1
-    ld hl,brahms2_start
+    ld hl,nosound_start
     call InitMusic2
-    ld hl,brahms3_start
+    ld hl,nosound_start
     call InitMusic3
     
     ;variables initialization
@@ -267,6 +268,9 @@ SetupLevel11:
     ld l,3;line (tiles) in l
     ld a,1;have to write slowly
     call PrintText
+    
+    ld a,1
+    ld (first_frame_on_end_status),a
 ret
 
 ;start at bottom, has to leave the screen (TODO: disable upper scroll limit and enable any scroll init)
@@ -339,12 +343,11 @@ SetupLevel12:
         jr nz,-
     
     ;init music
-    ld hl,brahms1_start
-    ld hl,demo_music_4_start
+    ld hl,lava_music_ch1_start
     call InitMusic1
-    ld hl,brahms2_start
+    ld hl,lava_music_ch2_start
     call InitMusic2
-    ld hl,brahms3_start
+    ld hl,lava_music_ch3_start
     call InitMusic3
 
     ;initialize scroll variables
@@ -397,6 +400,9 @@ SetupLevel12:
     
     ld hl,32
     ld (LevelMapWidth),hl
+    
+    ld a,1
+    ld (first_frame_on_end_status),a
 ret
 
 WaitForVBlankLava:
@@ -565,6 +571,28 @@ WaitForVBlankLava:
 ;==============================================================
 ; Data
 ;==============================================================
+
+;lava_music_ch3_start:
+;  .db $01,$94,$08,$07 $01,$ac,$0a,$07, $01,$94,$08,$07, $01,$7d,$0a,$07, $01,$68,$08,$07, $01,$53,$0a,$07, $01,$68,$08,$07, $01,$7d,$0a,$07
+;  .db $ff,$ff
+;lava_music_ch2_start:
+;  .db $01,$7d,$0a,$07, $01,$94,$08,$07, $01,$ac,$0a,$07, $01,$94,$08,$07, $01,$7d,$0a,$07, $01,$68,$08,$07, $01,$53,$0a,$07, $01,$68,$08,$07
+;  .db $ff,$ff
+;lava_music_ch1_start:
+;  .db $01,$ac,$0a,$07, $01,$94,$08,$07, $01,$7d,$0a,$07, $01,$68,$08,$07, $01,$53,$0a,$07, $01,$68,$08,$07, $01,$7d,$0a,$07, $01,$94,$08,$07
+;  .db $ff,$ff
+;  ;total 72.0 frames
+;lava_music_ch1_end:
+
+lava_music_ch3_start:
+  .db $00,$00,$08,$07
+lava_music_ch2_start:
+  .db $00,$00,$08,$07
+lava_music_ch1_start:
+  .db $01,$ac,$0a,$07, $01,$94,$08,$07, $01,$7d,$0a,$07, $01,$68,$08,$07, $01,$53,$0a,$07, $01,$68,$08,$07, $01,$7d,$0a,$07, $01,$94,$08,$07
+  .db $ff,$ff
+  ;total 72.0 frames
+lava_music_ch1_end:
 
 Level10Start:
 

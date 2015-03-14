@@ -93,12 +93,11 @@ SetupLevel4:
     
     
     ;init music
-    ld hl,brahms1_start
     ld hl,demo_music_4_start
     call InitMusic1
-    ld hl,brahms2_start
+    ld hl,nosound_start
     call InitMusic2
-    ld hl,brahms3_start
+    ld hl,nosound_start
     call InitMusic3
     
     ;variables initialization
@@ -144,6 +143,9 @@ SetupLevel4:
     ld l,3;line (tiles) in l
     ld a,1;have to write slowly
     call PrintText
+    
+    ld a,1
+    ld (first_frame_on_end_status),a
 ret
 
 
@@ -235,12 +237,11 @@ SetupLevel5:
     
     
     ;init music
-    ld hl,brahms1_start
     ld hl,demo_music_4_start
     call InitMusic1
-    ld hl,brahms2_start
+    ld hl,nosound_start
     call InitMusic2
-    ld hl,brahms3_start
+    ld hl,nosound_start
     call InitMusic3
     
     ;variables initialization
@@ -287,6 +288,9 @@ SetupLevel5:
     ld l,3;line (tiles) in l
     ld a,1;have to write slowly
     call PrintText
+    
+    ld a,1
+    ld (first_frame_on_end_status),a
 ret
 
 SetupLevel6:
@@ -376,12 +380,11 @@ SetupLevel6:
     
     
     ;init music
-    ld hl,brahms1_start
     ld hl,demo_music_4_start
     call InitMusic1
-    ld hl,brahms2_start
+    ld hl,nosound_start
     call InitMusic2
-    ld hl,brahms3_start
+    ld hl,nosound_start
     call InitMusic3
     
     ;variables initialization
@@ -424,6 +427,9 @@ SetupLevel6:
     
     ld de,160
     call SetHScrollTo
+    
+    ld a,1
+    ld (first_frame_on_end_status),a
 ret
 
 
@@ -514,12 +520,11 @@ SetupLevel7:
     
     
     ;init music
-    ld hl,brahms1_start
     ld hl,demo_music_4_start
     call InitMusic1
-    ld hl,brahms2_start
+    ld hl,nosound_start
     call InitMusic2
-    ld hl,brahms3_start
+    ld hl,nosound_start
     call InitMusic3
     
     ;initialize scroll variables
@@ -565,6 +570,9 @@ SetupLevel7:
     ld hl,DoLost
     ld (OnOutFunction),hl
     
+    
+    ld a,1
+    ld (first_frame_on_end_status),a
 ret
 
 
@@ -655,12 +663,11 @@ SetupLevel8:
     
     
     ;init music
-    ld hl,brahms1_start
     ld hl,demo_music_4_start
     call InitMusic1
-    ld hl,brahms2_start
+    ld hl,nosound_start
     call InitMusic2
-    ld hl,brahms3_start
+    ld hl,nosound_start
     call InitMusic3
     
     ;initialize scroll variables
@@ -705,6 +712,8 @@ SetupLevel8:
     ld hl,DoLost
     ld (OnOutFunction),hl
     
+    ld a,1
+    ld (first_frame_on_end_status),a
 ret
 
 
@@ -795,12 +804,11 @@ SetupLevel9:
     
     
     ;init music
-    ld hl,brahms1_start
     ld hl,demo_music_4_start
     call InitMusic1
-    ld hl,brahms2_start
+    ld hl,nosound_start
     call InitMusic2
-    ld hl,brahms3_start
+    ld hl,nosound_start
     call InitMusic3
     
     ;initialize scroll variables
@@ -844,6 +852,9 @@ SetupLevel9:
     ld hl,DoWon
     ld (OnOutFunction),hl
     
+    
+    ld a,1
+    ld (first_frame_on_end_status),a
 ret
 
 

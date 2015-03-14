@@ -19,6 +19,7 @@
   
   gameStatus               db    ; 0: start, 1: play, 2: lost, 3: landed left, 4: landed right, 5: out of screen
   gameStatusCnt            dw    ; counter of game status
+  first_frame_on_end_status db   ; 0: false, 1: true
 .ends
 
 

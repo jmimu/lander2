@@ -24,7 +24,7 @@ fps=60
 pseudo_frame_size=2 #to minimize memory used
 
 
-tempo=100
+tempo=120
 time_unit=60*fps/tempo/12 #number of frames for one 12th of a time
 
 
@@ -34,6 +34,7 @@ decay_duration=(12*time_unit)/10
 sustain_ratio=0.8
 release_duration=(12*time_unit)/4
 #(release is only if pause after the note)
+
 
 print("ADSR: ",attack_duration," ",decay_duration," ",sustain_ratio," ",release_duration)
 
@@ -60,8 +61,6 @@ class Note(object):
     self.tone=int(_SMS_norm[self.tone_str],16)
     self.duration=int(item[3:7],10)*time_unit
     self.volume=int(item[7],16)
-
-on pourrait commencer les notes tro courtes à 1/2 vulum
 
 """
   The melody is interpreted as an analog function, stored as (time,volume,note) 
@@ -104,9 +103,11 @@ class Melody(object):
           #print(note.duration,"<",attack_duration+decay_duration)
           #add first point of the note (volume 0)
           self.analog_function.append( (current_time,0,note.tone) )
+          ##add immediatly a second point with 50% volume
+          #self.analog_function.append( (current_time,note.volume*0.5,note.tone) )
           #add end of note
           current_time+=note.duration
-          self.analog_function.append( (current_time,note.volume*sustain_ratio,note.tone) )
+          self.analog_function.append( (current_time,note.volume,note.tone) )
           #if next is a pause, add release time
           if ((i<len(self.all_notes)-1) and (self.all_notes[i+1].tone_str=="Ppp")):
             if (self.all_notes[i+1].duration>release_duration):
@@ -242,13 +243,13 @@ if __name__ == '__main__':
   
   melody2=Melody("end_music_ch2",SMS_NTSC)
   melody2.interpret(test2)
-  print("melody1.length: ",melody2.length)
+  print("melody2.length: ",melody2.length)
   melody2.setLength(1150)
   melody2.sampling()
   
   melody3=Melody("end_music_ch3",SMS_NTSC)
   melody3.interpret(test3)
-  print("melody1.length: ",melody3.length)
+  print("melody3.length: ",melody3.length)
   melody3.setLength(1150)
   melody3.sampling()
   
@@ -273,5 +274,11 @@ if __name__ == '__main__':
   plt.plot(t, n, '-')
   plt.bar(t2, v2,pseudo_frame_size,color='r',edgecolor='r')
   plt.show()
-    
-
+  
+  
+  melody4=Melody("lost_music_ch1",SMS_NTSC)
+  melody4.interpret("c2#0006A c2_0006A b1_0035A")
+  print("melody4.length: ",melody4.length)
+  melody4.setLength(melody4.length)
+  melody4.sampling()
+  print(melody4.toASM())

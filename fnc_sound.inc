@@ -44,6 +44,7 @@
 ;3 bytes/tone : tone (16b, 10 used), duration (8b, in frames), volume (8b)
 ; tone $00 $00 for pause
 ; tone $FF $FF for end !
+; tone $FF $FE for end without loop
 ;example :
 ;Music1_start:
 ;.db $00,$FE,60,$00,$E2,60,$00,$D5,240,$00,$00,60,$FF,$FF,00  ;A 1s,B 1s,C 4s, pause 1s, end
@@ -223,6 +224,12 @@ PlayMusic1:
   push af
   push bc
   push hl
+    ;if music1_start_ptr==0, do nothing
+    ld hl,(music1_start_ptr)
+    ld a,h
+    or l
+    jp z,PlayMusic1_end
+  
     ;check is current tone is still played
     ld a,(music1_tone_duration)
     dec a
@@ -257,12 +264,20 @@ PlayMusic1:
     
     inc bc
     ld a,(bc)
-    cp $FF
-    jr nz,+;(music1_current_ptr+1) != $ff, not end of track
+    cp $FE
+    jr c,+;(music1_current_ptr+1) != $ff, not end of track
     
     ;have to loop music
     ld hl,(music1_start_ptr)
     ld (music1_current_ptr),hl ;return to begin of track
+    
+    cp $FE ;if $FF, $FE, end of music
+    jr nz,+
+      ld hl,0
+      ld (music1_start_ptr),hl
+      ld c,0;channel in c*%100000(max 3*%100000)
+      call CutOneChannel
+      jp PlayMusic1_end
     
     +:
     
@@ -304,6 +319,8 @@ PlayMusic1:
     ;ld a,%1000 ;volume
     call EnableChannel
     call PlayTone
+    
+    PlayMusic1_end:
   pop hl
   pop bc
   pop af
@@ -313,6 +330,12 @@ PlayMusic2:
   push af
   push bc
   push hl
+    ;if music2_start_ptr==0, do nothing
+    ld hl,(music2_start_ptr)
+    ld a,h
+    or l
+    jp z,PlayMusic2_end
+  
     ;check is current tone is still played
     ld a,(music2_tone_duration)
     dec a
@@ -340,12 +363,21 @@ PlayMusic2:
     
     inc bc
     ld a,(bc)
-    cp $FF
-    jr nz,+;(music2_current_ptr+1) != $ff, not end of track
+    cp $FE
+    jr c,+;(music2_current_ptr+1) != $ff, not end of track
     
     ;have to loop music
     ld hl,(music2_start_ptr)
     ld (music2_current_ptr),hl ;return to begin of track
+    
+    cp $FE ;if $FF, $FE, end of music
+    jr nz,+
+      ld hl,0
+      ld (music2_start_ptr),hl
+      ;stop sound
+      ld c,1*%100000;channel in c*%100000(max 2*%100000)
+      call CutOneChannel
+      jp PlayMusic2_end
     
     +:
     
@@ -373,7 +405,7 @@ PlayMusic2:
     cp $00
     jr nz,+;(music2_current_ptr+1) != 0, not pause
     ;this is a pause, so cut sound
-    ld c,%100000;channel in c*%100000(max 3*%100000)
+    ld c,1*%100000;channel in c*%100000(max 3*%100000)
     call CutOneChannel
     pop hl
     pop bc
@@ -383,9 +415,11 @@ PlayMusic2:
     ;get volume
     inc bc
     ld a,(bc)
-    ld c,%100000;channel in c*%100000(max 3*%100000)
+    ld c,1*%100000;channel in c*%100000(max 3*%100000)
     call EnableChannel
     call PlayTone
+    
+    PlayMusic2_end:
   pop hl
   pop bc
   pop af
@@ -395,6 +429,12 @@ PlayMusic3:
   push af
   push bc
   push hl
+    ;if music3_start_ptr==0, do nothing
+    ld hl,(music3_start_ptr)
+    ld a,h
+    or l
+    jp z,PlayMusic3_end
+    
     ;check is current tone is still played
     ld a,(music3_tone_duration)
     dec a
@@ -422,12 +462,20 @@ PlayMusic3:
     
     inc bc
     ld a,(bc)
-    cp $FF
-    jr nz,+;(music3_current_ptr+1) != $ff, not end of track
+    cp $FE
+    jr c,+;(music3_current_ptr+1) != $ff, not end of track
     
     ;have to loop music
     ld hl,(music3_start_ptr)
     ld (music3_current_ptr),hl ;return to begin of track
+    
+    cp $FE ;if $FF, $FE, end of music
+    jr nz,+
+      ld hl,0
+      ld (music3_start_ptr),hl
+      ld c,2*%100000;channel in c*%100000(max 3*%100000)
+      call CutOneChannel
+      jp PlayMusic3_end
     
     +:
     
@@ -455,7 +503,7 @@ PlayMusic3:
     cp $00
     jr nz,+;(music3_current_ptr+1) != 0, not pause
     ;this is a pause, so cut sound
-    ld c,%1000000;channel in c*%100000(max 3*%100000)
+    ld c,2*%100000;channel in c*%100000(max 3*%100000)
     call CutOneChannel
     pop hl
     pop bc
@@ -465,9 +513,11 @@ PlayMusic3:
     ;get volume
     inc bc
     ld a,(bc)
-    ld c,%1000000;channel in c*%100000(max 3*%100000)
+    ld c,2*%100000;channel in c*%100000(max 3*%100000)
     call EnableChannel
     call PlayTone
+    
+    PlayMusic3_end:
   pop hl
   pop bc
   pop af

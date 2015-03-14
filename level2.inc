@@ -78,12 +78,11 @@ SetupLevel2:
     
     
     ;init music
-    ld hl,brahms2_start
     ld hl,demo_music_4_start
     call InitMusic1
-    ld hl,brahms2_start
+    ld hl,nosound_start
     call InitMusic2
-    ld hl,brahms3_start
+    ld hl,nosound_start
     call InitMusic3
     
     ;variables initialization
@@ -130,6 +129,9 @@ SetupLevel2:
     
     ld hl,32
     ld (LevelMapWidth),hl
+    
+    ld a,1
+    ld (first_frame_on_end_status),a
 ret
 
 
