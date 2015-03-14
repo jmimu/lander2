@@ -47,10 +47,10 @@
 ;==============================================================
 ;demo
 .define forest_1st_tile $2
-.define forest_scroll_1st_tile_from_forest_start $40
+.define forest_scroll_1st_tile_from_forest_start $54
 .define forest_anim_steps $8
-.define bike_tile_number $20
-.define bike_pedal_tile_number $32
+.define bike_tile_number $3C
+.define bike_pedal_tile_number $4E
 .define bike_pedal_anim_steps $4
 
 ;game
@@ -177,11 +177,11 @@ main:
     ;==============================================================
     call initVDP
 
-    ;call InitializeJmimu
+    call InitializeJmimu
     
     ;run demo
-    ;call InitializeDemo
-    ;call RunDemo
+    call InitializeDemo
+    call RunDemo
 
     ; Turn screen off
     ld a,%10100000
@@ -227,21 +227,23 @@ IsButtonPressed:
 .include "data_demo.inc"
 .ends
 
+
+.include "level2.inc"
+.include "level10.inc"
+
 .include "level1.inc"
-.include "level5.inc"
-
-
 
 
 ;we have to skip the $7ff0-$7fff area
 .org $8000
+
+.include "level5.inc"
+
 ;.bank 2 slot 0
 .section "assets_game" force
 .include "data_game.inc"
 .ends
 
-.include "level2.inc"
-.include "level10.inc"
 
 
 

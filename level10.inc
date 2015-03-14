@@ -5,8 +5,10 @@ Level10Message:
 Level11Message:
  .db "EXPLORE THE CRATER!",0
 
-
-
+Level12Message:
+ .db "E A R T H Q U A K E ! ! !",0
+Level12Message2:
+ .db "WAIT, THIS IS NOT EARTH.",0
 
 SetupLevel10:
     ;==============================================================

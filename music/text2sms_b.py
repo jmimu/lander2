@@ -61,6 +61,7 @@ class Note(object):
     self.duration=int(item[3:7],10)*time_unit
     self.volume=int(item[7],16)
 
+on pourrait commencer les notes tro courtes à 1/2 vulum
 
 """
   The melody is interpreted as an analog function, stored as (time,volume,note) 
