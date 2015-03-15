@@ -1,3 +1,4 @@
+
 ShowMenu:
     ;disable interrupts and turn off screen before writing to it. Will it fix tiles issues?
     di  ; disable interrupts
@@ -85,6 +86,33 @@ ShowMenu:
     ld (tiles_vram_used),hl
     
     ;==============================================================
+    ; Load sprites tiles
+    ;==============================================================
+    ; 1. Set VRAM write address to tile index 0
+    ; by outputting $4000 ORed with (tiles_vram_used)
+    ld a,l
+    out ($bf),a
+    ld a,h
+    add a,$40
+    out ($bf),a
+    ; 2. Output tile data
+    ld bc,Tiles_sprites_End-Tiles_sprites_Start  ; Counter for number of bytes to write
+    ld hl,Tiles_sprites_Start              ; Location of tile data
+    
+    -:
+        ld a,(hl)        ; Get data byte
+        out ($be),a
+        inc hl           ; Add one to hl so it points to the next data byte
+        dec bc
+        ld a,b
+        or c
+        jp nz,-
+    ld hl,(tiles_vram_used)
+    ld bc,Tiles_sprites_End-Tiles_sprites_Start
+    add hl,bc
+    ld (tiles_vram_used),hl
+    
+    ;==============================================================
     ; Load title tiles
     ;==============================================================
     ; 1. Set VRAM write address to tile index 0
@@ -110,6 +138,8 @@ ShowMenu:
     ld bc,Title_Tiles_End-Title_Tiles_Start
     add hl,bc
     ld (tiles_vram_used),hl
+    
+
     
     
     ;==============================================================
@@ -195,6 +225,19 @@ ShowMenu:
 
     ei  ; enable interrupts
     
+    ;initialize variables
+    xor a
+    ld (current_level),a ;if current_level>0, quit menu
+    ld a,1
+    ld (difficulty_level),a
+    
+    xor a
+    ld (refuel),a;if refuel>0, an input has already been pressed (TODO)
+    
+    ld hl,$3B00
+    ld (posX),hl
+    ld hl,$7000
+    ld (posY),hl
     
     ;how the color loop works :
     ; changes colors 1-7 with Title_Colors_start
@@ -225,23 +268,113 @@ ShowMenu:
       
       inc de
       ld a,e
-      cp 14
+      cp 16
       jr nz,+
         ld e,0
       +:
       
+      call ResetSprites
+      
+      ;draw rocket sprites
+      ld bc,(posX)    
+      ld h,b;x in h
+      ld bc,(posY)    
+      ld l,b;y in l
+      call DrawRocket
+      
+      call SetLastSprite
       
       
+      call Menu_inputs
       call WaitForVBlankSimple
       call Demo_PSGMOD_Play
+
+      ;call Menu_inputs
       call WaitForVBlankSimple
       call Demo_PSGMOD_Play
+
+      ;call Menu_inputs
       call WaitForVBlankSimple
       call Demo_PSGMOD_Play
+
+      ;call Menu_inputs
       call WaitForVBlankSimple
       call Demo_PSGMOD_Play
-      jp Title_loop
+      
+      
+      ld a,(current_level)
+      cp 0
+      jp z,Title_loop
     ret
+
+Menu_inputs:
+   push af
+        in a,($dc)
+        ld (buttons),a
+        and %00010000
+        cp  %00000000
+        jr nz,+
+        call Menu_OnButton12
+    +:  
+        ld a,(buttons)
+        and %00100000
+        cp  %00000000
+        jr nz,+
+        call Menu_OnButton12
+    +:  
+        ld a,(buttons)
+        and %00000100
+        cp  %00000000
+        jr nz,+
+        call Menu_OnButtonLeft
+    +:  
+        ld a,(buttons)
+        and %00001000
+        cp  %00000000
+        jr nz,+
+        call Menu_OnButtonRight
+    +:
+    pop af
+  ret
+
+Menu_OnButton12:
+    ld a,1
+    ld (current_level),a
+  ret
+
+Menu_OnButtonRight:
+    ;check if difficulty_level at max
+    ld a,(difficulty_level)
+    cp 5
+    jr z,Menu_OnButtonRight_end
+    
+    ;increase difficulty
+    inc a
+    ld (difficulty_level),a
+    
+    ld bc,$2000
+    ld hl,(posX)
+    add hl,bc
+    ld (posX),hl
+  Menu_OnButtonRight_end:
+  ret
+
+Menu_OnButtonLeft:
+    ;check if difficulty_level at min
+    ld a,(difficulty_level)
+    cp 1
+    jr z,Menu_OnButtonLeft_end
+    
+    ;decrease difficulty
+    dec a
+    ld (difficulty_level),a
+    
+    ld bc,-$2000
+    ld hl,(posX)
+    add hl,bc
+    ld (posX),hl
+  Menu_OnButtonLeft_end:
+  ret
 
 ;TODO:
 ; - show menu
@@ -258,9 +391,6 @@ Menu_Text_2:
  .db "1 - 2 - 3 - 4 - 5",0
 
 Title_Colors_start:
-;.db $03,$03,$03,$03,$02,$02,$02,$02,$01,$01,$01,$01,$00,$00,$00,$00,$01,$01,$01,$01,$02,$02,$02,$02
-;.db $03,$03,$03,$03,$02,$02,$02,$02,$01,$01,$01,$01,$00,$00,$00,$00,$01,$01,$01,$01,$02,$02,$02,$02
-
 .db %00001001,%00001001,
 .db %00011001,%00011001,
 .db %00101001,%00101001,
@@ -280,7 +410,7 @@ Title_Colors_start:
 
 Title_Palette_Start:
 .db %00000000,$03,$02,$02,$01,$01,$00,$00,$06,$0b,$01,$3d,$38,$0c,$08,$3c
-.db $3f,$03,$02,$02,$01,$01,$00,$00,$3c,$0c,$0f,$08,$3a,$36,$01,$0a
+.db $3b,$3f,%00000100,$20,$38,$01,$02,$03,$15,$2a,$1f,$2f,$3a,$36,$01,$0a
 Title_Palette_End:
 
 Title_Tiles_Start:
@@ -316,8 +446,8 @@ Title_Tiles_Start:
 Title_Tiles_End:
 
 Title_TileMap_Row1_Start:
-.dw  1+94,  0   ,  0   ,  0   ,  0   ,  0   ,  0   ,  1+94,  0   ,  0   ,  0   ,  2+94,  3+94
+.dw  1+134,  0   ,  0   ,  0   ,  0   ,  0   ,  0   ,  1+134,  0   ,  0   ,  0   ,  2+134,  3+134
 Title_TileMap_Row2_Start:
-.dw  4+94,  5+94,  6+94,  7+94,  8+94,  9+94, 10+94, 11+94, 12+94, 13+94, 14+94, 15+94, 16+94
+.dw  4+134,  5+134,  6+134,  7+134,  8+134,  9+134, 10+134, 11+134, 12+134, 13+134, 14+134, 15+134, 16+134
 Title_TileMap_Row3_Start:
-.dw 17+94, 18+94, 19+94, 20+94, 21+94, 22+94, 23+94, 24+94, 25+94, 26+94, 27+94, 28+94, 29+94
+.dw 17+134, 18+134, 19+134, 20+134, 21+134, 22+134, 23+134, 24+134, 25+134, 26+134, 27+134, 28+134, 29+134

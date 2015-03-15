@@ -396,10 +396,13 @@ VScrollManager:
   pop af
 ret
 
-;difficulty in b (1 to 5)
+;use difficulty_level (1 to 5)
 SetDifficulty:
   push af
   push hl
+    ld a,(difficulty_level)
+    ld b,a
+    
     ;use difficulty 0 for debugging
     ld a,b
     cp 0
