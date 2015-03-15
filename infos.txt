@@ -20,6 +20,26 @@ when getting out, enable vscroll up out of memory with this line:
 ;remove this line to enable out of memory
 stop collisions and stop fuel counter, end of game when hitting y=0
 
+
+--------------------------------------------------------------------------------
+try to use only 32k ? currentyl using 44k (31k of data, 13k of code)
+memory usage (decimal) :
+1504 Tiles_jmimu $3910-3330
+1536 jmimu_TilemapStart $3f10-3910
+1536 Title_TilemapStart $4530-3f30
+1536 Forest_Tilemap_Start $4b50-4550
+1096 demo4_music $5aec-56a4 
+928 Title_Tiles_Start $5f34-5b94
+1536 Tilemap2Start $736e-6d6e
+3072 Tiles_bg10_Start $187a-0c7a
+4864 Tilemap10Start $2b9a-189a
+1536 Tilemap1Start $32e0-2ce0
+7680 Tilemap5Start $a37f-857f
+2554 end_music $ad79-a37f
+802 demo_music $b131-ae0f
+760 FontData_Start $b9f9-b701
+
+
 --------------------------------------------------------------------------------
 
 collisions:
