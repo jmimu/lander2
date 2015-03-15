@@ -18,7 +18,7 @@ MIDI_JM={
 112:"e7_",113:"f7_",114:"f7#",115:"g7_",116:"g7#",117:"a7_",118:"a7#",119:"b7_"}
 
 #TODO: support long pauses, read tempo, support multiple notes at the same time
-#TODO: support pauses at the end of track (longest track)
+#TODO: support pauses at the beginning of track
 
 #new durations : record 4 chars of 12th of beat, in decimal
 #~ durations={"q":3,"t":4,"h":6,"1":12,"p":18,"2":24,"3":36,"4":48}
@@ -216,9 +216,13 @@ if __name__ == '__main__':
     
 
 
-    music=MidiMusic("lander2_lost.mid",0,"6")
+    music=MidiMusic("lander2_intro4.mid",0,"a")
     #print music.pattern
     text_track0=music.convertToJMMusic()
-    
+
+    music=MidiMusic("lander2_intro4.mid",1,"a")
+    #print music.pattern
+    text_track1=music.convertToJMMusic()
     print text_track0
+    print text_track1
 

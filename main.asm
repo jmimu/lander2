@@ -177,7 +177,7 @@ main:
     ;==============================================================
     call initVDP
 
-    ;call InitializeJmimu
+    call InitializeJmimu
     
     ;run demo
     ;call InitializeDemo
@@ -194,6 +194,8 @@ main:
     out ($bf),a
     ld a,$81
     out ($bf),a
+    
+    call ShowMenu
     
     ;run game
     jp StartGame
@@ -225,6 +227,7 @@ IsButtonPressed:
 .section "assets_demo" free
 .include "data_jmimu.inc"
 .include "data_demo.inc"
+.include "menu.inc"
 .ends
 
 

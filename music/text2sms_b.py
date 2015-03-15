@@ -233,7 +233,7 @@ if __name__ == '__main__':
   
   test1="f3_0017A f3_0006A a3_0012A f3_0012A e3_0023A a3_0006A Ppp0017F d3_0017A d3_0006A f3_0012A d3_0012A c3_0023A Ppp0023F a2#0017A a2#0006A c3_0012A a2#0012A a2_0023A f3_0023A e3_0017A e3_0006A f3_0012A g3_0012A f3_0023A "
   test2="f4_00067 a4_00067 c5_00067 a4_00067 f4_00067 a4_00067 c5_00067 a4_00067 e4_00067 a4_00067 c5_00067 a4_00067 e4_00067 a4_00067 c5_00067 a4_00067 d4_00067 f4_00067 a4_00067 f4_00067 d4_00067 f4_00067 a4_00067 f4_00067 c4_00067 f4_00067 a4_00067 f4_00067 c4_00067 f4_00067 a4_00067 f4_00067 a3#00067 d4_00067 f4_00067 d4_00067 a3#00067 d4_00067 f4_00067 d4_00067 a3_00067 c4_00067 f4_00067 c4_00067 a3_00067 c4_00067 f4_00067 c4_00067 g3_00067 c4_00067 f4_00067 c4_00067 g3_00067 c4_00067 f4_00067 c4_00067 f3_00067 a3_00067 c4_00067 f4_00067 a4_00067 c5_00067 f5_00117 "
-  test3="c5_00037 d5_00037 c5_00037 Ppp0037F c5_00037 d5_00037 c5_00037 Ppp0037F a4_00037 a4#00037 a4_00037 Ppp0037F a4_00037 a4#00037 a4_00037 Ppp0037F a4_00037 a4#00037 a4_00037 Ppp0037F f4_00037 g4_00037 f4_00037 Ppp0037F c5_00037 d5_00037 c5_00037 "
+  test3="Ppp0018F c5_00037 d5_00037 c5_00037 Ppp0037F c5_00037 d5_00037 c5_00037 Ppp0037F a4_00037 a4#00037 a4_00037 Ppp0037F a4_00037 a4#00037 a4_00037 Ppp0037F a4_00037 a4#00037 a4_00037 Ppp0037F f4_00037 g4_00037 f4_00037 Ppp0037F c5_00037 d5_00037 c5_00037 "
   
   melody1=Melody("end_music_ch1",SMS_NTSC)
   melody1.interpret(test1)
@@ -276,9 +276,23 @@ if __name__ == '__main__':
   plt.show()
   
   
-  melody4=Melody("lost_music_ch1",SMS_NTSC)
-  melody4.interpret("c2#0006A c2_0006A b1_0035A")
+  melody4=Melody("demo4_music_ch1",SMS_NTSC)
+  melody4.interpret("e3_0011a g3_0006a f3_0017a e3_0012a a3_0006a g3_0017a e3_0012a g3_0006a f3_0017a a3_0012a g3_0006a e3_0017a c3_0017a d3_0040a Ppp0012F e3_0012a g3_0006a f3_0017a e3_0012a a3_0006a g3_0017a e3_0012a g3_0006a f3_0017a a3_0012a g3_0006a e3_0017a d3_0017a c3_0040a Ppp0012F c3_0006a d3_0006a e3_0006a f3_0006a g3_0006a a3_0006a b3_0035a c4_0011a Ppp0012F c3_0011a ")
   print("melody4.length: ",melody4.length)
-  melody4.setLength(melody4.length)
+  melody4.setLength(1310)
   melody4.sampling()
+  
+  melody5=Melody("demo4_music_ch2",SMS_NTSC)
+  melody5.interpret("a2_0035a g2_0035a a2_0035a b2_0035a g2_0058a Ppp0012F a2_0035a g2_0035a a2_0035a b2_0035a g2_0058a ")
+  print("melody5.length: ",melody5.length)
+  melody5.setLength(1310)
+  melody5.sampling()
+
   print(melody4.toASM())
+  print(melody5.toASM())
+
+
+
+
+
+

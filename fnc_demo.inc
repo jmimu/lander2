@@ -13,11 +13,11 @@ InitializeJmimu:
     out ($bf),a
 
     ;music init
-    ld hl,demo_music_ch1_start;data1 start in hl
+    ld hl,jmimu_music_ch1_start;data1 start in hl
     call InitMusic1
-    ld hl,demo_music_ch2_start;data2 start in hl
+    ld hl,jmimu_music_ch2_start;data2 start in hl
     call InitMusic2
-    ld hl,demo_music_ch3_start;data3 start in hl
+    ld hl,0;data3 start in hl
     call InitMusic3
 
     ;disable scrolling
@@ -225,13 +225,13 @@ InitializeJmimu:
       dec ixl
       call WaitForVBlankSimple
       call Demo_PSGMOD_Play
-      call Demo_PSGMOD_Play
+      ;call Demo_PSGMOD_Play
       call WaitForVBlankSimple
       call Demo_PSGMOD_Play
-      call Demo_PSGMOD_Play
+      ;call Demo_PSGMOD_Play
       call WaitForVBlankSimple
       call Demo_PSGMOD_Play
-      call Demo_PSGMOD_Play
+      ;call Demo_PSGMOD_Play
       jr nz,-
       
 
@@ -258,6 +258,14 @@ InitializeDemo:
     out ($bf),a
     ld a,%10001000
     out ($bf),a
+    
+    ;music init
+    ld hl,demo4_music_ch1_start;data1 start in hl
+    call InitMusic1
+    ld hl,demo4_music_ch2_start;data2 start in hl
+    call InitMusic2
+    ld hl,0;data3 start in hl
+    call InitMusic3
 
     ;========================== TITLE ==============================
     ;==============================================================
