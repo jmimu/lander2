@@ -276,7 +276,9 @@ DoLost:
       ld (first_frame_on_end_status),a
     +:
 
-    
+    ;stop lava
+    xor a
+    ld (YLava_speed),a
     
     ;read button 1
     in a,($dc)

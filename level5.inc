@@ -6,6 +6,12 @@ Level4Message:
 Level5Message:
  .db "GO RIGHT TO NEXT LANDING ZONE",0
 
+Level6Message:
+ .db "CONTINUE TO THE RIGHT",0
+
+Level9Message:
+ .db "TAKE OFF TO NEXT LEVEL",0
+
 SetupLevel4:
     ;==============================================================
     ; Load palette
@@ -436,6 +442,13 @@ SetupLevel6:
     
     ld a,1
     ld (first_frame_on_end_status),a
+    
+    ;show level message
+    ld de,Level6Message;text pointer in de
+    ld c,1;col (tiles) in c
+    ld l,3;line (tiles) in l
+    ld a,1;have to write slowly
+    call PrintText
 ret
 
 
@@ -581,6 +594,13 @@ SetupLevel7:
     
     ld a,1
     ld (first_frame_on_end_status),a
+    
+    ;show level message
+    ld de,Level6Message;text pointer in de
+    ld c,1;col (tiles) in c
+    ld l,3;line (tiles) in l
+    ld a,1;have to write slowly
+    call PrintText
 ret
 
 
@@ -724,6 +744,13 @@ SetupLevel8:
     
     ld a,1
     ld (first_frame_on_end_status),a
+    
+    ;show level message
+    ld de,Level6Message;text pointer in de
+    ld c,1;col (tiles) in c
+    ld l,3;line (tiles) in l
+    ld a,1;have to write slowly
+    call PrintText
 ret
 
 
@@ -867,6 +894,13 @@ SetupLevel9:
     
     ld a,1
     ld (first_frame_on_end_status),a
+    
+    ;show level message
+    ld de,Level9Message;text pointer in de
+    ld c,1;col (tiles) in c
+    ld l,3;line (tiles) in l
+    ld a,1;have to write slowly
+    call PrintText
 ret
 
 
