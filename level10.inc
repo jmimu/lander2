@@ -391,10 +391,12 @@ SetupLevel12:
     ld (rocket_status),a
     
     
-    ld hl,600
+    ld hl,620
     ld (YLava),hl
     xor a
-    ld (YLava_count),a
+    ld (YLava_decimal),a
+    ld a,$10
+    ld (YLava_speed),a
 
     ;functers
     ld hl,DoStartLava
@@ -610,8 +612,6 @@ DoStartLava:
       ld l,20;line (tiles) in l
       ld a,1;have to write slowly
       call PrintText
-      ld hl,600
-      ld (YLava),hl
   +:
     ld hl,(gameStatusCnt)
     ld a,h
@@ -627,8 +627,6 @@ DoStartLava:
       ld l,20;line (tiles) in l
       ld a,1;have to write slowly
       call PrintText
-      ld hl,600
-      ld (YLava),hl
   +:
     ld hl,(gameStatusCnt)
     ld a,h
@@ -638,8 +636,6 @@ DoStartLava:
       ld l,$50;y in l
       ld d, 18;n in d
       call SpriteSet8x8
-      ld hl,600
-      ld (YLava),hl
   +:
     ld hl,(gameStatusCnt)
     ld a,h

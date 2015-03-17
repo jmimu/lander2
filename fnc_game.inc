@@ -10,7 +10,9 @@
   NextMapDataStart         dw    ; pointer to tilemap new part to load due to scrolling (in bytes)
   LevelMapWidth            dw    ; tilemap width start (in tiles)
   YLava                    dw    ; total Y lava in level (in pixels)
-  YLava_count              db    ; Y lava increase counter
+  YLava_decimal            db    ; Y lava decimal part (1/256 pixels)
+  YLava_speed              db    ; Y lava increase counter
+  YLava_add_speed          db    ; YLava_speed increase counter
   
   OnStartFunction          dw    ; pointer to function called when starting level
   OnLandRightFunction      dw    ; pointer to function called when touching the ground
@@ -409,8 +411,8 @@ SetDifficulty:
     cp 0
     jr nz,+
     ;difficulty 0
-    ld hl,-$10;0
-    ld (fuel_use),hl;$-70
+    ld hl,-$1;0
+    ld (fuel_use),hl;$-7
     ld hl,$60
     ld (speed_pos_tolerance),hl;$40
     ld hl,-$60
@@ -421,14 +423,18 @@ SetDifficulty:
     ld (refuel),a;$0
     ld a,0
     ld (big_rocket),a;$1
+    
+    ld a,6
+    ld (YLava_add_speed),a
+    
     jp SetDifficulty_end
   +:
     ld a,b
     cp 1
     jr nz,+
     ;difficulty 1
-    ld hl,$-10
-    ld (fuel_use),hl;$-70
+    ld hl,$-1
+    ld (fuel_use),hl;$-7
     ld hl,$60
     ld (speed_pos_tolerance),hl;$40
     ld hl,-$60
@@ -439,14 +445,18 @@ SetDifficulty:
     ld (refuel),a;$0
     ld a,0
     ld (big_rocket),a;$1
+    
+    ld a,8
+    ld (YLava_add_speed),a
+    
     jp SetDifficulty_end
   +:
     ld a,b
     cp 2
     jr nz,+
     ;difficulty 2
-    ld hl,$-20
-    ld (fuel_use),hl;$-70
+    ld hl,$-2
+    ld (fuel_use),hl;$-7
     ld hl,$60
     ld (speed_pos_tolerance),hl;$40
     ld hl,-$60
@@ -457,14 +467,18 @@ SetDifficulty:
     ld (refuel),a;$0
     ld a,0
     ld (big_rocket),a;$1
-    jr SetDifficulty_end
+    
+    ld a,10
+    ld (YLava_add_speed),a
+    
+    jp SetDifficulty_end
   +:
     ld a,b
     cp 3
     jr nz,+
     ;difficulty 3
-    ld hl,$-40
-    ld (fuel_use),hl;$-70
+    ld hl,$-4
+    ld (fuel_use),hl;$-7
     ld hl,$50
     ld (speed_pos_tolerance),hl;$40
     ld hl,-$50
@@ -475,14 +489,18 @@ SetDifficulty:
     ld (refuel),a;$0
     ld a,0
     ld (big_rocket),a;$1
-    jr SetDifficulty_end
+    
+    ld a,12
+    ld (YLava_add_speed),a
+    
+    jp SetDifficulty_end
   +:
     ld a,b
     cp 4
     jr nz,+
     ;difficulty 4
-    ld hl,$-50
-    ld (fuel_use),hl;$-70
+    ld hl,$-5
+    ld (fuel_use),hl;$-7
     ld hl,$50
     ld (speed_pos_tolerance),hl;$40
     ld hl,-$50
@@ -493,14 +511,18 @@ SetDifficulty:
     ld (refuel),a;$0
     ld a,1
     ld (big_rocket),a;$1
-    jr SetDifficulty_end
+    
+    ld a,14
+    ld (YLava_add_speed),a
+    
+    jp SetDifficulty_end
   +:
     ld a,b
     cp 5
     jr nz,SetDifficulty_end
     ;difficulty 5
-    ld hl,$-70
-    ld (fuel_use),hl;$-70
+    ld hl,$-7
+    ld (fuel_use),hl;$-7
     ld hl,$40
     ld (speed_pos_tolerance),hl;$40
     ld hl,-$40
@@ -511,6 +533,10 @@ SetDifficulty:
     ld (refuel),a;$0  
     ld a,1
     ld (big_rocket),a;$1
+    
+    ld a,16
+    ld (YLava_add_speed),a
+    
   SetDifficulty_end:
   pop hl
   pop af

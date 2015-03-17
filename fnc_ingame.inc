@@ -492,17 +492,34 @@ UpdatePalette:
    push hl
    
    ;update lava position
-   ld a,(YLava_count)
-   inc a
-   ld hl,(YLava)
-   dec hl
-   cp 3
-   jr nz,+
-   xor a
-   inc hl
+   ld a,(YLava_speed)
+   ld b,a
+   ld a,(YLava_decimal)
+   add a,b
+   ld (YLava_decimal),a
+   cp $60
+   jr c,+
+     xor a
+     ld (YLava_decimal),a
+     ;has to change lava pos
+     ld hl,(YLava)
+     dec hl
+     ld (YLava),hl
   +:
-   ld (YLava_count),a
-   ld (YLava),hl
+    
+    ;on certain y value, lava sepped increases
+    ld hl,(YLava)
+    ld a,l
+    and %01111110
+    cp  %00100000
+    jr nz,+
+      ld a,(YLava_add_speed)
+      ld b,a
+      ld a,(YLava_speed)
+      add a,b
+      ld (YLava_speed),a
+  +:
+  
    
     ;update star color
     ld hl,(star_color1)
