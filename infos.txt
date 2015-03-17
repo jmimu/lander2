@@ -1,5 +1,6 @@
 Minimal to finish game:
- * finish demo
+ * add background at start of level 4
+ * fix lost music
  * add time before level start
  * fix lava speed, bug and collision
  * add lives

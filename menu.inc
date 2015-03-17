@@ -216,6 +216,14 @@ ShowMenu:
     ld de,Menu_Text_2;text pointer in de
     ld a,1;have to write slowly
     call PrintText
+    
+    ;music init
+    ;ld hl,demo4_music_ch1_start;data1 start in hl
+    ;call InitMusic1
+    ;ld hl,demo4_music_ch2_start;data2 start in hl
+    ;call InitMusic2
+    ;ld hl,0;data3 start in hl
+    ;call InitMusic3
 
     ; Turn screen on
     ld a,%11100000

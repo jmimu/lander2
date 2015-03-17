@@ -441,7 +441,7 @@ InitializeDemo:
     ld hl,0
     ld (pedal_anim_step),hl
     
-    ld hl,$4000
+    ld hl,$1000
     ld (posX),hl
     ld hl,$8800
     ld (posY),hl
@@ -470,11 +470,12 @@ RunDemo:
     ld hl,(demo_step)
     ld c,(hl)
     ld b,0 ;x-speed in bc
-    ;if c>128, this is negative speed
+    ;if c>128, speed=0 (special value)
     ld a,c
     cp $80
     jr c,+
-      ld b,$ff
+      ld c,0
+      ld b,0
   +:
     
     ld hl,(posX)
