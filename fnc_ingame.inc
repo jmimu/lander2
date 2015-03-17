@@ -178,7 +178,7 @@ GameStatusUpdate:
 ;-------------------------------------------------------------------------------
 DoStart:
     ld hl,(gameStatusCnt)
-    ld bc,$8 ;increment gameStatusCnt
+    ld bc,$6 ;increment gameStatusCnt
     add hl,bc
     ld (gameStatusCnt),hl
     
@@ -507,11 +507,11 @@ UpdatePalette:
      ld (YLava),hl
   +:
     
-    ;on certain y value, lava sepped increases
+    ;on certain y value, lava speed increases
     ld hl,(YLava)
     ld a,l
-    and %01111110
-    cp  %00100000
+    and %00111111
+    cp  %00000000
     jr nz,+
       ld a,(YLava_add_speed)
       ld b,a
@@ -519,6 +519,18 @@ UpdatePalette:
       add a,b
       ld (YLava_speed),a
   +:
+    ;if lava too high, it stops
+    ld hl,(YLava)
+    ld a,h
+    cp 0
+    jr nz,+
+      ld a,l
+      cp 0
+      jr nz,+
+        xor a
+        ld (YLava_speed),a
+  +:
+    
   
    
     ;update star color

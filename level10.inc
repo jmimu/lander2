@@ -391,11 +391,11 @@ SetupLevel12:
     ld (rocket_status),a
     
     
-    ld hl,620
+    ld hl,600
     ld (YLava),hl
     xor a
     ld (YLava_decimal),a
-    ld a,$10
+    ld a,08
     ld (YLava_speed),a
 
     ;functers
@@ -583,13 +583,14 @@ WaitForVBlankLava:
 ;-------------------------------------------------------------------------------
 DoStartLava:
     ld hl,(gameStatusCnt)
-    ld bc,$4 ;increment gameStatusCnt
+    ld bc,$6 ;increment gameStatusCnt
     add hl,bc
     ld (gameStatusCnt),hl
 
     
     ;screen shaking
     ld a,l
+    srl a
     srl a
     srl a
     and %00000011

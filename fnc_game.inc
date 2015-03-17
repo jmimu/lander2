@@ -424,7 +424,7 @@ SetDifficulty:
     ld a,0
     ld (big_rocket),a;$1
     
-    ld a,6
+    ld a,2
     ld (YLava_add_speed),a
     
     jp SetDifficulty_end
@@ -446,7 +446,7 @@ SetDifficulty:
     ld a,0
     ld (big_rocket),a;$1
     
-    ld a,8
+    ld a,4
     ld (YLava_add_speed),a
     
     jp SetDifficulty_end
@@ -468,7 +468,7 @@ SetDifficulty:
     ld a,0
     ld (big_rocket),a;$1
     
-    ld a,10
+    ld a,8
     ld (YLava_add_speed),a
     
     jp SetDifficulty_end
@@ -512,7 +512,7 @@ SetDifficulty:
     ld a,1
     ld (big_rocket),a;$1
     
-    ld a,14
+    ld a,15
     ld (YLava_add_speed),a
     
     jp SetDifficulty_end
@@ -534,7 +534,7 @@ SetDifficulty:
     ld a,1
     ld (big_rocket),a;$1
     
-    ld a,16
+    ld a,20
     ld (YLava_add_speed),a
     
   SetDifficulty_end:

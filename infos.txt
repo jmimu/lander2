@@ -1,12 +1,13 @@
 Minimal to finish game:
  * add background at start of level 4
  * fix lost music
- * fix lava speed, bug and collision => set sepped for each difficulty!
+ * fix lava bug and collision
  * add lives
  * compute score
  * fix high difficulty
  * show lives and difficulty before levels (level num in dec)
  * make an ending
+ * select musics
 --------------------------------------------------------------------------------
 
 fix lava out of screen
