@@ -2,8 +2,8 @@ Demo_Bike_Speed:
   ;x_speed (1/256 pix/frame), duration (frames) ;  speed=$fd for foot on ground;  speed=$fe for head up;  speed=$ff for end
   ;.db  $05,$40,  $00,$40,  $E0,$40,  $00,$40,  $05,$40,  $10,$40,  $15,$40,  $00,$40,  $fd,$80, $fe,$80,$ff
   ;x_speed (1/256 pix/frame), xscroll_speed (1/256 pix/frame), dduration (frames) ;  speed=$fd for foot on ground;  speed=$fe for head up;  speed=$ff for end
-  .db  $05,$100-$08,$40,  $00,$100-$08,$40,  $E0,$100-$08,$40,  $00,$100-$04,$40,  $05,$100-$04,$40
-  .db  $10,$100-$04,$40,  $15,$100-$02,$40,  $00,$100-$02,$40,  $fd,     $00,$80,  $fe,     $00,$80, $ff
+  .db  $E0,$100-$08,$40,  $00,$100-$08,$40,  $10,$100-$08,$40,  $20,$100-$08,$40,  $15,$100-$08,$40
+  .db  $10,$100-$08,$40,  $05,$100-$08,$40,  $00,$100-$04,$40,  $fd,$100-$02,$20,  $fd,     $00,$80,  $fe, $00,$80, $ff
 
 
 

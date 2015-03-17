@@ -514,8 +514,6 @@ RunDemo:
     ld (demo_step_counter),a
     
     
-    
-    
     ;if new step speed is $ff, quit demo
     ld hl,(demo_step)
     ld a,(hl)
@@ -529,24 +527,19 @@ RunDemo:
     ;scroll is implemented in WaitForVBlank
     call Demo_WaitForVBlank
     
-
-    
     call Demo_UpdateTiles
     ;call UpdatePalette
     ;call UpdateScreen
 
     ld hl,(forest_anim_step)
-    ;ld bc,$20  ;$20 for $8 in scroll
+    ;forest anim speed is -2*Xscroll_speed
     ld bc,(Xscroll_speed)
     ld a,c
     neg
     add a,a
     add a,a
-    ;add a,a
-    ;add a,a
     ld c,a
     ld b,0
-    
     add hl,bc
     ld a,forest_anim_steps
     cp h
@@ -579,6 +572,14 @@ RunDemo:
     +:
     ld (pedal_anim_step),hl
     
+    ;if demo speed is >$fd, got to anim step bike_pedal_anim_steps
+    ld hl,(demo_step)
+    ld a,(hl)
+    cp $fd
+    jr c,+
+      ld hl,bike_pedal_anim_steps*$100
+      ld (pedal_anim_step),hl
+    +:
     
     ;draw bike sprite
     ld bc,(posX)    
@@ -931,6 +932,21 @@ Demo_SpriteSetBike:
   out (c), a
   out (c), b
   
+;head part, changes with animation
+ push af
+ push hl
+    ;if demo speed is >$fe, change head
+    ld hl,(demo_step)
+    ld a,(hl)
+    cp $fe
+    jr c,+
+      ld a,b
+      add a,24 ;add 24 to tile number
+      ld b,a
+  +:
+ pop hl
+ pop af
+ 
   add a,16
   inc b
   out (c), a
@@ -940,6 +956,22 @@ Demo_SpriteSetBike:
   inc b
   out (c), a
   out (c), b
+  
+;go back to normal if head changed
+ push af
+ push hl
+    ;if demo speed is >$fe, change head
+    ld hl,(demo_step)
+    ld a,(hl)
+    cp $fe
+    jr c,+
+      ld a,b
+      add a,-24 ;add 24 to tile number
+      ld b,a
+
+  +:
+ pop hl
+ pop af
   
   ;line2
   ld a,h
