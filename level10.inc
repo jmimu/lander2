@@ -435,30 +435,32 @@ WaitForVBlankLava:
       ;ld c,a
       ;add hl,bc ;hl=(YLava)-(YScrollTotal)
       
+      
       ;put the 3 lava lines in screen in b,d,e 
       ld b,l
       ld a,b
       add a,$10
       jr nc,+
-      ld d,$FF ;out of screen
-      ld e,$FF ;out of screen
+      ld d,$F0 ;out of screen
+      ld e,$F0 ;out of screen
+      jp WaitForVBlankLava_end_levels
     +:
       ld d,a
       add a,$2
       jr nc,+
-      ld e,$FF ;out of screen
+      ld e,$F0 ;out of screen
     +:
       ld e,a
       
       ld a,h;test if hl in screen (<256)
       cp 0
       jr z,+
-      ld b,$C0 ;out of screen
-      ld d,$C0 ;out of screen
-      ld e,$C0 ;out of screen
+      ld b,$F0 ;out of screen
+      ld d,$F0 ;out of screen
+      ld e,$F0 ;out of screen
     +:
       
-    
+    WaitForVBlankLava_end_levels:
     -:
       ;check for lava level:
       ;read scan line counter
@@ -574,6 +576,8 @@ WaitForVBlankLava:
       out ($bf),a
       ld a,%00000101
       out ($be),a
+      
+  WaitForVBlankLava_end:
     pop bc
     pop af
   
