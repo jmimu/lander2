@@ -182,11 +182,11 @@ main:
     ;==============================================================
     call initVDP
 
-    call InitializeJmimu
-    
-    ;run demo
-    call InitializeDemo
-    call RunDemo
+  ;  call InitializeJmimu
+  ;  
+  ;  ;run demo
+  ;  call InitializeDemo
+  ;  call RunDemo
 
     ; Turn screen off
     ld a,%10100000

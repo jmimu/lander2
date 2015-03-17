@@ -128,6 +128,8 @@ SetupLevel4:
     ld (XScrollTotalMax),hl
     
     ;functers
+    ld hl,DoStart
+    ld (OnStartFunction),hl
     ld hl,WaitForVBlankSimple
     ld (WaitForVBlankFunction),hl
     ld hl,DoWait
@@ -273,6 +275,8 @@ SetupLevel5:
     
     
     ;functers
+    ld hl,DoStart
+    ld (OnStartFunction),hl
     ld hl,WaitForVBlankSimple
     ld (WaitForVBlankFunction),hl
     ld hl,DoWait
@@ -416,6 +420,8 @@ SetupLevel6:
     
     
     ;functers
+    ld hl,DoStart
+    ld (OnStartFunction),hl
     ld hl,WaitForVBlankSimple
     ld (WaitForVBlankFunction),hl
     ld hl,DoWon
@@ -561,6 +567,8 @@ SetupLevel7:
 
     
     ;functers
+    ld hl,DoStart
+    ld (OnStartFunction),hl
     ld hl,WaitForVBlankSimple
     ld (WaitForVBlankFunction),hl
     ld hl,DoWon
@@ -703,6 +711,8 @@ SetupLevel8:
 
     
     ;functers
+    ld hl,DoStart
+    ld (OnStartFunction),hl
     ld hl,WaitForVBlankSimple
     ld (WaitForVBlankFunction),hl
     ld hl,DoWon
@@ -843,6 +853,8 @@ SetupLevel9:
     
     
     ;functers
+    ld hl,DoStart
+    ld (OnStartFunction),hl
     ld hl,WaitForVBlankSimple
     ld (WaitForVBlankFunction),hl
     ld hl,DoWait

@@ -24,7 +24,7 @@ StartGame:
     ld a,%10001001 ;y scroll
     out ($bf),a
     
-    ld a,1
+    ld a,11
     ld (current_level),a
     
 
@@ -141,7 +141,7 @@ NewLevel:
 
     
     ;set game status to level start
-    ld a,1
+    ld a,0
     ld (gameStatus),a
     ld hl,0
     ld (gameStatusCnt),hl

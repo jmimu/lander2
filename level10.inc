@@ -6,9 +6,13 @@ Level11Message:
  .db "EXPLORE THE CRATER!",0
 
 Level12Message:
- .db "E A R T H Q U A K E ! ! !",0
+ .db "     E A R T H Q U A K E ! ! !   ",0
 Level12Message2:
- .db "WAIT, THIS IS NOT EARTH.",0
+ .db "     WAIT, THIS IS NOT EARTH.    ",0
+Level12Message3:
+ .db "             LAVA?!?!            ",0
+Level12Message4:
+ .db "            GET OUT!!!!          ",0
 
 SetupLevel10:
     ;==============================================================
@@ -117,6 +121,8 @@ SetupLevel10:
     
 
     ;functers
+    ld hl,DoStart
+    ld (OnStartFunction),hl
     ld hl,WaitForVBlankSimple
     ;ld hl,WaitForVBlankLava
     ld (WaitForVBlankFunction),hl
@@ -249,6 +255,8 @@ SetupLevel11:
     
 
     ;functers
+    ld hl,DoStart
+    ld (OnStartFunction),hl
     ld hl,WaitForVBlankSimple
     ;ld hl,WaitForVBlankLava
     ld (WaitForVBlankFunction),hl
@@ -362,12 +370,12 @@ SetupLevel12:
     ld (YScrollTotal),hl
     
     ;compute max y scroll value
-    ld hl,((Tilemap10End-Tilemap10Start)/64-24)*8
+    ld hl,((Tilemap10End-Tilemap10Start)/64-24)*8+8
     ld (YScrollTotalMax),hl
     ld hl,0
     ld (XScrollTotalMax),hl
     
-    ld de,408
+    ld de,408+8+8
     call SetVScrollTo
     
     ;variables initialization
@@ -377,7 +385,7 @@ SetupLevel12:
     ld (speedY),hl
     ld hl,$7B00
     ld (posX),hl
-    ld hl,$8F00
+    ld hl,$8F00-$1000
     ld (posY),hl
     xor a
     ld (rocket_status),a
@@ -389,6 +397,8 @@ SetupLevel12:
     ld (YLava_count),a
 
     ;functers
+    ld hl,DoStartLava
+    ld (OnStartFunction),hl
     ld hl,WaitForVBlankLava
     ld (WaitForVBlankFunction),hl
     ld hl,DoWait
@@ -567,6 +577,147 @@ WaitForVBlankLava:
   
   ret
 
+
+;-------------------------------------------------------------------------------
+DoStartLava:
+    ld hl,(gameStatusCnt)
+    ld bc,$4 ;increment gameStatusCnt
+    add hl,bc
+    ld (gameStatusCnt),hl
+
+    
+    ;screen shaking
+    ld a,l
+    srl a
+    srl a
+    and %00000011
+    sub 2
+    ;VDP hz scrolling
+    out ($bf),a
+    ld a,%10001000
+    out ($bf),a
+    
+    
+    
+    ;show 3,2,1,GO!
+    ld hl,(gameStatusCnt)
+    ld a,h
+    cp 0
+    jr nz,+
+      ;show level message
+      ld de,Level12Message;text pointer in de
+      ld c,1;col (tiles) in c
+      ld l,20;line (tiles) in l
+      ld a,1;have to write slowly
+      call PrintText
+      ld hl,600
+      ld (YLava),hl
+  +:
+    ld hl,(gameStatusCnt)
+    ld a,h
+    cp 1
+    jr nz,+
+      ld h,$80;x in h
+      ld l,$50;y in l
+      ld d, 19;n in d
+      call SpriteSet8x8
+      ;show level message
+      ld de,Level12Message2;text pointer in de
+      ld c,1;col (tiles) in c
+      ld l,20;line (tiles) in l
+      ld a,1;have to write slowly
+      call PrintText
+      ld hl,600
+      ld (YLava),hl
+  +:
+    ld hl,(gameStatusCnt)
+    ld a,h
+    cp 2
+    jr nz,+
+      ld h,$80;x in h
+      ld l,$50;y in l
+      ld d, 18;n in d
+      call SpriteSet8x8
+      ld hl,600
+      ld (YLava),hl
+  +:
+    ld hl,(gameStatusCnt)
+    ld a,h
+    cp 3
+    jr nz,+
+      ld h,$80;x in h
+      ld l,$50;y in l
+      ld d, 17;n in d
+      call SpriteSet8x8
+      ;show level message
+      ld de,Level12Message3;text pointer in de
+      ld c,1;col (tiles) in c
+      ld l,20;line (tiles) in l
+      ld a,1;have to write slowly
+      call PrintText
+  +:
+    ld hl,(gameStatusCnt)
+    ld a,h
+    cp 4
+    jr nz,+
+      ld h,$78;x in h
+      ld l,$50;y in l
+      ld d, 39;n in d
+      call SpriteSet8x8
+      ld h,$80;x in h
+      ld l,$50;y in l
+      ld d, 47;n in d
+      call SpriteSet8x8
+      ld h,$88;x in h
+      ld l,$50;y in l
+      ld d,  1;n in d
+      call SpriteSet8x8
+      ;show level message
+      ld de,Level12Message4;text pointer in de
+      ld c,1;col (tiles) in c
+      ld l,20;line (tiles) in l
+      ld a,1;have to write slowly
+      call PrintText
+      ;stop screen shaking
+      ;VDP hz scrolling
+      xor a
+      out ($bf),a
+      ld a,%10001000
+      out ($bf),a
+  +:
+    ld hl,(gameStatusCnt)
+    ld a,h
+    cp 5
+    jr nz,+
+    ;if gameStatusCnt too big, change to play status
+    ld a,1
+    ld (gameStatus),a
+    ld hl,0
+    ld (gameStatusCnt),hl
+  +:
+
+    ;draw rocket sprites
+    ld bc,(posX)    
+    ld h,b;x in h
+    ld bc,(posY)    
+    ld l,b;y in l
+    call DrawRocket
+    
+    ;draw fuel logo
+    ld h,8 ;col (pix) in h
+    ld l,8 ;line (pix) in l
+    ld d,fuel_tile_number
+    call SpriteSet8x8
+    ;fuel value
+    ld hl,(rocket_fuel)
+    ld e,h;value (8bit) in e
+    ld h,16 ;col (pix) in h
+    ld l,8 ;line (pix) in l
+    call PrintInt10Sprite
+    
+    ;hide other sprites
+    call SetLastSprite
+  ret
 
 ;==============================================================
 ; Data

@@ -118,6 +118,8 @@ SetupLevel2:
     ld (AutoDown),a
     
     ;functers
+    ld hl,DoStart
+    ld (OnStartFunction),hl
     ld hl,TutorialFunction
     ld (WaitForVBlankFunction),hl
     ld hl,DoWait

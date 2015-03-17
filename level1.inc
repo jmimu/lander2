@@ -110,6 +110,8 @@ SetupLevel1:
     ld (YLava),hl
     
     ;functers
+    ld hl,DoStart
+    ld (OnStartFunction),hl
     ld hl,WaitForVBlankWind
     ld (WaitForVBlankFunction),hl
     ld hl,DoWait

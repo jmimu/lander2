@@ -118,26 +118,15 @@ PrintTextMiddleScroll:
 ;update game status
 ;gameStatus= 0: start, 1: play, 2: lost, 3: landed left, 4: landed right, 5: out of screen
 GameStatusUpdate:
-    ld hl,(gameStatusCnt)
+    call ResetSprites
+
     ld a,(gameStatus)
     cp 0 ;test on gameStatus
     jp nz,GameStatusUpdate_sup0
     
       ;if gameStatus==0 (start)
-      ld bc,$12
-      add hl,bc
-      ld a,h
-      cp 2
-      jr nz,+
-      ;if gameStatusCnt too big, change to play status
-      ld a,1
-      ld (gameStatus),a
-      ld hl,0
-      ld (gameStatusCnt),hl
-    +:
-      ;actions if gameStatus==0
-      ;TODO: show direction?
-      call DoGameLogicDbg
+      ld hl,(OnStartFunction)
+      call CallFunctionHL;act as "call (hl)"
       jp GameStatusUpdate_end
       
   GameStatusUpdate_sup0:
@@ -186,9 +175,92 @@ GameStatusUpdate:
   GameStatusUpdate_end:
     ret
     
+;-------------------------------------------------------------------------------
+DoStart:
+    ld hl,(gameStatusCnt)
+    ld bc,$8 ;increment gameStatusCnt
+    add hl,bc
+    ld (gameStatusCnt),hl
+    
+    ;show 3,2,1,GO!
+    ld a,h
+    cp 1
+    jr nz,+
+      ld h,$80;x in h
+      ld l,$50;y in l
+      ld d, 19;n in d
+      call SpriteSet8x8
+  +:
+    ld hl,(gameStatusCnt)
+    ld a,h
+    cp 2
+    jr nz,+
+      ld h,$80;x in h
+      ld l,$50;y in l
+      ld d, 18;n in d
+      call SpriteSet8x8
+  +:
+    ld hl,(gameStatusCnt)
+    ld a,h
+    cp 3
+    jr nz,+
+      ld h,$80;x in h
+      ld l,$50;y in l
+      ld d, 17;n in d
+      call SpriteSet8x8
+  +:
+    ld hl,(gameStatusCnt)
+    ld a,h
+    cp 4
+    jr nz,+
+      ld h,$78;x in h
+      ld l,$50;y in l
+      ld d, 39;n in d
+      call SpriteSet8x8
+      ld h,$80;x in h
+      ld l,$50;y in l
+      ld d, 47;n in d
+      call SpriteSet8x8
+      ld h,$88;x in h
+      ld l,$50;y in l
+      ld d,  1;n in d
+      call SpriteSet8x8
+  +:
+    
+    ld hl,(gameStatusCnt)
+    ld a,h
+    cp 5
+    jr nz,+
+    ;if gameStatusCnt too big, change to play status
+    ld a,1
+    ld (gameStatus),a
+    ld hl,0
+    ld (gameStatusCnt),hl
+  +:
 
-
-
+    ;draw rocket sprites
+    ld bc,(posX)    
+    ld h,b;x in h
+    ld bc,(posY)    
+    ld l,b;y in l
+    call DrawRocket
+    
+    ;draw fuel logo
+    ld h,8 ;col (pix) in h
+    ld l,8 ;line (pix) in l
+    ld d,fuel_tile_number
+    call SpriteSet8x8
+    ;fuel value
+    ld hl,(rocket_fuel)
+    ld e,h;value (8bit) in e
+    ld h,16 ;col (pix) in h
+    ld l,8 ;line (pix) in l
+    call PrintInt10Sprite
+    
+    ;hide other sprites
+    call SetLastSprite
+  ret
+  
 ;-------------------------------------------------------------------------------
 DoLost:
     ld a,(first_frame_on_end_status)
@@ -204,7 +276,7 @@ DoLost:
       ld (first_frame_on_end_status),a
     +:
 
-    call ResetSprites
+    
     
     ;read button 1
     in a,($dc)
@@ -275,7 +347,6 @@ DoWait:
     ld a,1 ;start
     ld (gameStatus),a
     
-    call ResetSprites
     
     ;update rocket status
     ;if 1, set to 0
@@ -359,7 +430,6 @@ DoWon:
       ld (first_frame_on_end_status),a
     +:
 
-    call ResetSprites
     
     ;read button 1
     in a,($dc)

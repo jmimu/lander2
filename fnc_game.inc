@@ -12,6 +12,7 @@
   YLava                    dw    ; total Y lava in level (in pixels)
   YLava_count              db    ; Y lava increase counter
   
+  OnStartFunction          dw    ; pointer to function called when starting level
   OnLandRightFunction      dw    ; pointer to function called when touching the ground
   OnLandLeftFunction       dw    ; pointer to function called when touching the ground
   OnOutFunction            dw    ; pointer to function called when out of screen
@@ -994,7 +995,6 @@ DoGameLogicDbg:
     push de
     push hl
     
-    call ResetSprites
     ;TODO: make it better
     ;update rocket status
     ;if 1, set to 0
