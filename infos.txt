@@ -1,4 +1,7 @@
 Minimal to finish game:
+ * init message is not centered on level 7-9
+ * don't wait before "3"
+ * lost and won at the same time at last level ?
  * add background at start of level 4
  * fix lost music
  * add lives

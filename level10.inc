@@ -614,17 +614,7 @@ DoStartLava:
     ld (gameStatusCnt),hl
 
     
-    ;screen shaking
-    ld a,l
-    srl a
-    srl a
-    srl a
-    and %00000011
-    sub 2
-    ;VDP hz scrolling
-    out ($bf),a
-    ld a,%10001000
-    out ($bf),a
+
     
     
     
@@ -639,6 +629,18 @@ DoStartLava:
       ld l,20;line (tiles) in l
       ld a,1;have to write slowly
       call PrintText
+      
+      ;screen shaking
+      ld a,l
+      srl a
+      srl a
+      srl a
+      and %00000011
+      sub 2
+      ;VDP hz scrolling
+      out ($bf),a
+      ld a,%10001000
+      out ($bf),a
   +:
     ld hl,(gameStatusCnt)
     ld a,h
@@ -654,6 +656,18 @@ DoStartLava:
       ld l,20;line (tiles) in l
       ld a,1;have to write slowly
       call PrintText
+      
+      ;screen shaking
+      ld a,l
+      srl a
+      srl a
+      srl a
+      and %00000011
+      sub 2
+      ;VDP hz scrolling
+      out ($bf),a
+      ld a,%10001000
+      out ($bf),a
   +:
     ld hl,(gameStatusCnt)
     ld a,h
@@ -701,12 +715,7 @@ DoStartLava:
       ld l,20;line (tiles) in l
       ld a,1;have to write slowly
       call PrintText
-      ;stop screen shaking
-      ;VDP hz scrolling
-      xor a
-      out ($bf),a
-      ld a,%10001000
-      out ($bf),a
+
   +:
     ld hl,(gameStatusCnt)
     ld a,h

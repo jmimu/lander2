@@ -184,7 +184,7 @@ DoStart:
     
     ;show 3,2,1,GO!
     ld a,h
-    cp 1
+    cp 0
     jr nz,+
       ld h,$80;x in h
       ld l,$50;y in l
@@ -193,7 +193,7 @@ DoStart:
   +:
     ld hl,(gameStatusCnt)
     ld a,h
-    cp 2
+    cp 1
     jr nz,+
       ld h,$80;x in h
       ld l,$50;y in l
@@ -202,7 +202,7 @@ DoStart:
   +:
     ld hl,(gameStatusCnt)
     ld a,h
-    cp 3
+    cp 2
     jr nz,+
       ld h,$80;x in h
       ld l,$50;y in l
@@ -211,7 +211,7 @@ DoStart:
   +:
     ld hl,(gameStatusCnt)
     ld a,h
-    cp 4
+    cp 3
     jr nz,+
       ld h,$78;x in h
       ld l,$50;y in l
@@ -229,7 +229,7 @@ DoStart:
     
     ld hl,(gameStatusCnt)
     ld a,h
-    cp 5
+    cp 4
     jr nz,+
     ;if gameStatusCnt too big, change to play status
     ld a,1
