@@ -47,7 +47,7 @@
 ;==============================================================
 ;demo
 .define forest_1st_tile $2
-.define forest_scroll_1st_tile_from_forest_start $54
+.define forest_scroll_1st_tile_from_forest_start $58
 .define forest_anim_steps $8
 .define bike_tile_number $3C
 .define bike_pedal_tile_number $4E
@@ -79,13 +79,16 @@
   forest_anim_step dw;from 0 to forest_anim_steps*$100
   pedal_anim_step dw;from 0 to forest_anim_steps*$100
   Xscroll dw
+  Xscroll_speed dw
+  demo_step_counter       db  ; counterof current speed
+  demo_step               dw  ;pointer in Demo_Bike_Speed
+  
+  
+  ;game
   posX                     dw ; multiplied by 2^8
   posY                     dw ; multiplied by 2^8
-  ;game
   speedX                     dw ; multiplied by 2^8
   speedY                     dw ; multiplied by 2^8
-  ;posX                     dw ; multiplied by 2^8
-  ;posY                     dw ; multiplied by 2^8
   rocket_fuel         dw 
   rocket_status      db ;0: normal, 1: bottom fire, 2: destroyed
   buttons      db ; keep a copy of the buttons pressed
@@ -98,6 +101,7 @@
   landing_zone_color dw; loop between 4 colors (hi-byte is color index)
   ;PauseFlag db ;1 if pause
   tiles_vram_used   dw ; number of tiles in vram (where to add next tiles)
+  
   
   ;difficulty settings
   fuel_use dw;$-70

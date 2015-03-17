@@ -1,4 +1,4 @@
-    
+
 ;uses (refuel) to record if an input occured last frame
 ;uses (current_level)>0 to quit demo
 Demo_Inputs:
@@ -440,6 +440,24 @@ InitializeDemo:
 
     ld hl,0
     ld (pedal_anim_step),hl
+    
+    ld hl,$4000
+    ld (posX),hl
+    ld hl,$8800
+    ld (posY),hl
+    
+    ld hl,Demo_Bike_Speed
+    ld (demo_step),hl
+    inc hl
+    ld c,(hl)
+    ld b,$ff
+    ld (Xscroll_speed),bc
+    inc hl
+    ld a,(hl)
+    ld (demo_step_counter),a
+    
+    ;ld hl,$10000-$8
+    ;ld (Xscroll_speed),hl
 ret
 
 ;--------------------------------------------------------------------
@@ -448,16 +466,69 @@ RunDemo:
     ;cut noise channel sound
     ld c,%01100000;channel in c*%100000(max 3*%100000)
     call CutOneChannel
-
+    
+    ld hl,(demo_step)
+    ld c,(hl)
+    ld b,0 ;x-speed in bc
+    ;if c>128, this is negative speed
+    ld a,c
+    cp $80
+    jr c,+
+      ld b,$ff
+  +:
+    
+    ld hl,(posX)
+    add hl,bc
+    ld (posX),hl
+    
+    ;update scrolling speed
+    ld hl,(demo_step)
+    inc hl
+    ld a,(hl)
+    cp 0
+    jr nz,+
+      ld bc,0
+      ld (Xscroll_speed),bc
+      jr RunDemo_noscroll
+  +:
+    ld c,a
+    ld b,$ff
+    ld (Xscroll_speed),bc
+    
+  RunDemo_noscroll:
+    ;decrease step counter
+    ld a,(demo_step_counter)
+    dec a
+    ld (demo_step_counter),a
+    cp 0
+    jr nz,RunDemo_counter_end
+    ;go to next step
+    ld hl,(demo_step)
+    inc hl    
+    inc hl
+    inc hl    
+    ld (demo_step),hl
+    inc hl
+    inc hl    
+    ld a,(hl)
+    ld (demo_step_counter),a
+    
+    
+    
+    
+    ;if new step speed is $ff, quit demo
+    ld hl,(demo_step)
+    ld a,(hl)
+    cp $ff 
+    jr nz,RunDemo_counter_end
+      ;quit demo
+      ld a,1
+      ld (current_level),a
+  RunDemo_counter_end:
+    
     ;scroll is implemented in WaitForVBlank
-    ;ld hl,(Xscroll)
-    ;ld a,h
-    ;out ($bf),a
-    ;ld a,%10001000
-    ;out ($bf),a
-
     call Demo_WaitForVBlank
-
+    
 
     
     call Demo_UpdateTiles
@@ -465,7 +536,17 @@ RunDemo:
     ;call UpdateScreen
 
     ld hl,(forest_anim_step)
-    ld bc,$20
+    ;ld bc,$20  ;$20 for $8 in scroll
+    ld bc,(Xscroll_speed)
+    ld a,c
+    neg
+    add a,a
+    add a,a
+    ;add a,a
+    ;add a,a
+    ld c,a
+    ld b,0
+    
     add hl,bc
     ld a,forest_anim_steps
     cp h
@@ -475,7 +556,7 @@ RunDemo:
     ld (forest_anim_step),hl
     ;make scroll forward
     ld hl,(Xscroll)
-    ld bc,$10000-$8
+    ld bc,(Xscroll_speed)
     add hl,bc
     ld (Xscroll),hl
 
@@ -487,10 +568,6 @@ RunDemo:
     ld c,$01 ; hide only next sprite, the following will be hidden too
     call HideSprites
     
-    ld hl,$4000
-    ld (posX),hl
-    ld hl,$8800
-    ld (posY),hl
     ;pedal anim
     ld hl,(pedal_anim_step)
     ld bc,$20
