@@ -433,12 +433,13 @@ WaitForVBlankLava:
       ;ld a,c
       ;neg
       ;ld c,a
-      ;add hl,bc ;hl=(YLava)-(YScrollTotal)
+      ;add hl,bc ;hl=(YLava)-(YScrollTotal)      
       
       ld a,h;test if hl in screen (<256)
       cp 0
       jr nz,WaitForVBlankLava_startlevel_out
 
+      ;test if lava is on screen (hl<224)
       ld a,l
       cp 224
       jr c,WaitForVBlankLava_startlevel_ok
@@ -450,6 +451,18 @@ WaitForVBlankLava:
         call WaitForVBlankSimple
         jp WaitForVBlankLava_end
     WaitForVBlankLava_startlevel_ok:
+      
+      ;check if rocket is in contact with lava
+      ld bc,(posY)
+      ld a,b
+      add a,$4 ;bottom of the rocket
+      cp l
+      jr c,+
+        ld a,2
+        ld (rocket_status),a
+        ld a,2 ;lost
+        ld (gameStatus),a
+    +:
       
       ;put the 3 lava lines in screen in b,d,e 
       ld b,l

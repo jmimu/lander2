@@ -1,7 +1,6 @@
 Minimal to finish game:
  * add background at start of level 4
  * fix lost music
- * fix lava bug and collision
  * add lives
  * compute score
  * fix high difficulty
