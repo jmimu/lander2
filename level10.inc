@@ -435,6 +435,21 @@ WaitForVBlankLava:
       ;ld c,a
       ;add hl,bc ;hl=(YLava)-(YScrollTotal)
       
+      ld a,h;test if hl in screen (<256)
+      cp 0
+      jr nz,WaitForVBlankLava_startlevel_out
+
+      ld a,l
+      cp 224
+      jr c,WaitForVBlankLava_startlevel_ok
+      
+    WaitForVBlankLava_startlevel_out:
+        ld b,$F0 ;out of screen
+        ld d,$F0 ;out of screen
+        ld e,$F0 ;out of screen
+        call WaitForVBlankSimple
+        jp WaitForVBlankLava_end
+    WaitForVBlankLava_startlevel_ok:
       
       ;put the 3 lava lines in screen in b,d,e 
       ld b,l
@@ -452,13 +467,7 @@ WaitForVBlankLava:
     +:
       ld e,a
       
-      ld a,h;test if hl in screen (<256)
-      cp 0
-      jr z,+
-      ld b,$F0 ;out of screen
-      ld d,$F0 ;out of screen
-      ld e,$F0 ;out of screen
-    +:
+
       
     WaitForVBlankLava_end_levels:
     -:
