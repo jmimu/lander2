@@ -14,6 +14,12 @@ ShowMenu:
     ld a,$81
     out ($bf),a
 
+    ;disable scrolling
+    xor a
+    out ($bf),a
+    ld a,%10001000
+    out ($bf),a
+
     ;load default palette
     ld hl,Title_Palette_Start
     ;==============================================================
@@ -225,14 +231,13 @@ ShowMenu:
 
     ei  ; enable interrupts
     
-    ;initialize variables
+    ;initialize input variables
+    ld a,1
+    ld (refuel),a;if refuel>0, an input has already been pressed
     xor a
-    ld (current_level),a ;if current_level>0, quit menu
+    ld (current_level),a;if current_level>0 quit demo
     ld a,1
     ld (difficulty_level),a
-    
-    xor a
-    ld (refuel),a;if refuel>0, an input has already been pressed (TODO)
     
     ld hl,$3B00
     ld (posX),hl
@@ -289,15 +294,15 @@ ShowMenu:
       call WaitForVBlankSimple
       call Demo_PSGMOD_Play
 
-      ;call Menu_inputs
+      call Menu_inputs
       call WaitForVBlankSimple
       call Demo_PSGMOD_Play
 
-      ;call Menu_inputs
+      call Menu_inputs
       call WaitForVBlankSimple
       call Demo_PSGMOD_Play
 
-      ;call Menu_inputs
+      call Menu_inputs
       call WaitForVBlankSimple
       call Demo_PSGMOD_Play
       
@@ -307,19 +312,26 @@ ShowMenu:
       jp z,Title_loop
     ret
 
+;uses (refuel) to record if an input occured last frame
+;uses (current_level)>0 to quit demo
 Menu_inputs:
    push af
         in a,($dc)
         ld (buttons),a
-        and %00010000
-        cp  %00000000
-        jr nz,+
-        call Menu_OnButton12
-    +:  
+        or %11000011
+        cp  %11111111
+        jr z,Menu_Inputs_NoButtonPressed
+        
+        ;one button is pressed
+        ;check if last frame it was released
+        ld a,(refuel)
+        cp 0
+        jr nz,Menu_Inputs_end
+        
         ld a,(buttons)
-        and %00100000
-        cp  %00000000
-        jr nz,+
+        or %11001111
+        cp  %11111111
+        jr z,+
         call Menu_OnButton12
     +:  
         ld a,(buttons)
@@ -334,6 +346,11 @@ Menu_inputs:
         jr nz,+
         call Menu_OnButtonRight
     +:
+    jr Menu_Inputs_end
+    Menu_Inputs_NoButtonPressed:
+      xor a
+      ld (refuel),a;no button pressed last time
+    Menu_Inputs_end:
     pop af
   ret
 
@@ -343,6 +360,9 @@ Menu_OnButton12:
   ret
 
 Menu_OnButtonRight:
+    ld a,1
+    ld (refuel),a;a button was pressed
+
     ;check if difficulty_level at max
     ld a,(difficulty_level)
     cp 5
@@ -360,6 +380,9 @@ Menu_OnButtonRight:
   ret
 
 Menu_OnButtonLeft:
+    ld a,1
+    ld (refuel),a;a button was pressed
+
     ;check if difficulty_level at min
     ld a,(difficulty_level)
     cp 1
@@ -383,7 +406,7 @@ Menu_OnButtonLeft:
 ;(add this file to project, call it)
 
 Menu_Text_COPYRIGHT:
- .db "------ 2015  jmimu ------",0
+ .db "---  2015  jmimu - v0.7  ---",0
  
 Menu_Text_1:
  .db "DIFFICULTY LEVEL:",0

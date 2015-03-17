@@ -1,6 +1,14 @@
-make a function called only once when win and loose for music
+Minimal to finish game:
+ * finish demo
+ * add time before level start
+ * fix lava speed, bug and collision
+ * add lives
+ * compute score
+ * fix high difficulty
+ * show lives and difficulty before levels
+ * make an ending
+--------------------------------------------------------------------------------
 
-forbid hz out of screen ?
 fix lava out of screen
 make 2 variables for lava speed change (set by difficulty?)
 

@@ -24,7 +24,7 @@ fps=60
 pseudo_frame_size=2 #to minimize memory used
 
 
-tempo=120
+tempo=80
 time_unit=60*fps/tempo/12 #number of frames for one 12th of a time
 
 
@@ -233,24 +233,24 @@ if __name__ == '__main__':
   
   test1="f3_0017A f3_0006A a3_0012A f3_0012A e3_0023A a3_0006A Ppp0017F d3_0017A d3_0006A f3_0012A d3_0012A c3_0023A Ppp0023F a2#0017A a2#0006A c3_0012A a2#0012A a2_0023A f3_0023A e3_0017A e3_0006A f3_0012A g3_0012A f3_0023A "
   test2="f4_00067 a4_00067 c5_00067 a4_00067 f4_00067 a4_00067 c5_00067 a4_00067 e4_00067 a4_00067 c5_00067 a4_00067 e4_00067 a4_00067 c5_00067 a4_00067 d4_00067 f4_00067 a4_00067 f4_00067 d4_00067 f4_00067 a4_00067 f4_00067 c4_00067 f4_00067 a4_00067 f4_00067 c4_00067 f4_00067 a4_00067 f4_00067 a3#00067 d4_00067 f4_00067 d4_00067 a3#00067 d4_00067 f4_00067 d4_00067 a3_00067 c4_00067 f4_00067 c4_00067 a3_00067 c4_00067 f4_00067 c4_00067 g3_00067 c4_00067 f4_00067 c4_00067 g3_00067 c4_00067 f4_00067 c4_00067 f3_00067 a3_00067 c4_00067 f4_00067 a4_00067 c5_00067 f5_00117 "
-  test3="Ppp0018F c5_00037 d5_00037 c5_00037 Ppp0037F c5_00037 d5_00037 c5_00037 Ppp0037F a4_00037 a4#00037 a4_00037 Ppp0037F a4_00037 a4#00037 a4_00037 Ppp0037F a4_00037 a4#00037 a4_00037 Ppp0037F f4_00037 g4_00037 f4_00037 Ppp0037F c5_00037 d5_00037 c5_00037 "
+  test3="f3_00177 c5_00037 d5_00037 c5_00037 Ppp0037F c5_00037 d5_00037 c5_00037 Ppp0037F a4_00037 a4#00037 a4_00037 Ppp0037F a4_00037 a4#00037 a4_00037 Ppp0037F a4_00037 a4#00037 a4_00037 Ppp0037F f4_00037 g4_00037 f4_00037 Ppp0037F c5_00037 d5_00037 c5_00037"
   
   melody1=Melody("end_music_ch1",SMS_NTSC)
   melody1.interpret(test1)
   print("melody1.length: ",melody1.length)
-  melody1.setLength(1150)
+  melody1.setLength(1500)
   melody1.sampling()
   
   melody2=Melody("end_music_ch2",SMS_NTSC)
   melody2.interpret(test2)
   print("melody2.length: ",melody2.length)
-  melody2.setLength(1150)
+  melody2.setLength(1500)
   melody2.sampling()
   
   melody3=Melody("end_music_ch3",SMS_NTSC)
   melody3.interpret(test3)
   print("melody3.length: ",melody3.length)
-  melody3.setLength(1150)
+  melody3.setLength(1500)
   melody3.sampling()
   
   
@@ -261,7 +261,7 @@ if __name__ == '__main__':
 
   import numpy as np
   import matplotlib.pyplot as plt
-  npfunction=np.array(melody3.analog_function)
+  npfunction=np.array(melody1.analog_function)
   t=npfunction[:,0]
   v=npfunction[:,1]
   n=npfunction[:,2]/50
@@ -271,8 +271,10 @@ if __name__ == '__main__':
   v2=npfunction_compr[:,0]
   n2=npfunction_compr[:,1]/50
   plt.plot(t, v, '-')
-  plt.plot(t, n, '-')
-  plt.bar(t2, v2,pseudo_frame_size,color='r',edgecolor='r')
+  #plt.plot(t, n, '-')
+  plt.plot(t2, v2, '-')
+  #plt.plot(t2, n2, '-')
+  #plt.bar(t2, v2,pseudo_frame_size,color='r',edgecolor='r')
   plt.show()
   
   

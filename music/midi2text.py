@@ -210,19 +210,19 @@ if __name__ == '__main__':
     #print music.pattern
     text_track2=music.convertToJMMusic()
     
-    print text_track0
-    print text_track1
-    print text_track2
+
     
 
 
-    music=MidiMusic("lander2_intro4.mid",0,"a")
-    #print music.pattern
-    text_track0=music.convertToJMMusic()
+    #music=MidiMusic("lander2_intro4.mid",0,"a")
+    ##print music.pattern
+    #text_track0=music.convertToJMMusic()
+    #
+    #music=MidiMusic("lander2_intro4.mid",1,"a")
+    ##print music.pattern
+    #text_track1=music.convertToJMMusic()
 
-    music=MidiMusic("lander2_intro4.mid",1,"a")
-    #print music.pattern
-    text_track1=music.convertToJMMusic()
+
     print text_track0
     print text_track1
-
+    print text_track2

@@ -1,3 +1,33 @@
+    
+;uses (refuel) to record if an input occured last frame
+;uses (current_level)>0 to quit demo
+Demo_Inputs:
+  push af
+    in a,($dc)
+    ld (buttons),a
+    or %11001111
+    cp  %11111111
+    jr z,Demo_Inputs_NoButtonPressed
+    
+    ;one button is pressed
+    ;check if last frame it was released
+    ld a,(refuel)
+    cp 0
+    jr nz,Demo_Inputs_end
+    
+    ld a,1
+    ld (current_level),a;ask to quit
+    ld a,1
+    ld (refuel),a;a button was pressed
+    
+  Demo_Inputs_NoButtonPressed:  
+    xor a
+    ld (refuel),a;no button pressed last time
+  Demo_Inputs_end:
+  pop af
+  ret
+
+
 InitializeJmimu:
 
     ; Turn screen off
@@ -188,6 +218,12 @@ InitializeJmimu:
     ;  ld a,5
     ;  cp d
     ;  jr nz,jmimu_palette_loop
+    
+    ;initialize input variables
+    ld a,1
+    ld (refuel),a;if refuel>0, an input has already been pressed
+    xor a
+    ld (current_level),a;if current_level>0 quit demo
 
     ;how the color loop works :
     ; fill the 16 colors index with 16 colors in jmimu_colors,
@@ -221,20 +257,26 @@ InitializeJmimu:
       ld b,15
       ld c,$be
       otir
+      
+      call WaitForVBlankSimple
+      call Demo_PSGMOD_Play
+      call Demo_Inputs
+      call WaitForVBlankSimple
+      call Demo_PSGMOD_Play
+      call Demo_Inputs
+      call WaitForVBlankSimple
+      call Demo_PSGMOD_Play
+      call Demo_Inputs
+      
+      ld a,(current_level)
+      cp 0
+      jr nz,InitializeJmimu_end
+      
       dec de
       dec ixl
-      call WaitForVBlankSimple
-      call Demo_PSGMOD_Play
-      ;call Demo_PSGMOD_Play
-      call WaitForVBlankSimple
-      call Demo_PSGMOD_Play
-      ;call Demo_PSGMOD_Play
-      call WaitForVBlankSimple
-      call Demo_PSGMOD_Play
-      ;call Demo_PSGMOD_Play
       jr nz,-
       
-
+  InitializeJmimu_end:
 ret
 
 
@@ -384,7 +426,11 @@ InitializeDemo:
 
     ei;enable interruption (for vblank)
 
-
+    ;initialize input variables
+    ld a,1
+    ld (refuel),a;if refuel>0, an input has already been pressed
+    xor a
+    ld (current_level),a;if current_level>0 quit demo
 
     ld bc,$0
     ld (forest_anim_step),bc
@@ -468,9 +514,11 @@ RunDemo:
 
     call Demo_PSGMOD_Play
     
-    ;test if button pressed
-    ld b,%00100000
-    call IsButtonPressed
+    
+    call Demo_Inputs
+    
+    ld a,(current_level)
+    cp 0
     jr nz,demo_end
     
     jp Demo_MainLoop
