@@ -1,8 +1,7 @@
 Minimal to finish game:
- * init message is not centered on level 7-9
- * don't wait before "3"
+ * what to do if no more oil and start a level ? => make lost
  * lost and won at the same time at last level ?
- * add background at start of level 4
+ * add background at start of  level 4 => just need to be incorporated to rom
  * fix lost music
  * add lives
  * compute score

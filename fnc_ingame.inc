@@ -181,6 +181,31 @@ DoStart:
     ld bc,$6 ;increment gameStatusCnt
     add hl,bc
     ld (gameStatusCnt),hl
+
+    in a,($dc)
+    and %00000010
+    cp  %00000000
+    jr nz,+
+      ;if bottom pressed:
+      ;print go
+      ld h,$78;x in h
+      ld l,$50;y in l
+      ld d, 39;n in d
+      call SpriteSet8x8
+      ld h,$80;x in h
+      ld l,$50;y in l
+      ld d, 47;n in d
+      call SpriteSet8x8
+      ld h,$88;x in h
+      ld l,$50;y in l
+      ld d,  1;n in d
+      call SpriteSet8x8
+      ;end of start part
+      ld a,1
+      ld (gameStatus),a
+      ld hl,0
+      ld (gameStatusCnt),hl
+  +:
     
     ;show 3,2,1,GO!
     ld a,h

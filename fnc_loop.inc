@@ -96,6 +96,12 @@ NewLevel:
     out ($bf),a
     ld a,$81
     out ($bf),a    
+
+    ;set game status to level start
+    ld a,0
+    ld (gameStatus),a
+    ld hl,0
+    ld (gameStatusCnt),hl
     
     call SelectLevel
     
@@ -140,11 +146,6 @@ NewLevel:
    +: 
 
     
-    ;set game status to level start
-    ld a,0
-    ld (gameStatus),a
-    ld hl,0
-    ld (gameStatusCnt),hl
     
 GameLoop:
     ld hl,(WaitForVBlankFunction)

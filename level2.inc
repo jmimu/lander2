@@ -78,11 +78,11 @@ SetupLevel2:
     
     
     ;init music
-    ld hl,demo_music_4_start
+    ld hl,00;end_music_ch1_start
     call InitMusic1
-    ld hl,nosound_start
+    ld hl,end_music_ch2_start
     call InitMusic2
-    ld hl,nosound_start
+    ld hl,00;end_music_ch3_start
     call InitMusic3
     
     ;variables initialization
@@ -134,6 +134,9 @@ SetupLevel2:
     
     ld a,1
     ld (first_frame_on_end_status),a
+    
+    ld a,1;on tutorial, skip 3,2,1
+    ld (gameStatus),a
 ret
 
 

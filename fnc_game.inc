@@ -499,7 +499,7 @@ SetDifficulty:
     cp 4
     jr nz,+
     ;difficulty 4
-    ld hl,$-5
+    ld hl,-$0B
     ld (fuel_use),hl;$-7
     ld hl,$50
     ld (speed_pos_tolerance),hl;$40
@@ -515,13 +515,17 @@ SetDifficulty:
     ld a,15
     ld (YLava_add_speed),a
     
+    ;skip tutorial
+    ld a,3
+    ld (current_level),a
+    
     jp SetDifficulty_end
   +:
     ld a,b
     cp 5
     jr nz,SetDifficulty_end
     ;difficulty 5
-    ld hl,$-7
+    ld hl,-$10
     ld (fuel_use),hl;$-7
     ld hl,$40
     ld (speed_pos_tolerance),hl;$40
@@ -536,6 +540,10 @@ SetDifficulty:
     
     ld a,20
     ld (YLava_add_speed),a
+    
+    ;skip tutorial
+    ld a,3
+    ld (current_level),a
     
   SetDifficulty_end:
   pop hl
@@ -669,12 +677,16 @@ showLevel:
     ld a,1;have to write slowly
     call PrintText
     
+    call ResetSprites
     ;draw level number text
-    ld c,22;col (tiles) in c
-    ld l,10;line (tiles) in l
+    ld h,22*8;col (tiles) in h
+    ld l,10*8-1;line (tiles) in l
     ld a,(current_level)
     ld e,a;value (8bit) in e
-    call PrintInt8
+    ;call PrintInt8
+    call PrintInt10Sprite ;print an uint8 in decimal with sprites
+    call SetLastSprite
+
     
     ; Turn screen on
     ld a,%11100000

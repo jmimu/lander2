@@ -1,13 +1,13 @@
 .section "level5" force
 
 Level4Message:
- .db "SLOWLY LAND ON LANDING ZONE",0
+ .db "SLOWLY LAND ON BLINKING ZONE",0
 
 Level5Message:
  .db "GO RIGHT TO NEXT LANDING ZONE",0
 
 Level6Message:
- .db "CONTINUE TO THE RIGHT",0
+ .db "CONTINUE TO THE RIGHT...",0
 
 Level9Message:
  .db "TAKE OFF TO NEXT LEVEL",0
@@ -99,11 +99,11 @@ SetupLevel4:
     
     
     ;init music
-    ld hl,demo_music_4_start
+    ld hl,00;end_music_ch1_start
     call InitMusic1
-    ld hl,nosound_start
+    ld hl,end_music_ch2_start
     call InitMusic2
-    ld hl,nosound_start
+    ld hl,00;end_music_ch3_start
     call InitMusic3
     
     ;variables initialization
@@ -245,11 +245,11 @@ SetupLevel5:
     
     
     ;init music
-    ld hl,demo_music_4_start
+    ld hl,00;end_music_ch1_start
     call InitMusic1
-    ld hl,nosound_start
+    ld hl,end_music_ch2_start
     call InitMusic2
-    ld hl,nosound_start
+    ld hl,00;end_music_ch3_start
     call InitMusic3
     
     ;variables initialization
@@ -388,13 +388,12 @@ SetupLevel6:
       cp 0
       jr nz,SetupLevel6_line_loop
     
-    
     ;init music
-    ld hl,demo_music_4_start
+    ld hl,00;end_music_ch1_start
     call InitMusic1
-    ld hl,nosound_start
+    ld hl,end_music_ch2_start
     call InitMusic2
-    ld hl,nosound_start
+    ld hl,00;end_music_ch3_start
     call InitMusic3
     
     ;variables initialization
@@ -445,7 +444,7 @@ SetupLevel6:
     
     ;show level message
     ld de,Level6Message;text pointer in de
-    ld c,1;col (tiles) in c
+    ld c,22;col (tiles) in c
     ld l,3;line (tiles) in l
     ld a,1;have to write slowly
     call PrintText
@@ -537,13 +536,12 @@ SetupLevel7:
       cp 0
       jr nz,SetupLevel7_line_loop
     
-    
     ;init music
-    ld hl,demo_music_4_start
+    ld hl,00;end_music_ch1_start
     call InitMusic1
-    ld hl,nosound_start
+    ld hl,end_music_ch2_start
     call InitMusic2
-    ld hl,nosound_start
+    ld hl,00;end_music_ch3_start
     call InitMusic3
     
     ;initialize scroll variables
@@ -596,11 +594,11 @@ SetupLevel7:
     ld (first_frame_on_end_status),a
     
     ;show level message
-    ld de,Level6Message;text pointer in de
-    ld c,1;col (tiles) in c
-    ld l,3;line (tiles) in l
-    ld a,1;have to write slowly
-    call PrintText
+    ;ld de,Level6Message;text pointer in de
+    ;ld c,1;col (tiles) in c
+    ;ld l,3;line (tiles) in l
+    ;ld a,1;have to write slowly
+    ;call PrintText
 ret
 
 
@@ -689,13 +687,12 @@ SetupLevel8:
       cp 0
       jr nz,SetupLevel8_line_loop
     
-    
     ;init music
-    ld hl,demo_music_4_start
+    ld hl,00;end_music_ch1_start
     call InitMusic1
-    ld hl,nosound_start
+    ld hl,end_music_ch2_start
     call InitMusic2
-    ld hl,nosound_start
+    ld hl,00;end_music_ch3_start
     call InitMusic3
     
     ;initialize scroll variables
@@ -746,11 +743,11 @@ SetupLevel8:
     ld (first_frame_on_end_status),a
     
     ;show level message
-    ld de,Level6Message;text pointer in de
-    ld c,1;col (tiles) in c
-    ld l,3;line (tiles) in l
-    ld a,1;have to write slowly
-    call PrintText
+    ;ld de,Level6Message;text pointer in de
+    ;ld c,1;col (tiles) in c
+    ;ld l,3;line (tiles) in l
+    ;ld a,1;have to write slowly
+    ;call PrintText
 ret
 
 
@@ -839,13 +836,12 @@ SetupLevel9:
       cp 0
       jr nz,SetupLevel9_line_loop
     
-    
     ;init music
-    ld hl,demo_music_4_start
+    ld hl,00;end_music_ch1_start
     call InitMusic1
-    ld hl,nosound_start
+    ld hl,end_music_ch2_start
     call InitMusic2
-    ld hl,nosound_start
+    ld hl,00;end_music_ch3_start
     call InitMusic3
     
     ;initialize scroll variables

@@ -83,11 +83,11 @@ SetupLevel10:
         jr nz,-
     
     ;init music
-    ld hl,demo_music_4_start
+    ld hl,00;end_music_ch1_start
     call InitMusic1
-    ld hl,nosound_start
+    ld hl,end_music_ch2_start
     call InitMusic2
-    ld hl,nosound_start
+    ld hl,00;end_music_ch3_start
     call InitMusic3
     
     ;variables initialization
@@ -218,11 +218,11 @@ SetupLevel11:
         jr nz,-
     
     ;init music
-    ld hl,demo_music_4_start
+    ld hl,00;end_music_ch1_start
     call InitMusic1
-    ld hl,nosound_start
+    ld hl,end_music_ch2_start
     call InitMusic2
-    ld hl,nosound_start
+    ld hl,00;end_music_ch3_start
     call InitMusic3
     
     ;variables initialization
@@ -614,7 +614,17 @@ DoStartLava:
     ld (gameStatusCnt),hl
 
     
-
+    ;screen shaking
+    ld a,l
+    srl a
+    srl a
+    srl a
+    and %00000011
+    sub 2
+    ;VDP hz scrolling
+    out ($bf),a
+    ld a,%10001000
+    out ($bf),a
     
     
     
@@ -630,17 +640,6 @@ DoStartLava:
       ld a,1;have to write slowly
       call PrintText
       
-      ;screen shaking
-      ld a,l
-      srl a
-      srl a
-      srl a
-      and %00000011
-      sub 2
-      ;VDP hz scrolling
-      out ($bf),a
-      ld a,%10001000
-      out ($bf),a
   +:
     ld hl,(gameStatusCnt)
     ld a,h
@@ -657,17 +656,6 @@ DoStartLava:
       ld a,1;have to write slowly
       call PrintText
       
-      ;screen shaking
-      ld a,l
-      srl a
-      srl a
-      srl a
-      and %00000011
-      sub 2
-      ;VDP hz scrolling
-      out ($bf),a
-      ld a,%10001000
-      out ($bf),a
   +:
     ld hl,(gameStatusCnt)
     ld a,h
