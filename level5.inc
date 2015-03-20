@@ -1,7 +1,7 @@
 .section "level5" force
 
 Level4Message:
- .db "SLOWLY LAND ON BLINKING ZONE",0
+ .db "LAND SLOWLY ON BLINKING ZONE",0
 
 Level5Message:
  .db "GO RIGHT TO NEXT LANDING ZONE",0

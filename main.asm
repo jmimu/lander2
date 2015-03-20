@@ -90,6 +90,7 @@
   speedX                     dw ; multiplied by 2^8
   speedY                     dw ; multiplied by 2^8
   rocket_fuel         dw 
+  rocket_fuel_level_start  dw ;save rocket_fuel at level start
   rocket_status      db ;0: normal, 1: bottom fire, 2: destroyed
   buttons      db ; keep a copy of the buttons pressed
   current_level db
@@ -153,6 +154,18 @@
     ld (PauseFlag),a
   retn
 
+
+.org    $0080 ;Mapper initialization
+init:
+        ; This maps the first 48K of ROM to $0000-$BFFF
+        ld      de, $FFFC
+        ld      hl, init_tab
+        ld      bc, $0004
+        ldir
+        jp      main
+
+init_tab: ; Table must exist within first 1K of ROM
+        .db     $00, $00, $01, $02
 
 ;inclusions
 .include "fnc_sound.inc"

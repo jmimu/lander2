@@ -310,6 +310,9 @@ DoLost:
     and %00010000
     cp  %00000000
     jr nz,+
+        ld hl,(rocket_fuel_level_start)
+        ld (rocket_fuel),hl
+        
         ld sp, $dff0 ;clear stack
         jp NewLevel
   +:  
@@ -319,6 +322,9 @@ DoLost:
     and %00100000
     cp  %00000000
     jr nz,+
+        ld hl,(rocket_fuel_level_start)
+        ld (rocket_fuel),hl
+        
         ld sp, $dff0 ;clear stack
         jp StartGame
   +:
@@ -373,6 +379,14 @@ DoWait:
     
     ld a,1 ;start
     ld (gameStatus),a
+    
+    ;if no more fuel, lost
+    ld hl,(rocket_fuel)
+    ld a,h
+    cp 0
+    jr nz,+
+      call DoLost
+  +:
     
     
     ;update rocket status

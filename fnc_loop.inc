@@ -143,8 +143,9 @@ NewLevel:
     jr z,+
       ld hl,$FF0F
       ld (rocket_fuel),hl
-   +: 
-
+   +:
+    ld hl,(rocket_fuel)
+    ld (rocket_fuel_level_start),hl
     
     
 GameLoop:
