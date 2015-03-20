@@ -95,6 +95,7 @@
   buttons      db ; keep a copy of the buttons pressed
   current_level db
   difficulty_level db
+  nb_lives db ; number of lives
   already_lost db ;0 if not, 1 if lost at least 1 time
 ;  goto_level db ;0 if no need to change level, n to enter level n
   star_color1 dw ;color used: bright and yellow

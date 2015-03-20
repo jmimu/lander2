@@ -25,10 +25,20 @@ TextHelloStart:
 TextLevelStart:
 .db "ENTERING LEVEL",0
 
+TextLevelLivesStart:
+.db "x    LIVES",0
+
 TextLost1Start:
 .db "YOU LOST! PRESS 1 TO TRY AGAIN",0
 TextLost2Start:
 .db "OR 2 TO RESTART GAME",0
+
+TextLost3Start:
+.db " GAME OVER ",0
+TextLost4Start:
+.db "PRESS 1 OR 2 TO RESTART GAME",0
+
+
 
 TextWonStart:
 .db "GREAT! PRESS 1 TO CONTINUE",0
@@ -540,9 +550,10 @@ FontData_Start: ; 1 BPP
 FontData_End:
 
 
-Palette0Start:
-;.db $3b,$3f,$08,$18,$04,$06,$3a,$29,$2a,$3f,$01,$3d,$38,$0c,$08,$3c
-.db $00,$3f,$08,$18,$04,$06,$3a,$29,$2a,$3f,$01,$3d,$38,$0c,$08,$3c
-.db $3b, $3f, $3f, $4, $8, $c, $1, $3, $2b, $20, $2a, $38, $f, $15, $6, $21
-Palette0End:
+;Palette0Start:
+;;.db $3b,$3f,$08,$18,$04,$06,$3a,$29,$2a,$3f,$01,$3d,$38,$0c,$08,$3c
+;.db $00,$3f,$08,$18,$04,$06,$3a,$29,$2a,$3f,$01,$3d,$38,$0c,$08,$3c
+;;.db $3b, $3f, $3f, $4, $8, $c, $1, $3, $2b, $20, $2a, $38, $f, $15, $6, $21
+;.db $3b,$3f,$00,$20,$38,$01,$02,$03,$15,$2a,$1f,$2f,$3a,$36,$01,$0a
+;Palette0End:
 

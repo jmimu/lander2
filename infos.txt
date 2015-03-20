@@ -1,17 +1,12 @@
 Minimal to finish game:
 
  - on ne peut plus gagner à cause de la lave => tester plus de scrolling, sinon faire quelque chose de spécial
- - enregistrer le carburant du début du niveau pour recommencer avec si pas refill
  - pouvoir passer au niveau suivant aussi avec la touche 2 ?
- - si DoWait et pas de carburant => perdu !
-http://www.smspower.org/Development/GettingStarted 
-
+ 
  * add background at start of  level 4 => just need to be incorporated to rom
  * fix lost music
- * add lives
  * compute score
  * fix high difficulty
- * show lives and difficulty before levels (level num in dec)
  * make an ending
  * select musics
 --------------------------------------------------------------------------------

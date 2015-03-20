@@ -588,7 +588,7 @@ showLevel:
     ld (tiles_vram_used),hl
 
     ;load default palette
-    ld hl,Palette0Start
+    ld hl,Title_Palette_Start
     ;==============================================================
     ; Load palette
     ;==============================================================
@@ -599,8 +599,8 @@ showLevel:
     ld a,$c0
     out ($bf),a
     ; 2. Output colour data
-    ;ld hl,Palette0Start
-    ld b,(Palette0End-Palette0Start)
+    ;ld hl,Title_Palette_Start
+    ld b,(Title_Palette_End-Title_Palette_Start)
     ld c,$be
     otir
 
@@ -685,6 +685,28 @@ showLevel:
     ld e,a;value (8bit) in e
     ;call PrintInt8
     call PrintInt10Sprite ;print an uint8 in decimal with sprites
+    
+        
+    ;draw lives text
+    ld c,12;col (tiles) in c
+    ld l,12;line (tiles) in l
+    ld de,TextLevelLivesStart;text pointer in de
+    ld a,1;have to write slowly
+    call PrintText
+    ;draw lives number
+    ld h,13*8;col (tiles) in h
+    ld l,12*8-1;line (tiles) in l
+    ld a,(nb_lives)
+    ld e,a;value (8bit) in e
+    call PrintInt10Sprite ;print an uint8 in decimal with sprites
+    
+    ld h,10*8;x in h
+    ld l,12*8-1;y in l
+    ld d,guy_tile_number;n in d
+    call SpriteSet16x8
+    
+    
+    
     call SetLastSprite
 
     
@@ -1074,24 +1096,7 @@ DoGameLogicDbg:
     
   DoGameLogicDbg_end:
 
-    ;draw rocket sprites
-    ld bc,(posX)    
-    ld h,b;x in h
-    ld bc,(posY)    
-    ld l,b;y in l
-    call DrawRocket
-    
-    ;draw fuel logo
-    ld h,8 ;col (pix) in h
-    ld l,8 ;line (pix) in l
-    ld d,fuel_tile_number
-    call SpriteSet8x8
-    ;fuel value
-    ld hl,(rocket_fuel)
-    ld e,h;value (8bit) in e
-    ld h,16 ;col (pix) in h
-    ld l,8 ;line (pix) in l
-    call PrintInt10Sprite
+    call DrawGameElements
     
     ;hide other sprites
     call SetLastSprite

@@ -32,8 +32,7 @@ ShowMenu:
     ld a,$c0
     out ($bf),a
     ; 2. Output colour data
-    ;ld hl,Palette0Start
-    ld b,(Palette0End-Palette0Start)
+    ld b,(Title_Palette_End-Title_Palette_Start)
     ld c,$be
     otir
 

@@ -1,5 +1,5 @@
 ;-------------------------------------------------------------------
-DrawRocket
+DrawRocket:
   ;x in h
   ;y in l
   
@@ -263,6 +263,13 @@ DoStart:
     ld (gameStatusCnt),hl
   +:
 
+    call DrawGameElements
+    
+    ;hide other sprites
+    call SetLastSprite
+  ret
+
+DrawGameElements:
     ;draw rocket sprites
     ld bc,(posX)    
     ld h,b;x in h
@@ -282,12 +289,30 @@ DoStart:
     ld l,8 ;line (pix) in l
     call PrintInt10Sprite
     
-    ;hide other sprites
-    call SetLastSprite
+    
+    ;draw lives
+    ld h,8 ;col (pix) in h
+    ld l,8*2 ;line (pix) in l
+    ld d,guy_tile_number
+    ld a,(nb_lives)
+    ld c,a
+  -:
+    cp 0
+    jr z,+
+      call SpriteSet16x8
+      ld a,l
+      add a,8
+      ld l,a
+      dec c
+      dec d
+      ld a,c
+      jr -
+   +:
   ret
-  
+
 ;-------------------------------------------------------------------------------
 DoLost:
+    ;play music if first time in DoLost
     ld a,(first_frame_on_end_status)
     cp 1
     jr nz,+
@@ -299,12 +324,58 @@ DoLost:
       call InitMusic3
       xor a
       ld (first_frame_on_end_status),a
+      
+      ;one life less
+      ld a,(nb_lives)
+      dec a
+      ld (nb_lives),a
     +:
 
     ;stop lava
     xor a
     ld (YLava_speed),a
     
+    ld a,(nb_lives)
+    cp 0
+    jr nz,+
+      ;no life
+      jp DoLostNoLife
+  +:
+    jp DoLostLives
+  
+
+DoLostNoLife:
+    ;read buttons
+    in a,($dc)
+    or %11001111
+    cp  %11111111
+    jr z,+
+        ld sp, $dff0 ;clear stack
+        jp StartGame
+  +:
+    call DrawGameElements
+    
+    ;draw lost text
+    ld c,11;col (tiles) in c
+    ld l,10;line (tiles) in l
+    ld de,TextLost3Start;text pointer in de
+    ld a,1;have to write slowly ?????????
+    call PrintTextMiddleScroll
+    
+    ld c,2;col (tiles) in c
+    ld l,11;line (tiles) in l
+    ld de,TextLost4Start;text pointer in de
+    ld a,1;have to write slowly ?????????
+    call PrintTextMiddleScroll
+    
+    call drawWarning;to see what went wrong
+
+    ;hide other sprites
+    call SetLastSprite
+    
+    ret
+
+DoLostLives:
     ;read button 1
     in a,($dc)
     and %00010000
@@ -329,24 +400,7 @@ DoLost:
         jp StartGame
   +:
     
-    ;draw rocket sprites
-    ld bc,(posX)    
-    ld h,b;x in h
-    ld bc,(posY)    
-    ld l,b;y in l
-    call DrawRocket
-    
-    ;draw fuel logo
-    ld h,8 ;col (pix) in h
-    ld l,8 ;line (pix) in l
-    ld d,fuel_tile_number
-    call SpriteSet8x8
-    ;fuel value
-    ld hl,(rocket_fuel)
-    ld e,h;value (8bit) in e
-    ld h,16 ;col (pix) in h
-    ld l,8 ;line (pix) in l
-    call PrintInt10Sprite
+    call DrawGameElements
     
     ;draw lost text
     ld c,2;col (tiles) in c
@@ -424,24 +478,7 @@ DoWait:
     
     call ReadButtonsPlay
     
-    ;draw rocket sprites
-    ld bc,(posX)    
-    ld h,b;x in h
-    ld bc,(posY)    
-    ld l,b;y in l
-    call DrawRocket
-    
-    ;draw fuel logo
-    ld h,8 ;col (pix) in h
-    ld l,8 ;line (pix) in l
-    ld d,fuel_tile_number
-    call SpriteSet8x8
-    ;fuel value
-    ld hl,(rocket_fuel)
-    ld e,h;value (8bit) in e
-    ld h,16 ;col (pix) in h
-    ld l,8 ;line (pix) in l
-    call PrintInt10Sprite
+    call DrawGameElements
     
     ;call drawWarning
     ;call TestAllCollisions
@@ -484,13 +521,7 @@ DoWon:
         jp NewLevel
   +:  
     
-    
-    ;draw rocket sprites
-    ld bc,(posX)    
-    ld h,b;x in h
-    ld bc,(posY)    
-    ld l,b;y in l
-    call DrawRocket
+    call DrawGameElements
     
     ;draw player
     ld bc,(posX)    
@@ -503,17 +534,6 @@ DoWon:
     ld e,$6;sprite index in e, 6 because we draw the rocket too
     call SpriteSet16x16
     
-    ;draw fuel logo
-    ld h,8 ;col (pix) in h
-    ld l,8 ;line (pix) in l
-    ld d,fuel_tile_number
-    call SpriteSet8x8
-    ;fuel value
-    ld hl,(rocket_fuel)
-    ld e,h;value (8bit) in e
-    ld h,16 ;col (pix) in h
-    ld l,8 ;line (pix) in l
-    call PrintInt10Sprite
     
     ;draw won text
     ld c,1;col (tiles) in c

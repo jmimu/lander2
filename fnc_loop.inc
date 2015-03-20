@@ -46,6 +46,9 @@ StartGame:
     ld (rocket_fuel),hl
     xor a
     ld (already_lost),a
+    
+    ld a,5
+    ld (nb_lives),a
 
 NewLevel:
     call CutAllSound

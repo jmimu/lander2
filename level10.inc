@@ -716,24 +716,7 @@ DoStartLava:
     ld (gameStatusCnt),hl
   +:
 
-    ;draw rocket sprites
-    ld bc,(posX)    
-    ld h,b;x in h
-    ld bc,(posY)    
-    ld l,b;y in l
-    call DrawRocket
-    
-    ;draw fuel logo
-    ld h,8 ;col (pix) in h
-    ld l,8 ;line (pix) in l
-    ld d,fuel_tile_number
-    call SpriteSet8x8
-    ;fuel value
-    ld hl,(rocket_fuel)
-    ld e,h;value (8bit) in e
-    ld h,16 ;col (pix) in h
-    ld l,8 ;line (pix) in l
-    call PrintInt10Sprite
+    call DrawGameElements
     
     ;hide other sprites
     call SetLastSprite
