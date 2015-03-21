@@ -294,98 +294,98 @@ PrintText:
     ret
     
     
-PrintTextStatic: ;for static screens (turn off screen to avoid missing letters)
-    ;col (tiles) in c
-    ;line (tiles) in l
-    ;text pointer in de (the text ends then ascii=0)
-    ;the constant "diff_tile_ascii"  must represent difference between index in tiles and in ascii
-    
-    ;push bc
-    ;  ld b,e
-    ;  call PrintInt
-    ;pop bc
-    
-    push bc
-    push de
-    push hl
-    push af
-    push bc
-    
-    
-    ;compute the tile index in tilemap
-    ;sms screen is 32*28 tiles large
-    call Multby32 ;multipy l by 32, result in hl
-    ld b,0
-    add hl,bc
-    ;hl is the number of the tile
-    
-    add hl,hl ;2 bytes by tile
-    ;hl is the number of the byte in tilemap
-    
-    pop bc
-    
-    di
-    ; Turn screen off
-    ld a,%10100000
-;          |||| |`- Zoomed sprites -> 16x16 pixels
-;          |||| `-- Doubled sprites -> 2 tiles per sprite, 8x16
-;          |||`---- 30 row/240 line mode
-;          ||`----- 28 row/224 line mode
-;          |`------ VBlank interrupts
-;          `------- Enable display
-    out ($bf),a
-    ld a,$81
-    out ($bf),a
-    
-    ;write chars
-    -:
-        ;==============================================================
-      ; Write text to name table
-      ;==============================================================
-      ; 1. Set VRAM write address to name table index 0
-      ; by outputting $4000 ORed with $3800+hl*2
-      ld a,$00
-      add a,l ;number of byte: hl
-      out ($bf),a
-      ld a,$38|$40
-      add a,h ;number of byte: hl
-      out ($bf),a
-      
-      ; 2. Output tilemap data   
-      ld a,(de);the char
-      cp 0
-      jr z,PrintTextStatic_end ;end of loop if value=0
-      
-      sub diff_tile_ascii
-      out ($be),a
-      xor a ;one zero
-      out ($be),a
-      inc de;move pointer in data
-      inc hl;move pointer on screen
-      inc hl;move pointer on screen
-      
-      jr -
-    
-  PrintTextStatic_end:
-
-    ; Turn screen on
-    ld a,%11100000
-;          |||| |`- Zoomed sprites -> 16x16 pixels
-;          |||| `-- Doubled sprites -> 2 tiles per sprite, 8x16
-;          |||`---- 30 row/240 line mode
-;          ||`----- 28 row/224 line mode
-;          |`------ VBlank interrupts
-;          `------- Enable display
-    out ($bf),a
-    ld a,$81
-    out ($bf),a
-    ei
-    
-    
-    pop af
-    pop hl
-    pop de
-    pop bc
-    
-        
-    ret
+;PrintTextStatic: ;for static screens (turn off screen to avoid missing letters)
+;    ;col (tiles) in c
+;    ;line (tiles) in l
+;    ;text pointer in de (the text ends then ascii=0)
+;    ;the constant "diff_tile_ascii"  must represent difference between index in tiles and in ascii
+;    
+;    ;push bc
+;    ;  ld b,e
+;    ;  call PrintInt
+;    ;pop bc
+;    
+;    push bc
+;    push de
+;    push hl
+;    push af
+;    push bc
+;    
+;    
+;    ;compute the tile index in tilemap
+;    ;sms screen is 32*28 tiles large
+;    call Multby32 ;multipy l by 32, result in hl
+;    ld b,0
+;    add hl,bc
+;    ;hl is the number of the tile
+;    
+;    add hl,hl ;2 bytes by tile
+;    ;hl is the number of the byte in tilemap
+;    
+;    pop bc
+;    
+;    di
+;    ; Turn screen off
+;    ld a,%10100000
+;;          |||| |`- Zoomed sprites -> 16x16 pixels
+;;          |||| `-- Doubled sprites -> 2 tiles per sprite, 8x16
+;;          |||`---- 30 row/240 line mode
+;;          ||`----- 28 row/224 line mode
+;;          |`------ VBlank interrupts
+;;          `------- Enable display
+;    out ($bf),a
+;    ld a,$81
+;    out ($bf),a
+;    
+;    ;write chars
+;    -:
+;        ;==============================================================
+;      ; Write text to name table
+;      ;==============================================================
+;      ; 1. Set VRAM write address to name table index 0
+;      ; by outputting $4000 ORed with $3800+hl*2
+;      ld a,$00
+;      add a,l ;number of byte: hl
+;      out ($bf),a
+;      ld a,$38|$40
+;      add a,h ;number of byte: hl
+;      out ($bf),a
+;      
+;      ; 2. Output tilemap data   
+;      ld a,(de);the char
+;      cp 0
+;      jr z,PrintTextStatic_end ;end of loop if value=0
+;      
+;      sub diff_tile_ascii
+;      out ($be),a
+;      xor a ;one zero
+;      out ($be),a
+;      inc de;move pointer in data
+;      inc hl;move pointer on screen
+;      inc hl;move pointer on screen
+;      
+;      jr -
+;    
+;  PrintTextStatic_end:
+;
+;    ; Turn screen on
+;    ld a,%11100000
+;;          |||| |`- Zoomed sprites -> 16x16 pixels
+;;          |||| `-- Doubled sprites -> 2 tiles per sprite, 8x16
+;;          |||`---- 30 row/240 line mode
+;;          ||`----- 28 row/224 line mode
+;;          |`------ VBlank interrupts
+;;          `------- Enable display
+;    out ($bf),a
+;    ld a,$81
+;    out ($bf),a
+;    ei
+;    
+;    
+;    pop af
+;    pop hl
+;    pop de
+;    pop bc
+;    
+;        
+;    ret

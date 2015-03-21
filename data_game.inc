@@ -52,6 +52,11 @@ TextNotPerfectStart:
 .db "TRY NOT TO LOOSE NEXT TIME!",0
 
 
+TextScoreStart:
+  .db "SCORE",0
+  
+TextHIScoreStart:
+  .db "HISCORE",0
 
 LandingColorLoop:
 ;.db %00111001,%00101101,%00011110,%00011011

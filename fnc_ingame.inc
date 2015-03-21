@@ -498,6 +498,15 @@ DoWon:
     ld a,(first_frame_on_end_status)
     cp 1
     jr nz,+
+      ;only on first frame of DoWon
+      ld hl,(score)
+      ld bc,(rocket_fuel)
+      ld c,b
+      xor a
+      ld b,a ;bc=rocket_fuel/256
+      add hl,bc
+      ld (score),hl ;score+=rocket_fuel/256
+      
       ld hl,win_music_ch1_start
       call InitMusic1
       ld hl,nosound_start

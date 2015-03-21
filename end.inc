@@ -1,3 +1,6 @@
+.section "end" force
+
+
 Level12Ending:
     call WaitForVBlankLava
     
@@ -82,11 +85,33 @@ EndGame:
     call ResetSprites
     call DrawGameElements
     
+    ;draw score text
+    ld c,7;col (tiles) in c
+    ld l,10;line (tiles) in l
+    ld de,TextScoreStart;text pointer in de
+    ld a,1;have to write slowly
+    call PrintText
+    
+    ;draw score number text
+    ld h,22*8;col (tiles) in h
+    ld l,10*8-1;line (tiles) in l
+    ld bc,(score)
+    ld e,b;value (8bit) in e
+    call PrintInt10Sprite ;print an uint8 in decimal with sprites
+    ;draw score number text
+    ld h,26*8;col (tiles) in h
+    ld l,10*8-1;line (tiles) in l
+    ld bc,(score)
+    ld e,c;value (8bit) in e
+    call PrintInt10Sprite ;print an uint8 in decimal with sprites
+    
     ;hide other sprites
     call SetLastSprite
-
 
     call UpdatePalette
     call UpdateScreen
     call PSGMOD_Play
   jp -
+
+
+.ends ;--------------- end end section

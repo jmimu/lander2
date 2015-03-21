@@ -97,6 +97,8 @@
   difficulty_level db
   nb_lives db ; number of lives
   already_lost db ;0 if not, 1 if lost at least 1 time
+  score   dw
+  hiscore dw
 ;  goto_level db ;0 if no need to change level, n to enter level n
   star_color1 dw ;color used: bright and yellow
   star_color2 dw ;color used: bright and yellow
@@ -195,6 +197,10 @@ main:
     ; Set up VDP registers
     ;==============================================================
     call initVDP
+    
+    ld hl,0
+    ld (score),hl
+    ld (hiscore),hl
 
     call InitializeJmimu
     
@@ -245,7 +251,6 @@ IsButtonPressed:
 .include "data_jmimu.inc"
 .include "data_demo.inc"
 .include "menu.inc"
-.include "end.inc"
 .ends
 
 
@@ -254,12 +259,13 @@ IsButtonPressed:
 
 .include "level1.inc"
 
-
-
 ;we have to skip the $7ff0-$7fff area
 .org $8000
 
 .include "level5.inc"
+
+.include "end.inc"
+
 
 ;.bank 2 slot 0
 .section "assets_game" force

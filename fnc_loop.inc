@@ -75,15 +75,6 @@ NewLevel:
     ld a,%10001001
     out ($bf),a
     
-
-    ;check if end of game
-    ld a,(current_level)
-    dec a
-    cp number_of_levels
-    jr nz,+
-    call endGame
-   +:
-    
     call showLevel
     
     ;disable interrupts and turn off screen before writing to it. Will it fix tiles issues?
@@ -166,8 +157,6 @@ GameLoop:
     call GameStatusUpdate
     
     
-    
-    
     call UpdatePalette
     call UpdateScreen
     call PSGMOD_Play
@@ -175,12 +164,60 @@ GameLoop:
     ;on last level, if VScroll<0, go to Level12Ending
     ld a,(current_level)
     cp number_of_levels
-    jr nz,+
+    jr nz,GameLoop_notEndOfGame
       ld hl,(YScrollTotal)
       ld a,h
       cp $80
-      jp nc,Level12Ending
-    +:
+      jp c,GameLoop_notEndOfGame
+        ;end of game
+        ld hl,(score)
+        ld bc,(rocket_fuel)
+        ld c,b
+        xor a
+        ld b,a ;bc=rocket_fuel/256
+        add hl,bc
+        ld (score),hl ;score+=rocket_fuel/256
+        ;if refuel==0, add $600 to score to compensate
+        ld a,(refuel)
+        cp 0
+        jr nz,+
+          ld a,h
+          add a,6
+          ld h,a
+          ld (score),hl ;score+=$600
+       +:
+        ;add $200 for each remaining life
+        ld a,(nb_lives)
+        add a,a
+        ld b,a
+        ld a,h
+        add a,b
+        ld h,a
+        
+        ;add $100 for each difficulty level
+        ld a,(difficulty_level)
+        ld b,a
+        ld a,h
+        add a,b
+        ld h,a
+        ld (score),hl
+        
+        ;test if > hiscore
+        ld hl,(score)
+        ld bc,(hiscore)
+        or a ; reset carry flag (see http://www.smspower.org/Development/Z80ProgrammingTechniques#SubHlde)
+        sbc hl,bc
+        ;hl=(score)-(hiscore)
+        ;if h>80, hiscore>score
+        ld a,h
+        cp 80
+        jr nc,+
+          ld hl,(score)
+          ld (hiscore),hl
+       +:
+        
+        jp Level12Ending
+    GameLoop_notEndOfGame:
     
     jp GameLoop
 
@@ -247,35 +284,6 @@ SelectLevel:
     
   SelectLevel_end:
     ret
-
-;-----------------------------------------------------------------------
-endGame:
-    ;draw congratulations text
-    ld c,2;col (tiles) in c
-    ld l,5;line (tiles) in l
-    ld de,TextCongratStart;text pointer in de
-    call PrintTextStatic
-    
-    ;draw final fuel
-    ld hl,(rocket_fuel)
-    ld c,24;col (tiles) in c
-    ld l,6;line (tiles) in l
-    ld e,h;value (8bit) in e
-    call PrintInt8
-    
-    ld a,(already_lost)
-    cp 0
-    jr z,+
-    ;game finished, but not perfect
-    ld c,2;col (tiles) in c
-    ld l,7;line (tiles) in l
-    ld de,TextNotPerfectStart;text pointer in de
-    call PrintTextStatic
-  +:
-    
-    call WaitForButton
-    ld sp, $dff0 ;clear stack
-    jp main
 
 
 ;-----------------------------------------------------------------------
