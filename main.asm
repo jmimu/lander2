@@ -1,6 +1,6 @@
-;bloup
+;lander2
 ;
-;Copyright (C) 2013  jmimu (jmimu@free.fr)
+;Copyright (C) 2014-2015  jmimu (jmimu@free.fr)
 ;
 ;This program is free software: you can redistribute it and/or modify
 ;it under the terms of the GNU General Public License as published by
@@ -120,7 +120,7 @@
 ;==============================================================
 ; SDSC tag and SMS rom header
 ;==============================================================
-.sdsctag 1.2,"Lander2 v0.1","bloupbloup","jmimu"
+.sdsctag 1.2,"Lander2","Lander2 v0.7","jmimu"
 
 .bank 0 slot 0
 .org $0000

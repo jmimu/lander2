@@ -462,9 +462,9 @@ SetDifficulty:
     ;difficulty 2
     ld hl,$-40
     ld (fuel_use),hl;$-7
-    ld hl,$60
+    ld hl,$55
     ld (speed_pos_tolerance),hl;$40
-    ld hl,-$60
+    ld hl,-$55
     ld (speed_neg_tolerance),hl;$40
     ld hl,$-5
     ld (Xdumping),hl;$0
@@ -492,7 +492,7 @@ SetDifficulty:
     ld (Xdumping),hl;$0
     ld a,1
     ld (refuel),a;$0
-    ld a,0
+    ld a,1
     ld (big_rocket),a;$1
     
     ld a,12
