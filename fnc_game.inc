@@ -438,7 +438,7 @@ SetDifficulty:
     cp 1
     jr nz,+
     ;difficulty 1
-    ld hl,$-1
+    ld hl,$-30
     ld (fuel_use),hl;$-7
     ld hl,$60
     ld (speed_pos_tolerance),hl;$40
@@ -460,7 +460,7 @@ SetDifficulty:
     cp 2
     jr nz,+
     ;difficulty 2
-    ld hl,$-2
+    ld hl,$-40
     ld (fuel_use),hl;$-7
     ld hl,$60
     ld (speed_pos_tolerance),hl;$40
@@ -482,7 +482,7 @@ SetDifficulty:
     cp 3
     jr nz,+
     ;difficulty 3
-    ld hl,$-4
+    ld hl,$-50
     ld (fuel_use),hl;$-7
     ld hl,$50
     ld (speed_pos_tolerance),hl;$40
@@ -1431,8 +1431,6 @@ TestLanding:;use tilemap collision data
       ld (gameStatus),a
       
       ;refill!
-      ld hl,$FF0F
-      ld (rocket_fuel),hl
       ld a,1
       ld (already_lost),a
       

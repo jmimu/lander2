@@ -545,7 +545,7 @@ DoWon:
     
     
     ;draw won text
-    ld c,1;col (tiles) in c
+    ld c,2;col (tiles) in c
     ld l,10;line (tiles) in l
     ld de,TextWonStart;text pointer in de
     ld a,1;have to write slowly ?????????

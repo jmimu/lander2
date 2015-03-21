@@ -199,10 +199,13 @@ main:
     call initVDP
     
     ld hl,0
-    ld (score),hl
     ld (hiscore),hl
 
 demo:
+    call CutAllSound
+    ld hl,0
+    ld (score),hl
+    
     call InitializeJmimu
     
     ;run demo

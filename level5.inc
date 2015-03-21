@@ -147,7 +147,7 @@ SetupLevel4:
     
     ;show level message
     ld de,Level4Message;text pointer in de
-    ld c,1;col (tiles) in c
+    ld c,3;col (tiles) in c
     ld l,3;line (tiles) in l
     ld a,1;have to write slowly
     call PrintText
@@ -294,7 +294,7 @@ SetupLevel5:
     
     ;show level message
     ld de,Level5Message;text pointer in de
-    ld c,1;col (tiles) in c
+    ld c,3;col (tiles) in c
     ld l,3;line (tiles) in l
     ld a,1;have to write slowly
     call PrintText
@@ -444,7 +444,7 @@ SetupLevel6:
     
     ;show level message
     ld de,Level6Message;text pointer in de
-    ld c,22;col (tiles) in c
+    ld c,24;col (tiles) in c
     ld l,3;line (tiles) in l
     ld a,1;have to write slowly
     call PrintText
@@ -893,7 +893,7 @@ SetupLevel9:
     
     ;show level message
     ld de,Level9Message;text pointer in de
-    ld c,1;col (tiles) in c
+    ld c,3;col (tiles) in c
     ld l,3;line (tiles) in l
     ld a,1;have to write slowly
     call PrintText

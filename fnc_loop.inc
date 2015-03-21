@@ -27,9 +27,6 @@ StartGame:
     ld a,1
     ld (current_level),a
     
-
-    ld hl,$FF0F
-    ld (rocket_fuel),hl
     
     ld hl,$0000
     ld (star_color1),hl
