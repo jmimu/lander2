@@ -24,7 +24,7 @@ StartGame:
     ld a,%10001001 ;y scroll
     out ($bf),a
     
-    ld a,1
+    ld a,11
     ld (current_level),a
     
 

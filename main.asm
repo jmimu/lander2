@@ -214,10 +214,8 @@ main:
     ld a,$81
     out ($bf),a
     
-    call ShowMenu
+    jp ShowMenu
     
-    ;run game
-    jp StartGame
 end:
   jr end
 

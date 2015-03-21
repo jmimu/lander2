@@ -13,12 +13,20 @@ ShowMenu:
     out ($bf),a
     ld a,$81
     out ($bf),a
-
+    
     ;disable scrolling
     xor a
     out ($bf),a
-    ld a,%10001000
+    ld a,%10001000 ;x scroll
     out ($bf),a
+    
+    xor a
+    out ($bf),a
+    ld a,%10001001 ;y scroll
+    out ($bf),a
+    
+    xor a
+    ld (rocket_status),a
 
     ;load default palette
     ld hl,Title_Palette_Start
@@ -317,7 +325,7 @@ ShowMenu:
       ld a,(current_level)
       cp 0
       jp z,Title_loop
-    ret
+    jp StartGame
 
 ;uses (refuel) to record if an input occured last frame
 ;uses (current_level)>0 to quit demo

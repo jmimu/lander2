@@ -305,7 +305,12 @@ VScrollManager:
     cp 0
     jr nz,+
     ;we are at 0, stop scrolling
-    jp z,VScrollManager_end ;remove this line to enable out of memory 
+    
+      ;only on level 11 enable out of memory 
+      ld a,(current_level)
+      cp number_of_levels
+      jr z,+
+      jp VScrollManager_end ;remove this line to enable out of memory 
   +:
     ;update YScrollTotal
     dec hl

@@ -351,7 +351,7 @@ DoLostNoLife:
     cp  %11111111
     jr z,+
         ld sp, $dff0 ;clear stack
-        jp StartGame
+        jp ShowMenu
   +:
     call DrawGameElements
     
@@ -397,7 +397,7 @@ DoLostLives:
         ld (rocket_fuel),hl
         
         ld sp, $dff0 ;clear stack
-        jp StartGame
+        jp ShowMenu
   +:
     
     call DrawGameElements
