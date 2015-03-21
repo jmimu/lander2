@@ -1,30 +1,10 @@
-Minimal to finish game:
-
- * add background at start of  level 4 => just need to be incorporated to rom
- * fix lost music
- * fix high difficulty
- * select musics
 --------------------------------------------------------------------------------
 
-fix lava out of screen
-make 2 variables for lava speed change (set by difficulty?)
-
 add other collisions models
-
-have 5 lives (small rocket sprites vertically arranged)
 
 do not clear all data for showLevel
 
 make a generic load data function using pile to get all adresses ?
-
-Double every landing zone for 2-player game?
-
-last level : lava going up with 2 levels of palette hack: light then lava.
-both with color loop ? Make the cave dark
-when getting out, enable vscroll up out of memory with this line:
-;remove this line to enable out of memory
-stop collisions and stop fuel counter, end of game when hitting y=0
-
 
 --------------------------------------------------------------------------------
 try to use only 32k ? currentyl using 44k (31k of data, 13k of code)
@@ -72,13 +52,7 @@ each level has his onw SpecialTileFunction, called when touching a special case
 (most of the time try to land and end en level).
 SpecialTileFunction is a variable initialized at each level
 
-
-function RunGame is strange no need to use palette0...
-
-
 add tiles_vram_used in demo too
-
-keep posY as 8.8 ? use it as local to screen ?
 
 --------------------------------------------------------------------------------
  3008 bytes for chars, divided by 4 using 1bpp tiles => 2256 bytes saved
