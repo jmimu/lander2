@@ -245,6 +245,7 @@ IsButtonPressed:
 .include "data_jmimu.inc"
 .include "data_demo.inc"
 .include "menu.inc"
+.include "end.inc"
 .ends
 
 
@@ -252,6 +253,7 @@ IsButtonPressed:
 .include "level10.inc"
 
 .include "level1.inc"
+
 
 
 ;we have to skip the $7ff0-$7fff area

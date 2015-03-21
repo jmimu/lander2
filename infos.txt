@@ -8,7 +8,6 @@ Minimal to finish game:
  héroine qui passe en vélo avec fusée ! ET!
 
  - on ne peut plus gagner à cause de la lave => tester plus de scrolling, sinon faire quelque chose de spécial
- - pouvoir passer au niveau suivant aussi avec la touche 2 ?
  
  * add background at start of  level 4 => just need to be incorporated to rom
  * fix lost music

@@ -172,6 +172,16 @@ GameLoop:
     call UpdateScreen
     call PSGMOD_Play
     
+    ;on last level, if VScroll<0, go to Level12Ending
+    ld a,(current_level)
+    cp number_of_levels
+    jr nz,+
+      ld hl,(YScrollTotal)
+      ld a,h
+      cp $80
+      jp nc,Level12Ending
+    +:
+    
     jp GameLoop
 
 
