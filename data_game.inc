@@ -44,16 +44,15 @@ TextWonStart:
 .db "GREAT! PRESS 1 TO CONTINUE",0
 
 TextCongratStart:
-.db "CONGRATULATIONS, YOU FINISHED THE GAME!",0
-TextCongrat2Start:
-.db "FINAL SCORE: ",0
+.db "CONGRATULATIONS, GAME FINISHED!",0
+
 
 TextNotPerfectStart:
 .db "TRY NOT TO LOOSE NEXT TIME!",0
 
 
 TextScoreStart:
-  .db "SCORE",0
+  .db "FINAL SCORE",0
   
 TextHIScoreStart:
   .db "HISCORE",0

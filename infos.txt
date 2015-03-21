@@ -1,19 +1,8 @@
 Minimal to finish game:
 
- faire une variable dw score avec somme des (fuel/256)+4*256 (si diff>=4)+256*diff+256*vies
- avoir un hiscore
- quand on recommence le jeu, revenir au menu !
- 
- fin du jeu : félicitations+score+encouragements +dur et 1 seule vie
- héroine qui passe en vélo avec fusée ! ET!
-
- - on ne peut plus gagner à cause de la lave => tester plus de scrolling, sinon faire quelque chose de spécial
- 
  * add background at start of  level 4 => just need to be incorporated to rom
  * fix lost music
- * compute score
  * fix high difficulty
- * make an ending
  * select musics
 --------------------------------------------------------------------------------
 

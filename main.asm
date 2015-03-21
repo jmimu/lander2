@@ -202,6 +202,7 @@ main:
     ld (score),hl
     ld (hiscore),hl
 
+demo:
     call InitializeJmimu
     
     ;run demo
