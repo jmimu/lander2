@@ -183,9 +183,9 @@ DoStart:
     ld (gameStatusCnt),hl
 
     in a,($dc)
-    and %00000010
-    cp  %00000000
-    jr nz,+
+    or %11001101
+    cp  %11111111
+    jr z,+
       ;if bottom pressed:
       ;print go
       ld h,$78;x in h

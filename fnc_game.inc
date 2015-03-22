@@ -1399,6 +1399,23 @@ TestCollision:;use tilemap collision data
       +:
       ld a,c
       and %11100000
+      cp  %10100000 ;test high ramp block
+      jr nz,+
+        ;touches=> check that point is in top left
+        ld a,e
+        add a,d
+        cp 8
+        jr nc,+ ;if y+x>8, no collision
+          ;explode
+          ld a,2
+          ld (rocket_status),a
+          ld hl,0
+          ld (gameStatusCnt),hl
+          ld a,2 ;lost
+          ld (gameStatus),a
+      +:
+      ld a,c
+      and %11100000
       cp  %11000000 ;test half side block
       jr nz,+
         ;touches=> check that point is left block half
@@ -1424,6 +1441,22 @@ TestCollision:;use tilemap collision data
         add a,d
         cp 7
         jr c,+ ;if y+x<8, no collision
+          ;explode
+          ld a,2
+          ld (rocket_status),a
+          ld hl,0
+          ld (gameStatusCnt),hl
+          ld a,2 ;lost
+          ld (gameStatus),a
+      +:
+      ld a,c
+      and %11100000
+      cp  %10100000 ;test high ramp block
+      jr nz,+
+        ;touches=> check that point is in top right
+        ld a,e
+        cp d
+        jr nc,+ ;if x<y, no collision
           ;explode
           ld a,2
           ld (rocket_status),a
