@@ -46,4 +46,13 @@ List of custom tools
  - the tiles are in PNG, and converted into binary format with Master Tile Converter (jmimu.free.fr/mastertileconverter)
 Please ask me for any help with them!
 
+External tools used :
+ - WLA DX (www.villehelin.com/wla.html): assembler
+ - pixeditor (github.com/z-uo/pixeditor): pixel art editor
+ - aseprite (http://www.aseprite.org): pixel art editor
+ - GIMP: pixel art editor
+ - Tiled (http://www.mapeditor.org): tiles map editor
+ - MuseScore (musescore.org): musical score editor
+ - Master Tile Converter (jmimu.free.fr/mastertileconverter): bitmap to asm converter
+ - emulicious (emulicious.net): SMS emulator with great debugger!
 

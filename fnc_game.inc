@@ -1123,6 +1123,8 @@ DoGameLogicDbg:
 ;output:
 ;  x in h (in tiles)
 ;  y in l (in tiles)
+;  x%8 in d (in pixels)
+;  y%8 in e (in pixels)
 RocketPos2vramTiles:
   push af
   push bc
@@ -1138,14 +1140,19 @@ RocketPos2vramTiles:
     ld a,(XScrollVDP)
     neg
     add a,l
-    ld l,a
+    ld c,a
     ;sub scrolling value
     
-    ld h,l
+    ld a,c
+    and %00000111 ;keep x%8
+    ld l,a
+    
+    ld h,c
     srl h;divide by 8
     srl h
     srl h
     ;x in h (in tiles)
+    ;x%8 in l (in pixels)
     
     ;Y part
     pop bc ;get (posX,posY)
@@ -1181,18 +1188,33 @@ RocketPos2vramTiles:
     
     ;carry is handled
   RocketPos2vramTiles_VcarryOK:
+    ld a,l
+    and %00000111 ;keep y%8
+    ld h,a
+    
     srl l ;divide by 8
     srl l
     srl l
     ;y in l (in tiles)
+    ;y%8 in h (in pixels)
     
     ;get x back
     pop bc
+    ;x in b (in tiles)
+    ;x%8 in c (in pixels)
+    
+    ld e,h
     ld h,b
+    ld d,c
+    ;x in h (in tiles)
+    ;y in l (in tiles)
+    ;x%8 in d (in pixels)
+    ;y%8 in e (in pixels)
     
   pop bc
   pop af
   ret
+
 
 TestAllCollisions:
       ;test if out of screen
@@ -1261,15 +1283,18 @@ TestAllCollisions:
     TestAllCollisions_end:
     ret
 
-;posX MSB in b ;TODO: use bc to get mod 8 part of positions
-;posY MSB in c
+;posX MSB in b ;unused
+;posY MSB in c ;unused
 ;x in h (in tiles)
 ;y in l (in tiles)
+;  x%8 in d (in pixels)
+;  y%8 in e (in pixels)
 TestCollision:;use tilemap collision data
     push af
     push bc
     push hl
-    
+    push de
+      
       ;compute tile number
       ld b,0
       ld c,h;x in bc
@@ -1292,13 +1317,13 @@ TestCollision:;use tilemap collision data
       in a,($be)
       ld h,a
       in a,($be)
-      ld l,a
+      ld c,a
       
-      ;collision data is in l & %11100000
-      
-      ld a,l
+      ;collision data is in c & %11100000
+    pop de ;x%8 in d, y%8 in e
+      ld a,c
       and %11100000
-      cp %00100000
+      cp %00100000 ;test full block
       jr nz,+
       ;touches=> explode
       ld a,2
@@ -1308,7 +1333,22 @@ TestCollision:;use tilemap collision data
       ld a,2 ;lost
       ld (gameStatus),a
     +:
-      
+      ld a,c
+      and %11100000
+      cp %01000000 ;test half bottom block
+      jr nz,+
+      ;touches=> check that point is below block half
+      ld a,e
+      cp 4
+      jr c,+ ;if y%8<4, no collision
+        ;explode
+        ld a,2
+        ld (rocket_status),a
+        ld hl,0
+        ld (gameStatusCnt),hl
+        ld a,2 ;lost
+        ld (gameStatus),a
+    +:
       
       
     TestCollision_end:
