@@ -1,9 +1,6 @@
-check that every vram action are after wait for vblank ?
-check end game screen off
-
 --------------------------------------------------------------------------------
 
-add other collisions models, show correct scores?
+show correct scores?
 
 do not clear all data for showLevel
 

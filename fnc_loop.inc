@@ -24,7 +24,7 @@ StartGame:
     ld a,%10001001 ;y scroll
     out ($bf),a
     
-    ld a,1
+    ld a,11
     ld (current_level),a
     
     
@@ -140,8 +140,6 @@ NewLevel:
     
     
 GameLoop:
-    ld hl,(WaitForVBlankFunction)
-    call CallFunctionHL;act as "call (hl)"
 
     ld a,(PauseFlag)
     cp 1
@@ -151,6 +149,8 @@ GameLoop:
     ld c,%01100000;channel in c*%100000(max 3*%100000)
     call CutOneChannel
     
+    ld hl,(WaitForVBlankFunction)
+    call CallFunctionHL;act as "call (hl)"
     call GameStatusUpdate
     
     

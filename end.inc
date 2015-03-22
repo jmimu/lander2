@@ -67,6 +67,18 @@ Level12Ending:
 
 
 EndGame:
+  ; Turn screen off
+  ld a,%10100000
+;          |||| |`- Zoomed sprites -> 16x16 pixels
+;          |||| `-- Doubled sprites -> 2 tiles per sprite, 8x16
+;          |||`---- 30 row/240 line mode
+;          ||`----- 28 row/224 line mode
+;          |`------ VBlank interrupts
+;          `------- Disable display
+  out ($bf),a
+  ld a,$81
+  out ($bf),a
+
   ;disable scrolling
   xor a
   out ($bf),a
@@ -177,6 +189,18 @@ EndGame:
   
   xor a
   ld (current_level),a ;just to stop color loop
+  
+  ; Turn screen on
+  ld a,%11100000
+;          |||| |`- Zoomed sprites -> 16x16 pixels
+;          |||| `-- Doubled sprites -> 2 tiles per sprite, 8x16
+;          |||`---- 30 row/240 line mode
+;          ||`----- 28 row/224 line mode
+;          |`------ VBlank interrupts
+;          `------- Enable display
+  out ($bf),a
+  ld a,$81
+  out ($bf),a 
   
   -:
     call WaitForVBlankWind
