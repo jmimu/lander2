@@ -1295,6 +1295,14 @@ TestCollision:;use tilemap collision data
     push hl
     push de
       
+      ;test if posY out of screen
+      ld a,c
+      cp 223
+      jp c,+
+        pop de
+        jp TestCollision_end
+    +:
+      
       ;compute tile number
       ld b,0
       ld c,h;x in bc
@@ -1320,10 +1328,10 @@ TestCollision:;use tilemap collision data
       ld c,a
       
       ;collision data is in c & %11100000
-    pop de ;x%8 in d, y%8 in e
+      pop de ;x%8 in d, y%8 in e
       ld a,c
       and %11100000
-      cp %00100000 ;test full block
+      cp  %00100000 ;test full block
       jr nz,+
       ;touches=> explode
       ld a,2
@@ -1335,7 +1343,7 @@ TestCollision:;use tilemap collision data
     +:
       ld a,c
       and %11100000
-      cp %01000000 ;test half bottom block
+      cp  %01000000 ;test half bottom block
       jr nz,+
       ;touches=> check that point is below block half
       ld a,e
@@ -1349,6 +1357,97 @@ TestCollision:;use tilemap collision data
         ld a,2 ;lost
         ld (gameStatus),a
     +:
+      ld a,c
+      and %11100000
+      cp  %01100000 ;test half top block
+      jr nz,+
+      ;touches=> check that point is above block half
+      ld a,e
+      cp 4
+      jr nc,+ ;if y%8>=4, no collision
+        ;explode
+        ld a,2
+        ld (rocket_status),a
+        ld hl,0
+        ld (gameStatusCnt),hl
+        ld a,2 ;lost
+        ld (gameStatus),a
+    +:
+      
+      ;now tests depends on flip bit
+      ld a,c
+      and %00000010
+      cp  %00000010 ;test half side block
+      jr z,TestCollision_HzFlip
+      jp TestCollision_HzNoFlip
+    TestCollision_HzFlip:
+      ld a,c
+      and %11100000
+      cp  %10000000 ;test low ramp block
+      jr nz,+
+        ;touches=> check that point is in bottom left
+        ld a,e
+        cp d
+        jr c,+ ;if y<x, no collision
+          ;explode
+          ld a,2
+          ld (rocket_status),a
+          ld hl,0
+          ld (gameStatusCnt),hl
+          ld a,2 ;lost
+          ld (gameStatus),a
+      +:
+      ld a,c
+      and %11100000
+      cp  %11000000 ;test half side block
+      jr nz,+
+        ;touches=> check that point is left block half
+        ld a,d
+        cp 4
+        jr nc,+ ;if x%8<4, no collision
+          ;explode
+          ld a,2
+          ld (rocket_status),a
+          ld hl,0
+          ld (gameStatusCnt),hl
+          ld a,2 ;lost
+          ld (gameStatus),a
+      +:
+        jp TestCollision_end
+    TestCollision_HzNoFlip:
+      ld a,c
+      and %11100000
+      cp  %10000000 ;test low ramp block
+      jr nz,+
+        ;touches=> check that point is in bottom right
+        ld a,e
+        add a,d
+        cp 7
+        jr c,+ ;if y+x<8, no collision
+          ;explode
+          ld a,2
+          ld (rocket_status),a
+          ld hl,0
+          ld (gameStatusCnt),hl
+          ld a,2 ;lost
+          ld (gameStatus),a
+      +:
+      ld a,c
+      and %11100000
+      cp  %11000000 ;test half side block
+      jr nz,+
+        ;touches=> check that point is left block half
+        ld a,d
+        cp 4
+        jr c,+ ;if x%8>=4, no collision
+          ;explode
+          ld a,2
+          ld (rocket_status),a
+          ld hl,0
+          ld (gameStatusCnt),hl
+          ld a,2 ;lost
+          ld (gameStatus),a
+      +:
       
       
     TestCollision_end:
