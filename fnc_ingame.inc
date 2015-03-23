@@ -624,6 +624,10 @@ UpdatePalette:
     ; by outputting $c000 ORed with number of the color to change
     ld a,$0F
     out ($bf),a
+    nop
+    nop
+    nop
+    nop
     ld a,$c0
     out ($bf),a
     ; 2. Output colour data
@@ -632,10 +636,18 @@ UpdatePalette:
     and %00110000 ;use only bright colors (let only blue byte change)
     or  %00001111 ; R and G are at max
     out ($be),a
+    nop
+    nop
+    nop
+    nop
     
     ;update fire color 1
     ld a,$1A
     out ($bf),a
+    nop
+    nop
+    nop
+    nop
     ld a,$c0
     out ($bf),a
     ; 2. Output colour data
@@ -648,6 +660,10 @@ UpdatePalette:
     ;update fire color 2
     ld a,$1B
     out ($bf),a
+    nop
+    nop
+    nop
+    nop
     ld a,$c0
     out ($bf),a
     ; 2. Output colour data
@@ -696,8 +712,16 @@ UpdatePalette:
     ; by outputting $c000 ORed with number of the color to change
     ld a,11 ;change color 11
     out ($bf),a
+    nop
+    nop
+    nop
+    nop
     ld a,$c0
     out ($bf),a
+    nop
+    nop
+    nop
+    nop
     ; 2. Output colour data
     ld a,(hl)
     out ($be),a
@@ -712,8 +736,16 @@ UpdatePalette:
   +:
     ld a,12 ;change color 12
     out ($bf),a
+    nop
+    nop
+    nop
+    nop
     ld a,$c0
     out ($bf),a
+    nop
+    nop
+    nop
+    nop
     ; 2. Output colour data
     ld a,(hl)
     out ($be),a
@@ -728,8 +760,16 @@ UpdatePalette:
   +:
     ld a,13 ;change color 13
     out ($bf),a
+    nop
+    nop
+    nop
+    nop
     ld a,$c0
     out ($bf),a
+    nop
+    nop
+    nop
+    nop
     ; 2. Output colour data
     ld a,(hl)
     out ($be),a    
@@ -744,8 +784,16 @@ UpdatePalette:
   +:
     ld a,14 ;change color 14
     out ($bf),a
+    nop
+    nop
+    nop
+    nop
     ld a,$c0
     out ($bf),a
+    nop
+    nop
+    nop
+    nop
     ; 2. Output colour data
     ld a,(hl)
     out ($be),a   
