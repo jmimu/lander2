@@ -224,6 +224,26 @@ ShowMenu:
     ld a,1;have to write slowly
     call PrintText
     
+    
+    ;draw hiscore text
+    ld c,7;col (tiles) in c
+    ld l,19;line (tiles) in l
+    ld de,TextHIScoreStart;text pointer in de
+    ld a,1;have to write slowly
+    call PrintText
+    ;draw score number text
+    ld l,19;line (tiles) in l
+    ld bc,(hiscore)
+    ld e,b;value (8bit) in e
+    ld c,22;col (tiles) in c
+    call PrintInt8
+    ;draw score number text
+    ld l,19;line (tiles) in l
+    ld bc,(hiscore)
+    ld e,c;value (8bit) in e
+    ld c,25;col (tiles) in c
+    call PrintInt8
+    
     ;music init
     ;ld hl,demo4_music_ch1_start;data1 start in hl
     ;call InitMusic1
@@ -448,7 +468,7 @@ Title_Colors_start:
 
 Title_Palette_Start:
 .db %00000000,$03,$02,$02,$01,$01,$00,$00,$06,$0b,$01,$3d,$38,$0c,$08,$3c
-.db $3b,$3f,%00000100,$20,$38,$01,$02,$03,$15,$2a,$1f,$2f,$3a,$36,$01,$0a
+.db $00,$3f,%00000100,$20,$38,$01,$02,$03,$15,$2a,$1f,$2f,$3a,$36,$01,$0a
 Title_Palette_End:
 
 Title_Tiles_Start:

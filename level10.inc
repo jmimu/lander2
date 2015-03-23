@@ -497,10 +497,16 @@ WaitForVBlankLava:
       ; by outputting $c000 ORed with $0002 (number of the color to change)
       ld a,$02
       out ($bf),a
+      nop
+      nop
       ld a,$c0
       out ($bf),a
+      nop
+      nop
       ld a,$20
       out ($be),a
+      nop
+      nop
       jr -
     +:
       ld a,c ;get line counter back
@@ -513,24 +519,42 @@ WaitForVBlankLava:
       ; by outputting $c000 ORed with $0002 (number of the color to change)
       ld a,$02
       out ($bf),a
+      nop
+      nop
       ld a,$c0
       out ($bf),a
+      nop
+      nop
       ld a,$03
       out ($be),a
+      nop
+      nop
       ;change color 8
       ld a,$08
       out ($bf),a
+      nop
+      nop
       ld a,$c0
       out ($bf),a
+      nop
+      nop
       ld a,$03
       out ($be),a
+      nop
+      nop
       ;change color 9
       ld a,$09
       out ($bf),a
+      nop
+      nop
       ld a,$c0
       out ($bf),a
+      nop
+      nop
       ld a,$03
       out ($be),a
+      nop
+      nop
       jr -
     +:    
       ld a,c ;get line counter back
@@ -543,30 +567,48 @@ WaitForVBlankLava:
       ; by outputting $c000 ORed with $0002 (number of the color to change)
       ld a,$02
       out ($bf),a
+      nop
+      nop
       ld a,$c0
       out ($bf),a
+      nop
+      nop
       ld a,$01
       out ($be),a
+      nop
+      nop
       ;change color 8
       ld a,$08
       out ($bf),a
+      nop
+      nop
       ld a,$c0
       out ($bf),a
+      nop
+      nop
       ld a,$01
       out ($be),a
+      nop
+      nop
       ;change color 9
       ld a,$09
       out ($bf),a
+      nop
+      nop
       ld a,$c0
       out ($bf),a
+      nop
+      nop
       ld a,$01
       out ($be),a
-      jr -
+      nop
+      nop
+      jp -
     +:    
       ;check if end of frame
       ld a,(new_frame)
       cp 0
-      jr z,-
+      jp z,-
 
       xor a
       ld (new_frame),a
@@ -580,24 +622,42 @@ WaitForVBlankLava:
       ; by outputting $c000 ORed with $0002 (number of the color to change)
       ld a,$02
       out ($bf),a
+      nop
+      nop
       ld a,$c0
       out ($bf),a
+      nop
+      nop
       ld a,$10
       out ($be),a
+      nop
+      nop
       ;change color 8
       ld a,$08
       out ($bf),a
+      nop
+      nop
       ld a,$c0
       out ($bf),a
+      nop
+      nop
       ld a,$3a
       out ($be),a
+      nop
+      nop
       ;change color 9
       ld a,$09
       out ($bf),a
+      nop
+      nop
       ld a,$c0
       out ($bf),a
+      nop
+      nop
       ld a,%00000101
       out ($be),a
+      nop
+      nop
       
   WaitForVBlankLava_end:
     pop bc
@@ -623,6 +683,10 @@ DoStartLava:
     sub 2
     ;VDP hz scrolling
     out ($bf),a
+    nop
+    nop
+    nop
+    nop
     ld a,%10001000
     out ($bf),a
     
@@ -855,7 +919,7 @@ Palette10Start:
 ;.db $3f,$00,$10,$15,$25,$06,$1a,$2a,$3a,%00000101,$05,$1b,$2b,$3f,$3e,$3c
 ;.db $3f,$00,$10,$15,$25,$06,$1a,$2a,$3a,%00000101,$05,$1b,$2b,$3f,$3e,$0f
 .db $00,$3f,$10,$15,$25,$06,$1a,$2a,$3a,%00000101,$05,$1b,$2b,$3f,$3e,$0f
-.db $3b,$3f,$00,$20,$38,$01,$02,$03,$15,$2a,$1f,$2f,$3a,$36,$01,$0a
+.db $00,$3f,$00,$20,$38,$01,$02,$03,$15,$2a,$1f,$2f,$3a,$36,$01,$0a
 Palette10End:
 
 Tilemap10Start:

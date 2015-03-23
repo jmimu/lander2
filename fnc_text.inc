@@ -153,13 +153,14 @@ PrintInt8: ;print an int in octal...
     push de
     push hl
     
+    
     ;compute the tile index in tilemap
     ;sms screen is 32*28 tiles large
     call Multby32 ;multipy l by 32, result in hl
     ld b,0
     add hl,bc
-    ld bc,2
-    add hl,bc ;begin to write the least siginificant digit
+    ;ld bc,2
+    ;add hl,bc ;begin to write the least siginificant digit
     add hl,hl ;2 bytes by tile
     ;hl is the number of the byte in tilemap
     

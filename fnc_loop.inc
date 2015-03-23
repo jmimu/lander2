@@ -145,17 +145,23 @@ GameLoop:
     cp 1
     jp z,GameLoop ;if pause do nothing in main loop
     
+    
+    
+    ld hl,(WaitForVBlankFunction)
+    call CallFunctionHL;act as "call (hl)"
+
     ;cut noise channel sound
     ld c,%01100000;channel in c*%100000(max 3*%100000)
     call CutOneChannel
     
-    ld hl,(WaitForVBlankFunction)
-    call CallFunctionHL;act as "call (hl)"
+
     call GameStatusUpdate
     
     
     call UpdatePalette
     call UpdateScreen
+    
+    
     call PSGMOD_Play
     
     ;on last level, if VScroll<0, go to Level12Ending
@@ -191,8 +197,9 @@ GameLoop:
         add a,b
         ld h,a
         
-        ;add $100 for each difficulty level
+        ;add $200 for each difficulty level
         ld a,(difficulty_level)
+        add a,a
         ld b,a
         ld a,h
         add a,b

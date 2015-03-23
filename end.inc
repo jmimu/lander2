@@ -190,6 +190,60 @@ EndGame:
   xor a
   ld (current_level),a ;just to stop color loop
   
+    
+  call ResetSprites
+  call DrawGameElements
+  
+  ;draw score text
+  ld c,1;col (tiles) in c
+  ld l,8;line (tiles) in l
+  ld de,TextCongratStart;text pointer in de
+  ld a,1;have to write slowly
+  call PrintText
+  
+  ;draw score text
+  ld c,7;col (tiles) in c
+  ld l,10;line (tiles) in l
+  ld de,TextScoreStart;text pointer in de
+  ld a,1;have to write slowly
+  call PrintText
+  ;draw score number text
+  ld l,10;line (tiles) in l
+  ld bc,(score)
+  ld e,b;value (8bit) in e
+  ld c,22;col (tiles) in c
+  call PrintInt8
+  ;draw score number text
+  ld l,10;line (tiles) in l
+  ld bc,(score)
+  ld e,c;value (8bit) in e
+  ld c,25;col (tiles) in c
+  call PrintInt8
+  
+  
+  ;draw hiscore text
+  ld c,7;col (tiles) in c
+  ld l,12;line (tiles) in l
+  ld de,TextHIScoreStart;text pointer in de
+  ld a,1;have to write slowly
+  call PrintText
+  ;draw score number text
+  ld l,12;line (tiles) in l
+  ld bc,(hiscore)
+  ld e,b;value (8bit) in e
+  ld c,22;col (tiles) in c
+  call PrintInt8
+  ;draw score number text
+  ld l,12;line (tiles) in l
+  ld bc,(hiscore)
+  ld e,c;value (8bit) in e
+  ld c,25;col (tiles) in c
+  call PrintInt8
+  
+  ;hide other sprites
+  call SetLastSprite
+
+  call UpdatePalette
   ; Turn screen on
   ld a,%11100000
 ;          |||| |`- Zoomed sprites -> 16x16 pixels
@@ -201,63 +255,9 @@ EndGame:
   out ($bf),a
   ld a,$81
   out ($bf),a 
-  
   -:
     call WaitForVBlankWind
-    
-    call ResetSprites
-    call DrawGameElements
-    
-    ;draw score text
-    ld c,1;col (tiles) in c
-    ld l,8;line (tiles) in l
-    ld de,TextCongratStart;text pointer in de
-    ld a,1;have to write slowly
-    call PrintText
-    
-    ;draw score text
-    ld c,7;col (tiles) in c
-    ld l,10;line (tiles) in l
-    ld de,TextScoreStart;text pointer in de
-    ld a,1;have to write slowly
-    call PrintText
-    ;draw score number text
-    ld h,22*8;col (tiles) in h
-    ld l,10*8-1;line (tiles) in l
-    ld bc,(score)
-    ld e,b;value (8bit) in e
-    call PrintInt10Sprite ;print an uint8 in decimal with sprites
-    ;draw score number text
-    ld h,25*8;col (tiles) in h
-    ld l,10*8-1;line (tiles) in l
-    ld bc,(score)
-    ld e,c;value (8bit) in e
-    call PrintInt10Sprite ;print an uint8 in decimal with sprites
-    
-    
-    ;draw hiscore text
-    ld c,7;col (tiles) in c
-    ld l,12;line (tiles) in l
-    ld de,TextHIScoreStart;text pointer in de
-    ld a,1;have to write slowly
-    call PrintText
-    ;draw score number text
-    ld h,22*8;col (tiles) in h
-    ld l,12*8-1;line (tiles) in l
-    ld bc,(hiscore)
-    ld e,b;value (8bit) in e
-    call PrintInt10Sprite ;print an uint8 in decimal with sprites
-    ;draw score number text
-    ld h,25*8;col (tiles) in h
-    ld l,12*8-1;line (tiles) in l
-    ld bc,(hiscore)
-    ld e,c;value (8bit) in e
-    call PrintInt10Sprite ;print an uint8 in decimal with sprites
-    
-    ;hide other sprites
-    call SetLastSprite
 
-    call UpdatePalette
     call UpdateScreen
     call PSGMOD_Play
     

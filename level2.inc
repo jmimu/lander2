@@ -246,9 +246,10 @@ TutorialFunction:;replace WaitForVBlankSimple for tutorial
   ld c,2;col (tiles) in c
   ld l,20;line (tiles) in l
   ld a,1;have to write slowly
+  call WaitForVBlankSimple
   call PrintText
   
-  call WaitForVBlankSimple
+
 ret
 
 TutoText1:
@@ -282,7 +283,7 @@ Level2Start:
 
 Palette2Start:
 .db %00010100*0,$07,$00,$04,$06,$08,$0b,$10,$14,$15,$16,$1a,$29,$3f,$15,$0f
-.db $3b,$3f,$00,$20,$38,$01,$02,$03,$15,$2a,$1f,$2f,$3a,$36,$01,$0a
+.db $00,$3f,$00,$20,$38,$01,$02,$03,$15,$2a,$1f,$2f,$3a,$36,$01,$0a
 Palette2End:
 
 Tilemap2Start:

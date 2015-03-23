@@ -20,11 +20,23 @@ SetLastSprite:
   ld a, e
   ;inc a
   out ($bf), a
+  nop
+  nop
+  nop
+  nop
   ld a, $7f
   out ($bf), a
+  nop
+  nop
+  nop
+  nop
   
   ld a, $D0 ;set $D0 to the y of sprite e+1 = e is the last sprite to print
   out ($be), a
+  nop
+  nop
+  nop
+  nop
   pop de
   pop af
 ret
@@ -34,11 +46,23 @@ HideSprites:
   ;first sprite to hide index in a
   ;number of sprites to hide in c
   out ($bf), a
+  nop
+  nop
+  nop
+  nop
   ld a, $7f
   out ($bf), a
+  nop
+  nop
+  nop
+  nop
 -:
   ld a, $D0 ;set $D0 to the y of sprite e+1 = e is the last sprite to print
   out ($be), a
+  nop
+  nop
+  nop
+  nop
   dec c
   jr nz,-
 ret
@@ -57,23 +81,51 @@ SpriteSet8x8:
   ;vdp set addr
   ld a, e
   out ($bf), a
+  nop
+  nop
+  nop
+  nop
   ld a, $7f
   out ($bf), a
+  nop
+  nop
+  nop
+  nop
   ;y
   ld a, l
   out ($be), a
+  nop
+  nop
+  nop
+  nop
   ;vdp set addr
   ld a, e
   add a, a
   or $80
   out ($bf), a
+  nop
+  nop
+  nop
+  nop
   ld a, $7f
   out ($bf), a
+  nop
+  nop
+  nop
+  nop
   ;x n
   ld a, h
   out ($be), a
+  nop
+  nop
+  nop
+  nop
   ld a, d
   out ($be), a
+  nop
+  nop
+  nop
+  nop
 ret
 
 ;--------------------------------------------------------------------
@@ -91,34 +143,74 @@ SpriteSet16x8:
   ;vdp set addr
   ld a, e
   out ($bf), a
+  nop
+  nop
+  nop
+  nop
   ld a, $7f
   out ($bf), a
+  nop
+  nop
+  nop
+  nop
 
   ;y+0 y+0
   ld a, l
   out ($be), a
+  nop
+  nop
+  nop
+  nop
   out ($be), a
+  nop
+  nop
+  nop
+  nop
 
   ;vdp set addr
   ld a, e
   add a, a
   or $80
   out ($bf), a
+  nop
+  nop
+  nop
+  nop
   ld a, $7f
   out ($bf), a
+  nop
+  nop
+  nop
+  nop
 
   ;x+0 n+0 x+8 n+1
   ld a, h
   out ($be), a
+  nop
+  nop
+  nop
+  nop
   ld a, d
   out ($be), a
+  nop
+  nop
+  nop
+  nop
 
   ld a, h
   add a, $08
   out ($be), a
+  nop
+  nop
+  nop
+  nop
   inc d
   ld a, d
   out ($be), a
+  nop
+  nop
+  nop
+  nop
 
 ret
 
@@ -138,52 +230,116 @@ SpriteSet16x16:
   ;vdp set addr
   ld a, e
   out ($bf), a
+  nop
+  nop
+  nop
+  nop
   ld a, $7f
   out ($bf), a
+  nop
+  nop
+  nop
+  nop
 
   ;y+0 y+0
   ;y+8 y+8
   ld a, l
   out ($be), a
+  nop
+  nop
+  nop
+  nop
   out ($be), a
+  nop
+  nop
+  nop
+  nop
   add a, $08
   out ($be), a
+  nop
+  nop
+  nop
+  nop
   out ($be), a
+  nop
+  nop
+  nop
+  nop
 
   ;vdp set addr
   ld a, e
   add a, a
   or $80
   out ($bf), a
+  nop
+  nop
+  nop
+  nop
   ld a, $7f
   out ($bf), a
+  nop
+  nop
+  nop
+  nop
 
   ;x+0 n+0 x+8 n+1
   ;x+0 n+2 x+8 n+3
   ld a, h
   out ($be), a
+  nop
+  nop
+  nop
+  nop
   ld a, d
   out ($be), a
+  nop
+  nop
+  nop
+  nop
 
   ld a, h
   add a, $08
   out ($be), a
+  nop
+  nop
+  nop
+  nop
   inc d
   ld a, d
   out ($be), a
+  nop
+  nop
+  nop
+  nop
 
   ld a, h
   out ($be), a
+  nop
+  nop
+  nop
+  nop
   inc d
   ld a, d
   out ($be), a
+  nop
+  nop
+  nop
+  nop
 
   ld a, h
   add a, $08
   out ($be), a
+  nop
+  nop
+  nop
+  nop
   inc d
   ld a, d
   out ($be), a
+  nop
+  nop
+  nop
+  nop
 ret
 
 ;--------------------------------------------------------------------
@@ -201,36 +357,76 @@ SpriteSet8x16:
   ;vdp set addr
   ld a, e
   out ($bf), a
+  nop
+  nop
+  nop
+  nop
   ld a, $7f
   out ($bf), a
+  nop
+  nop
+  nop
+  nop
 
   ;y+0
   ;y+8
   ld a, l
   out ($be), a
+  nop
+  nop
+  nop
+  nop
   add a, $08
   out ($be), a
+  nop
+  nop
+  nop
+  nop
 
   ;vdp set addr
   ld a, e
   add a, a
   or $80
   out ($bf), a
+  nop
+  nop
+  nop
+  nop
   ld a, $7f
   out ($bf), a
+  nop
+  nop
+  nop
+  nop
 
   ;x+0 n+0
   ;x+0 n+1
   ld a, h
   out ($be), a
+  nop
+  nop
+  nop
+  nop
   ld a, d
   out ($be), a
+  nop
+  nop
+  nop
+  nop
 
   ld a, h
   out ($be), a
+  nop
+  nop
+  nop
+  nop
   inc d
   ld a, d
   out ($be), a
+  nop
+  nop
+  nop
+  nop
 ret
 
 
@@ -248,70 +444,158 @@ SpriteSet16x24:
   ;vdp set addr
   ld a, e
   out ($bf), a
+  nop
+  nop
+  nop
+  nop
   ld a, $7f
   out ($bf), a
+  nop
+  nop
+  nop
+  nop
 
   ;y+0 y+0
   ;y+8 y+8
   ;y+16 y+16
   ld a, l
   out ($be), a
+  nop
+  nop
+  nop
+  nop
   out ($be), a
+  nop
+  nop
+  nop
+  nop
   add a, $08
   out ($be), a
+  nop
+  nop
+  nop
+  nop
   out ($be), a
+  nop
+  nop
+  nop
+  nop
   add a, $08
   out ($be), a
+  nop
+  nop
+  nop
+  nop
   out ($be), a
+  nop
+  nop
+  nop
+  nop
   
   ;vdp set addr
   ld a, e
   add a, a
   or $80
   out ($bf), a
+  nop
+  nop
+  nop
+  nop
   ld a, $7f
   out ($bf), a
+  nop
+  nop
+  nop
+  nop
 
   ;x+0 n+0 x+8 n+1
   ;x+0 n+2 x+8 n+3
   ;x+0 n+4 x+8 n+5
   ld a, h
   out ($be), a
+  nop
+  nop
+  nop
+  nop
   ld a, d
   out ($be), a
+  nop
+  nop
+  nop
+  nop
 
   ld a, h
   add a, $08
   out ($be), a
+  nop
+  nop
+  nop
+  nop
   inc d
   ld a, d
   out ($be), a
+  nop
+  nop
+  nop
+  nop
 
   ld a, h
   out ($be), a
+  nop
+  nop
+  nop
+  nop
   inc d
   ld a, d
   out ($be), a
+  nop
+  nop
+  nop
+  nop
 
   ld a, h
   add a, $08
   out ($be), a
+  nop
+  nop
+  nop
+  nop
   inc d
   ld a, d
   out ($be), a
+  nop
+  nop
+  nop
+  nop
 
   ld a, h
   out ($be), a
+  nop
+  nop
+  nop
+  nop
   inc d
   ld a, d
   out ($be), a
+  nop
+  nop
+  nop
+  nop
 
   ld a, h
   add a, $08
   out ($be), a
+  nop
+  nop
+  nop
+  nop
   inc d
   ld a, d
   out ($be), a
+  nop
+  nop
+  nop
+  nop
  
 ret
 

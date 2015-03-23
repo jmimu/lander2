@@ -942,7 +942,6 @@ ret
 
 WaitForVBlankSimple:
     push af
-    
     -:
       ;check if end of frame
       ld a,(new_frame)
