@@ -1232,7 +1232,7 @@ TestAllCollisions:
       ld hl,(posY)
       ld c,h;posY in c
       ld d,8;deltaX in d
-      ld e,0;deltaY in e
+      ld e,1;deltaY in e
       ;if small rocket, add 2 pixels in deltaY
       ld a,(big_rocket)
       cp 1

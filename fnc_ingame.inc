@@ -187,6 +187,12 @@ DoStart:
     cp  %11111111
     jr z,+
       ;if bottom pressed:
+      
+      ;if not first second:
+      ld a,h
+      cp 1
+      jr c,+
+      
       ;print go
       ld h,$78;x in h
       ld l,$50;y in l

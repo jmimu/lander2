@@ -1,11 +1,8 @@
-real hw bugs:
- - tutoral text
- - scrolling
+ * test one octave deeper
 
-fix lost music
 --------------------------------------------------------------------------------
 
-show correct scores?
+show decimal scores?
 
 do not clear all data for showLevel
 
