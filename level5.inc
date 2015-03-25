@@ -10,7 +10,7 @@ Level6Message:
  .db "CONTINUE TO THE RIGHT...",0
 
 Level9Message:
- .db "TAKE OFF TO NEXT LEVEL",0
+ .db "GO WAY UP TO NEXT LEVEL",0
 
 SetupLevel4:
     ;==============================================================

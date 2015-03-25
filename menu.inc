@@ -279,11 +279,23 @@ ShowMenu:
     ld hl,$7000
     ld (posY),hl
     
+    ld hl,0
+    ld (speedX),hl ;speedX is used to return to demo after a while
+    
     ;how the color loop works :
     ; changes colors 1-7 with Title_Colors_start
     ; index in colors increasing slowly
     ld de,0
   Title_loop:
+      ld hl,(speedX)
+      inc hl
+      
+      ld a,l
+      cp $FF
+      jp z,demo
+      
+      ld (speedX),hl
+  
       ;set palette of title
       ;==============================================================
       ; Update palette
@@ -395,6 +407,9 @@ Menu_OnButton12:
   ret
 
 Menu_OnButtonRight:
+    ld hl,0
+    ld (speedX),hl
+
     ld a,1
     ld (refuel),a;a button was pressed
 
@@ -415,6 +430,9 @@ Menu_OnButtonRight:
   ret
 
 Menu_OnButtonLeft:
+    ld hl,0
+    ld (speedX),hl
+
     ld a,1
     ld (refuel),a;a button was pressed
 
@@ -441,7 +459,7 @@ Menu_OnButtonLeft:
 ;(add this file to project, call it)
 
 Menu_Text_COPYRIGHT:
- .db "---  2015  jmimu - v0.7  ---",0
+ .db "---  2015  jmimu - v0.9  ---",0
  
 Menu_Text_1:
  .db "DIFFICULTY LEVEL:",0

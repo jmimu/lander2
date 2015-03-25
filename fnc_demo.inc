@@ -171,6 +171,16 @@ InitializeJmimu:
     
     ei
     
+    ;small delay in order to loose nothing of the demo!
+    
+    ld hl,0
+  -:
+    inc hl
+    call WaitForVBlankSimple
+    ld a,l
+    cp $20
+    jp nz,-
+    
     ;;how the color loop works :
     ;; fill the 16 colors index with colors in jmimu_colors
     ;ld hl,jmimu_colors
