@@ -1,8 +1,7 @@
- * test one octave deeper
-
 --------------------------------------------------------------------------------
 
 show decimal scores?
+test one octave deeper?
 
 do not clear all data for showLevel
 

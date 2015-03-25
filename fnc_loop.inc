@@ -138,13 +138,21 @@ NewLevel:
     ld hl,(rocket_fuel)
     ld (rocket_fuel_level_start),hl
     
+    call ResetSprites
+    call SetLastSprite
     
+    xor a
+    ld (PauseFlag),a
 GameLoop:
 
     ld a,(PauseFlag)
     cp 1
-    jp z,GameLoop ;if pause do nothing in main loop
-    
+    jr nz,+ ;if pause do nothing in main loop
+      call CutAllSound
+      ld hl,(WaitForVBlankFunction)
+      call CallFunctionHL;act as "call (hl)"
+      jr GameLoop
+  +:
     
     
     ld hl,(WaitForVBlankFunction)

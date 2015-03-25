@@ -120,7 +120,7 @@
 ;==============================================================
 ; SDSC tag and SMS rom header
 ;==============================================================
-.sdsctag 1.2,"Lander2","Lander2 v0.7","jmimu"
+.sdsctag 1.2,"Lander2","Lander2 v0.9","jmimu"
 
 .bank 0 slot 0
 .org $0000
@@ -150,11 +150,11 @@
 ;==============================================================
 ; Pause button handler
 ;==============================================================
-    call CutAllSound
-    
-    ld a,(PauseFlag) ;taken from Heliophobe's SMS Tetris 
-    xor $1  ;Just a quick toggle
-    ld (PauseFlag),a
+    push af
+      ld a,(PauseFlag) ;taken from Heliophobe's SMS Tetris 
+      xor $1  ;Just a quick toggle
+      ld (PauseFlag),a
+    pop af
   retn
 
 
@@ -192,6 +192,9 @@ main:
     
     xor a
     ld (PauseFlag),a
+    
+    ld hl,WaitForVBlankSimple
+    ld (WaitForVBlankFunction),hl
 
     ;==============================================================
     ; Set up VDP registers

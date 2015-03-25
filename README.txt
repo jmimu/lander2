@@ -1,4 +1,4 @@
-Lander2 v0.7
+Lander2 v0.9
 
 Copyright (C) 2014-2015  jmimu (jmimu@free.fr)
 https://github.com/jmimu/lander2
@@ -32,8 +32,6 @@ I found useful information to start asm SMS developpement on these pages:
  - Maxim's bmp2tile for title screen
 
 The font tiles come from Maxim example.
-
-In-game music copyright (C) 2015 jmimu+JPS
 
 ////////////////////////////////////////////////////////////////////////
 
