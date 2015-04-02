@@ -1,5 +1,4 @@
---------------------------------------------------------------------------------
-
+still graph bugs
 show decimal scores?
 test one octave deeper?
 

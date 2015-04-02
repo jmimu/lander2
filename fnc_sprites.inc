@@ -23,20 +23,14 @@ SetLastSprite:
   nop
   nop
   nop
-  nop
   ld a, $7f
   out ($bf), a
-  nop
   nop
   nop
   nop
   
   ld a, $D0 ;set $D0 to the y of sprite e+1 = e is the last sprite to print
   out ($be), a
-  nop
-  nop
-  nop
-  nop
   pop de
   pop af
 ret
@@ -49,19 +43,14 @@ HideSprites:
   nop
   nop
   nop
-  nop
   ld a, $7f
   out ($bf), a
-  nop
   nop
   nop
   nop
 -:
   ld a, $D0 ;set $D0 to the y of sprite e+1 = e is the last sprite to print
   out ($be), a
-  nop
-  nop
-  nop
   nop
   dec c
   jr nz,-
@@ -84,17 +73,14 @@ SpriteSet8x8:
   nop
   nop
   nop
-  nop
   ld a, $7f
   out ($bf), a
-  nop
   nop
   nop
   nop
   ;y
   ld a, l
   out ($be), a
-  nop
   nop
   nop
   nop
@@ -106,10 +92,8 @@ SpriteSet8x8:
   nop
   nop
   nop
-  nop
   ld a, $7f
   out ($bf), a
-  nop
   nop
   nop
   nop
@@ -119,13 +103,8 @@ SpriteSet8x8:
   nop
   nop
   nop
-  nop
   ld a, d
   out ($be), a
-  nop
-  nop
-  nop
-  nop
 ret
 
 ;--------------------------------------------------------------------
@@ -146,10 +125,8 @@ SpriteSet16x8:
   nop
   nop
   nop
-  nop
   ld a, $7f
   out ($bf), a
-  nop
   nop
   nop
   nop
@@ -160,11 +137,7 @@ SpriteSet16x8:
   nop
   nop
   nop
-  nop
   out ($be), a
-  nop
-  nop
-  nop
   nop
 
   ;vdp set addr
@@ -175,10 +148,8 @@ SpriteSet16x8:
   nop
   nop
   nop
-  nop
   ld a, $7f
   out ($bf), a
-  nop
   nop
   nop
   nop
@@ -189,11 +160,8 @@ SpriteSet16x8:
   nop
   nop
   nop
-  nop
   ld a, d
   out ($be), a
-  nop
-  nop
   nop
   nop
 
@@ -201,16 +169,9 @@ SpriteSet16x8:
   add a, $08
   out ($be), a
   nop
-  nop
-  nop
-  nop
   inc d
   ld a, d
   out ($be), a
-  nop
-  nop
-  nop
-  nop
 
 ret
 
@@ -233,10 +194,8 @@ SpriteSet16x16:
   nop
   nop
   nop
-  nop
   ld a, $7f
   out ($bf), a
-  nop
   nop
   nop
   nop
@@ -253,7 +212,6 @@ SpriteSet16x16:
   nop
   nop
   nop
-  nop
   add a, $08
   out ($be), a
   nop
@@ -261,9 +219,6 @@ SpriteSet16x16:
   nop
   nop
   out ($be), a
-  nop
-  nop
-  nop
   nop
 
   ;vdp set addr
@@ -274,10 +229,8 @@ SpriteSet16x16:
   nop
   nop
   nop
-  nop
   ld a, $7f
   out ($bf), a
-  nop
   nop
   nop
   nop
@@ -289,11 +242,8 @@ SpriteSet16x16:
   nop
   nop
   nop
-  nop
   ld a, d
   out ($be), a
-  nop
-  nop
   nop
   nop
 
@@ -302,12 +252,9 @@ SpriteSet16x16:
   out ($be), a
   nop
   nop
-  nop
-  nop
   inc d
   ld a, d
   out ($be), a
-  nop
   nop
   nop
   nop
@@ -316,13 +263,9 @@ SpriteSet16x16:
   out ($be), a
   nop
   nop
-  nop
-  nop
   inc d
   ld a, d
   out ($be), a
-  nop
-  nop
   nop
   nop
 
@@ -331,15 +274,9 @@ SpriteSet16x16:
   out ($be), a
   nop
   nop
-  nop
-  nop
   inc d
   ld a, d
   out ($be), a
-  nop
-  nop
-  nop
-  nop
 ret
 
 ;--------------------------------------------------------------------
@@ -360,10 +297,8 @@ SpriteSet8x16:
   nop
   nop
   nop
-  nop
   ld a, $7f
   out ($bf), a
-  nop
   nop
   nop
   nop
@@ -375,11 +310,8 @@ SpriteSet8x16:
   nop
   nop
   nop
-  nop
   add a, $08
   out ($be), a
-  nop
-  nop
   nop
   nop
 
@@ -391,10 +323,8 @@ SpriteSet8x16:
   nop
   nop
   nop
-  nop
   ld a, $7f
   out ($bf), a
-  nop
   nop
   nop
   nop
@@ -406,10 +336,8 @@ SpriteSet8x16:
   nop
   nop
   nop
-  nop
   ld a, d
   out ($be), a
-  nop
   nop
   nop
   nop
@@ -418,15 +346,9 @@ SpriteSet8x16:
   out ($be), a
   nop
   nop
-  nop
-  nop
   inc d
   ld a, d
   out ($be), a
-  nop
-  nop
-  nop
-  nop
 ret
 
 
@@ -447,10 +369,8 @@ SpriteSet16x24:
   nop
   nop
   nop
-  nop
   ld a, $7f
   out ($bf), a
-  nop
   nop
   nop
   nop
@@ -468,7 +388,6 @@ SpriteSet16x24:
   nop
   nop
   nop
-  nop
   add a, $08
   out ($be), a
   nop
@@ -479,7 +398,6 @@ SpriteSet16x24:
   nop
   nop
   nop
-  nop
   add a, $08
   out ($be), a
   nop
@@ -487,8 +405,6 @@ SpriteSet16x24:
   nop
   nop
   out ($be), a
-  nop
-  nop
   nop
   nop
   
@@ -500,10 +416,8 @@ SpriteSet16x24:
   nop
   nop
   nop
-  nop
   ld a, $7f
   out ($bf), a
-  nop
   nop
   nop
   nop
@@ -516,11 +430,8 @@ SpriteSet16x24:
   nop
   nop
   nop
-  nop
   ld a, d
   out ($be), a
-  nop
-  nop
   nop
   nop
 
@@ -529,12 +440,9 @@ SpriteSet16x24:
   out ($be), a
   nop
   nop
-  nop
-  nop
   inc d
   ld a, d
   out ($be), a
-  nop
   nop
   nop
   nop
@@ -543,13 +451,9 @@ SpriteSet16x24:
   out ($be), a
   nop
   nop
-  nop
-  nop
   inc d
   ld a, d
   out ($be), a
-  nop
-  nop
   nop
   nop
 
@@ -558,12 +462,9 @@ SpriteSet16x24:
   out ($be), a
   nop
   nop
-  nop
-  nop
   inc d
   ld a, d
   out ($be), a
-  nop
   nop
   nop
   nop
@@ -572,13 +473,9 @@ SpriteSet16x24:
   out ($be), a
   nop
   nop
-  nop
-  nop
   inc d
   ld a, d
   out ($be), a
-  nop
-  nop
   nop
   nop
 
@@ -587,15 +484,9 @@ SpriteSet16x24:
   out ($be), a
   nop
   nop
-  nop
-  nop
   inc d
   ld a, d
   out ($be), a
-  nop
-  nop
-  nop
-  nop
  
 ret
 

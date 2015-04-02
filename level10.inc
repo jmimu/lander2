@@ -253,6 +253,8 @@ SetupLevel11:
     ld hl,0
     ld (XScrollTotalMax),hl
     
+    ld de,16
+    call SetVScrollTo
 
     ;functers
     ld hl,DoStart
@@ -499,14 +501,14 @@ WaitForVBlankLava:
       out ($bf),a
       nop
       nop
+      nop
       ld a,$c0
       out ($bf),a
       nop
       nop
+      nop
       ld a,$20
       out ($be),a
-      nop
-      nop
       jr -
     +:
       ld a,c ;get line counter back
@@ -521,12 +523,15 @@ WaitForVBlankLava:
       out ($bf),a
       nop
       nop
+      nop
       ld a,$c0
       out ($bf),a
       nop
       nop
+      nop
       ld a,$03
       out ($be),a
+      nop
       nop
       nop
       ;change color 8
@@ -534,12 +539,15 @@ WaitForVBlankLava:
       out ($bf),a
       nop
       nop
+      nop
       ld a,$c0
       out ($bf),a
       nop
       nop
+      nop
       ld a,$03
       out ($be),a
+      nop
       nop
       nop
       ;change color 9
@@ -551,10 +559,9 @@ WaitForVBlankLava:
       out ($bf),a
       nop
       nop
+      nop
       ld a,$03
       out ($be),a
-      nop
-      nop
       jr -
     +:    
       ld a,c ;get line counter back
@@ -569,12 +576,15 @@ WaitForVBlankLava:
       out ($bf),a
       nop
       nop
+      nop
       ld a,$c0
       out ($bf),a
       nop
       nop
+      nop
       ld a,$01
       out ($be),a
+      nop
       nop
       nop
       ;change color 8
@@ -582,12 +592,15 @@ WaitForVBlankLava:
       out ($bf),a
       nop
       nop
+      nop
       ld a,$c0
       out ($bf),a
       nop
       nop
+      nop
       ld a,$01
       out ($be),a
+      nop
       nop
       nop
       ;change color 9
@@ -595,14 +608,14 @@ WaitForVBlankLava:
       out ($bf),a
       nop
       nop
+      nop
       ld a,$c0
       out ($bf),a
       nop
       nop
+      nop
       ld a,$01
       out ($be),a
-      nop
-      nop
       jp -
     +:    
       ;check if end of frame
@@ -624,12 +637,15 @@ WaitForVBlankLava:
       out ($bf),a
       nop
       nop
+      nop
       ld a,$c0
       out ($bf),a
       nop
       nop
+      nop
       ld a,$10
       out ($be),a
+      nop
       nop
       nop
       ;change color 8
@@ -637,12 +653,15 @@ WaitForVBlankLava:
       out ($bf),a
       nop
       nop
+      nop
       ld a,$c0
       out ($bf),a
       nop
       nop
+      nop
       ld a,$3a
       out ($be),a
+      nop
       nop
       nop
       ;change color 9
@@ -650,14 +669,14 @@ WaitForVBlankLava:
       out ($bf),a
       nop
       nop
+      nop
       ld a,$c0
       out ($bf),a
       nop
       nop
+      nop
       ld a,%00000101
       out ($be),a
-      nop
-      nop
       
   WaitForVBlankLava_end:
     pop bc
@@ -683,7 +702,6 @@ DoStartLava:
     sub 2
     ;VDP hz scrolling
     out ($bf),a
-    nop
     nop
     nop
     nop

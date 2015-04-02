@@ -177,9 +177,15 @@ PrintInt8: ;print an int in octal...
         ld a,$00
         add a,l ;number of byte: hl
         out ($bf),a
+        nop
+        nop
+        nop
+        nop
         ld a,$38|$40
         add a,h ;number of byte: hl
         out ($bf),a
+        nop
+        nop
         
         ; 2. Output tilemap data   
         ld a,e
@@ -250,9 +256,15 @@ PrintText:
       ld a,$00
       add a,l ;number of byte: hl
       out ($bf),a
+      nop
+      nop
+      nop
+      nop
       ld a,$38|$40
       add a,h ;number of byte: hl
       out ($bf),a
+      nop
+      nop
       
       ; 2. Output tilemap data   
       ld a,(de);the char
@@ -261,6 +273,11 @@ PrintText:
       
       sub diff_tile_ascii
       out ($be),a
+      nop
+      nop
+      nop
+      nop
+      nop
       xor a ;one zero
       out ($be),a
       inc de;move pointer in data

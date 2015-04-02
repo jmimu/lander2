@@ -126,7 +126,7 @@ SetupLevel2:
     ld (OnLandRightFunction),hl
     ld hl,DoWait
     ld (OnLandLeftFunction),hl
-    ld hl,DoWait
+    ld hl,DoGameLogicTutoOutOfScreen
     ld (OnOutFunction),hl
     
     ld hl,32
@@ -138,6 +138,44 @@ SetupLevel2:
     ld a,1;on tutorial, skip 3,2,1
     ld (gameStatus),a
 ret
+
+DoGameLogicTutoOutOfScreen:
+    push af
+    push bc
+    push de
+    push hl
+    
+    ;mechanics
+    ;increment Y-speed (gravity)
+    ld hl,(speedY)
+    inc hl
+    inc hl
+    ld (speedY),hl
+    
+    ;update x pos
+    ld bc,(posX)
+    ld hl, (speedX)
+    add hl,bc
+    ld (posX),hl
+    ;update y pos
+    ld bc,(posY)
+    ld hl, (speedY)
+    add hl,bc
+    ld (posY),hl
+            
+    call ReadButtonsPlay
+
+    call DrawGameElements
+    
+    ;hide other sprites
+    call SetLastSprite
+    
+    pop hl
+    pop de
+    pop bc
+    pop af
+
+    ret
 
 
 TutorialFunction:;replace WaitForVBlankSimple for tutorial

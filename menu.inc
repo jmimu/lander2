@@ -1,5 +1,8 @@
 
 ShowMenu:
+    ld hl,0
+    ld (score),hl
+    
     ;disable interrupts and turn off screen before writing to it. Will it fix tiles issues?
     di  ; disable interrupts
     ; Turn screen off
@@ -452,14 +455,8 @@ Menu_OnButtonLeft:
   Menu_OnButtonLeft_end:
   ret
 
-;TODO:
-; - show menu
-; - wait for input
-; - setup game
-;(add this file to project, call it)
-
 Menu_Text_COPYRIGHT:
- .db "---  2015  jmimu - v0.9  ---",0
+ .db "---  2015  jmimu - v1.0  ---",0
  
 Menu_Text_1:
  .db "DIFFICULTY LEVEL:",0

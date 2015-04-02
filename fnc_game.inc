@@ -81,6 +81,9 @@ HScrollManager:
     ld (XScrollVDP),a
     ;VDP hz scrolling
     out ($bf),a
+    nop
+    nop
+    nop
     ld a,%10001000
     out ($bf),a
     
@@ -134,14 +137,20 @@ HScrollManager:
     ; by outputting $4000 ORed with $3800+bc
     ld a,c
     out ($bf),a
+    nop
+    nop
     ld a,$38|$40
     add a,b
     out ($bf),a
+    nop
+    nop
     ; 2. Output tilemap data
     
     ld hl,(NextMapDataStart)
     ld a,(hl)    ; Get data byte
     out ($be),a
+    nop
+    nop
     inc hl
     ld a,(hl)    ; Get data byte
     out ($be),a
@@ -223,6 +232,9 @@ VScrollManager:
     ld (YScrollVDP),a
     ;VDP vertical scrolling
     out ($bf),a
+    nop
+    nop
+    nop
     ld a,%10001001
     out ($bf),a
     
@@ -275,9 +287,13 @@ VScrollManager:
     ; by outputting $4000 ORed with $3800+hl
     ld a,l
     out ($bf),a
+    nop
+    nop
     ld a,$38|$40
     add a,h
     out ($bf),a
+    nop
+    nop
     ; 2. Output tilemap data
     ld hl,(NextMapDataStart)
     ld bc,64  ; Counter for number of bytes to write
@@ -331,6 +347,9 @@ VScrollManager:
     ld (YScrollVDP),a
     ;VDP vertical scrolling
     out ($bf),a
+    nop
+    nop
+    nop
     ld a,%10001001
     out ($bf),a
     
@@ -382,9 +401,13 @@ VScrollManager:
     ; by outputting $4000 ORed with $3800+hl
     ld a,l
     out ($bf),a
+    nop
+    nop
     ld a,$38|$40
     add a,h
     out ($bf),a
+    nop
+    nop
     ; 2. Output tilemap data
     ld hl,(NextMapDataStart)
     ld bc,64  ; Counter for number of bytes to write
@@ -558,19 +581,6 @@ SetDifficulty:
 
 
 showLevel:
-    ;disable interrupts and turn off screen before writing to it. Will it fix tiles issues?
-    di  ; disable interrupts
-    ; Turn screen off
-    ld a,%10100000
-;          |||| |`- Zoomed sprites -> 16x16 pixels
-;          |||| `-- Doubled sprites -> 2 tiles per sprite, 8x16
-;          |||`---- 30 row/240 line mode
-;          ||`----- 28 row/224 line mode
-;          |`------ VBlank interrupts
-;          `------- Disable display
-    out ($bf),a
-    ld a,$81
-    out ($bf),a
     
     ;==============================================================
     ; Clear VRAM
@@ -710,7 +720,45 @@ showLevel:
     ld d,guy_tile_number;n in d
     call SpriteSet16x8
     
+    ;draw score text
+    ld c,7;col (tiles) in c
+    ld l,14;line (tiles) in l
+    ld de,TextScoreStart;text pointer in de
+    ld a,1;have to write slowly
+    call PrintText
+    ;draw score number text
+    ld l,14;line (tiles) in l
+    ld bc,(score)
+    ld e,b;value (8bit) in e
+    ld c,21;col (tiles) in c
+    call PrintInt8
+    ;draw score number text
+    ld l,14;line (tiles) in l
+    ld bc,(score)
+    ld e,c;value (8bit) in e
+    ld c,24;col (tiles) in c
+    call PrintInt8
     
+    
+    ;draw hiscore text
+    ld c,7;col (tiles) in c
+    ld l,16;line (tiles) in l
+    ld de,TextHIScoreStart;text pointer in de
+    ld a,1;have to write slowly
+    call PrintText
+    ;draw score number text
+    ld l,16;line (tiles) in l
+    ld bc,(hiscore)
+    ld e,b;value (8bit) in e
+    ld c,21;col (tiles) in c
+    call PrintInt8
+    ;draw score number text
+    ld l,16;line (tiles) in l
+    ld bc,(hiscore)
+    ld e,c;value (8bit) in e
+    ld c,24;col (tiles) in c
+    call PrintInt8
+  
     
     call SetLastSprite
 
@@ -1317,6 +1365,8 @@ TestCollision:;use tilemap collision data
       ; by outputting $0000 ORed with $3800+bc
       ld a,b
       out ($bf),a
+      nop
+      nop
       ld a,$38
       add a,c
       out ($bf),a
@@ -1514,6 +1564,8 @@ TestLanding:;use tilemap collision data
       ; by outputting $0000 ORed with $3800+bc
       ld a,b
       out ($bf),a
+      nop
+      nop
       ld a,$38
       add a,c
       out ($bf),a

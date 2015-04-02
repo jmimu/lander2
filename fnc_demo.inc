@@ -29,7 +29,7 @@ Demo_Inputs:
 
 
 InitializeJmimu:
-
+    di  ; disable interrupts
     ; Turn screen off
     ld a,%10100000
     ;      |||| |`- Zoomed sprites -> 16x16 pixels
@@ -249,6 +249,10 @@ InitializeJmimu:
       ; by outputting $c000 ORed with $0001
       ld a,$01
       out ($bf),a
+      nop
+      nop
+      nop
+      nop
       ld a,$c0
       out ($bf),a
       ; 2. Output colour data
@@ -261,6 +265,10 @@ InitializeJmimu:
       ; by outputting $c000 ORed with $0001
       ld a,$11
       out ($bf),a
+      nop
+      nop
+      nop
+      nop
       ld a,$c0
       out ($bf),a
       ; 2. Output colour data
@@ -293,6 +301,7 @@ ret
 
 
 InitializeDemo:
+    di  ; disable interrupts
     ; Turn screen off
     ld a,%10100000
     ;      |||| |`- Zoomed sprites -> 16x16 pixels
@@ -631,6 +640,10 @@ Demo_UpdateTiles:
     ld bc,$20*(forest_scroll_1st_tile_from_forest_start+forest_1st_tile);has to be written in that order
     ld a,c
     out ($bf),a
+    nop
+    nop
+    nop
+    nop
     ld a,$40
     or b
     out ($bf),a
@@ -774,6 +787,9 @@ Demo_WaitForVBlank:
     ;no scroll at screen top
     xor a
     out ($bf),a
+    nop
+    nop
+    nop
     ld a,%10001000
     out ($bf),a
     
@@ -786,12 +802,16 @@ Demo_WaitForVBlank:
       ld hl,(Xscroll)
       ld a,h
       out ($bf),a
+      nop
+      nop
+      nop
+      nop
       ld a,%10001000
       out ($bf),a
       
       +:
       ld a,c
-      cp $50-1;if > $50, scroll half speed
+      cp $50-1-8;if > $50, scroll half speed
       jr nz,+
       ld hl,(Xscroll)
       add hl,hl
@@ -800,6 +820,10 @@ Demo_WaitForVBlank:
       add hl,hl
       ld a,h
       out ($bf),a
+      nop
+      nop
+      nop
+      nop
       ld a,%10001000
       out ($bf),a
       
@@ -816,6 +840,10 @@ Demo_WaitForVBlank:
       add hl,hl
       ld a,h
       out ($bf),a
+      nop
+      nop
+      nop
+      nop
       ld a,%10001000
       out ($bf),a
       +:

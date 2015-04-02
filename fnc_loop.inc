@@ -50,6 +50,21 @@ StartGame:
 NewLevel:
     call CutAllSound
 
+    ;disable interrupts and turn off screen before writing to it. Will it fix tiles issues?
+    di  ; disable interrupts
+    ; Turn screen off
+    ld a,%10100000
+;          |||| |`- Zoomed sprites -> 16x16 pixels
+;          |||| `-- Doubled sprites -> 2 tiles per sprite, 8x16
+;          |||`---- 30 row/240 line mode
+;          ||`----- 28 row/224 line mode
+;          |`------ VBlank interrupts
+;          `------- Disable display
+    out ($bf),a
+    ld a,$81
+    out ($bf),a
+
+
     ;reset scrolling
     xor a
     ld (XScrollVDP),a
@@ -147,16 +162,27 @@ GameLoop:
 
     ld a,(PauseFlag)
     cp 1
-    jr nz,+ ;if pause do nothing in main loop
+    jr nz,GameLoop_not_pause ;if pause do nothing in main loop
       call CutAllSound
+      
+      ;if level!=2
+      ld a,(current_level)
+      cp 2
+        jr z,GameLoop_pause_lvl2
+      
       ld hl,(WaitForVBlankFunction)
       call CallFunctionHL;act as "call (hl)"
       jr GameLoop
-  +:
+      
+    GameLoop_pause_lvl2:
+      call WaitForVBlankSimple
+      jr GameLoop
+  GameLoop_not_pause:
     
     
     ld hl,(WaitForVBlankFunction)
     call CallFunctionHL;act as "call (hl)"
+    call UpdatePalette
 
     ;cut noise channel sound
     ld c,%01100000;channel in c*%100000(max 3*%100000)
@@ -166,7 +192,6 @@ GameLoop:
     call GameStatusUpdate
     
     
-    call UpdatePalette
     call UpdateScreen
     
     
@@ -205,9 +230,8 @@ GameLoop:
         add a,b
         ld h,a
         
-        ;add $200 for each difficulty level
+        ;add $100 for each difficulty level
         ld a,(difficulty_level)
-        add a,a
         ld b,a
         ld a,h
         add a,b

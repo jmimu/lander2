@@ -309,7 +309,3 @@ demo4_music_ch2_end:
 
 
 
-
-
-demo_music_ch3_start:
-demo_music_ch3_end:

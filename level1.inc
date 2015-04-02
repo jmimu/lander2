@@ -1,4 +1,4 @@
-.section "level1" force
+.section "level1" free
 
 
 SetupLevel1:
@@ -150,6 +150,9 @@ WaitForVBlankWind:
     ;no scroll at screen top
     xor a
     out ($bf),a
+    nop
+    nop
+    nop
     ld a,%10001000
     out ($bf),a
     
@@ -162,6 +165,9 @@ WaitForVBlankWind:
       ld hl,(Xscroll)
       ld a,h
       out ($bf),a
+      nop
+      nop
+      nop
       ld a,%10001000
       out ($bf),a
       
@@ -171,6 +177,9 @@ WaitForVBlankWind:
       jr nz,+
       xor a
       out ($bf),a
+      nop
+      nop
+      nop
       ld a,%10001000
       out ($bf),a
 

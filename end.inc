@@ -67,6 +67,7 @@ Level12Ending:
 
 
 EndGame:
+  di  ; disable interrupts
   ; Turn screen off
   ld a,%10100000
 ;          |||| |`- Zoomed sprites -> 16x16 pixels
@@ -204,7 +205,7 @@ EndGame:
   ;draw score text
   ld c,7;col (tiles) in c
   ld l,10;line (tiles) in l
-  ld de,TextScoreStart;text pointer in de
+  ld de,TextFinalScoreStart;text pointer in de
   ld a,1;have to write slowly
   call PrintText
   ;draw score number text
@@ -255,6 +256,7 @@ EndGame:
   out ($bf),a
   ld a,$81
   out ($bf),a 
+  ei 
   -:
     call WaitForVBlankWind
 

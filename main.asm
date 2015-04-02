@@ -120,7 +120,7 @@
 ;==============================================================
 ; SDSC tag and SMS rom header
 ;==============================================================
-.sdsctag 1.2,"Lander2","Lander2 v0.9","jmimu"
+.sdsctag 1.2,"Lander2","Lander2 v1.0","jmimu"
 
 .bank 0 slot 0
 .org $0000
@@ -261,21 +261,26 @@ IsButtonPressed:
 .ends
 
 
-.include "level2.inc"
-.include "level10.inc"
+
+
+.org $7ff0
+;we have to skip the $7ff0-$7fff area for the ROM header
+ROM_header:
+.org $8000
 
 .include "level1.inc"
 
-;we have to skip the $7ff0-$7fff area
-.org $8000
+.include "level2.inc"
 
 .include "level5.inc"
+
+.include "level10.inc"
 
 .include "end.inc"
 
 
 ;.bank 2 slot 0
-.section "assets_game" force
+.section "assets_game" free
 .include "data_game.inc"
 .ends
 

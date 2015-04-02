@@ -6,7 +6,16 @@ DrawRocket:
   push af
   push bc
   push de
-  
+    
+    ;if y in [$C0:$D0], don't print
+    ld a,l
+    cp $C0
+      jr c,DrawRockey_start
+    cp $D0+1
+      jr nc,DrawRockey_start
+    jp DrawRockey_end
+
+  DrawRockey_start:
     ;select rocket image
     ld a,(rocket_status)  
     cp 0
@@ -73,6 +82,8 @@ DrawRocket:
     inc e
     inc e
     call SpriteSet16x16
+    
+  DrawRockey_end:
 
   pop de
   pop bc
@@ -376,6 +387,67 @@ DoLostNoLife:
     
     call drawWarning;to see what went wrong
 
+    ld l,13;line (tiles) in l
+    ld a,(YScrollVDP)
+    srl a
+    srl a
+    srl a
+    add a,l;add YScrollVDP/8 to line number
+    ;if a>=28, a=a-28
+    cp 27
+    jr c,+
+      sub 28
+  +:
+    ld l,a
+    
+    ;draw score text
+    ld c,7;col (tiles) in c
+    ld de,TextScoreStart;text pointer in de
+    ld a,1;have to write slowly
+    ;ld l,13;line (tiles) in l
+    call PrintText
+    ;draw score number text
+    ld bc,(score)
+    ld e,b;value (8bit) in e
+    ld c,22;col (tiles) in c
+    ;ld l,13;line (tiles) in l
+    call PrintInt8
+    ;draw score number text
+    ld bc,(score)
+    ld e,c;value (8bit) in e
+    ld c,25;col (tiles) in c
+    ;ld l,13;line (tiles) in l
+    call PrintInt8
+    
+    ld a,l
+    inc a
+    inc a
+    ;if a>=28, a=a-28
+    cp 27
+    jr c,+
+      sub 28
+  +:
+    ld l,a
+    
+    ;draw hiscore text
+    ld c,7;col (tiles) in c
+    ld de,TextHIScoreStart;text pointer in de
+    ld a,1;have to write slowly
+    ;ld l,15;line (tiles) in l
+    call PrintText
+    ;draw score number text
+    ld bc,(hiscore)
+    ld e,b;value (8bit) in e
+    ld c,22;col (tiles) in c
+    ;ld l,15;line (tiles) in l
+    call PrintInt8
+    ;draw score number text
+    ld bc,(hiscore)
+    ld e,c;value (8bit) in e
+    ld c,25;col (tiles) in c
+    ;ld l,15;line (tiles) in l
+    call PrintInt8
+
     ;hide other sprites
     call SetLastSprite
     
@@ -425,7 +497,6 @@ DoLostLives:
 
     ;hide other sprites
     call SetLastSprite
-    
 
     ret
 
@@ -508,16 +579,42 @@ DoWon:
       
       ;add to score only if level>2
       ld a,(current_level)
-      cp 2
-      jr nc,+
+      cp 3
+      jr c,+
       ld hl,(score)
       ld bc,(rocket_fuel)
       ld c,b
       xor a
       ld b,a ;bc=rocket_fuel/256
       add hl,bc
-      ld (score),hl ;score+=rocket_fuel/256
+      
+      ld b,h
+      ld c,l
+      ;add $80 for each difficulty level
+      ld a,(difficulty_level)
+      ld l,a
+      call Multby32 ;mult l by 32, result in hl
+      add hl,hl
+      add hl,hl
+      add hl,hl
+      add hl,bc
+      
+      ld (score),hl ;score+=rocket_fuel/256 + $20*difficulty_level
+      
+      ;test if > hiscore
+      ld hl,(score)
+      ld bc,(hiscore)
+      or a ; reset carry flag (see http://www.smspower.org/Development/Z80ProgrammingTechniques#SubHlde)
+      sbc hl,bc
+      ;hl=(score)-(hiscore)
+      ;if h>80, hiscore>score
+      ld a,h
+      cp 80
+      jr nc,+
+        ld hl,(score)
+        ld (hiscore),hl
      +:
+     
       ld hl,win_music_ch1_start
       call InitMusic1
       ld hl,nosound_start
@@ -662,6 +759,8 @@ UpdatePalette:
     and %00110101 ;use only bright colors (let only blue byte change)
     or  %00001010 ; R and G are at max
     out ($be),a
+    nop
+    nop
     
     ;update fire color 2
     ld a,$1B
@@ -745,10 +844,8 @@ UpdatePalette:
     nop
     nop
     nop
-    nop
     ld a,$c0
     out ($bf),a
-    nop
     nop
     nop
     nop
@@ -769,10 +866,8 @@ UpdatePalette:
     nop
     nop
     nop
-    nop
     ld a,$c0
     out ($bf),a
-    nop
     nop
     nop
     nop
@@ -793,10 +888,8 @@ UpdatePalette:
     nop
     nop
     nop
-    nop
     ld a,$c0
     out ($bf),a
-    nop
     nop
     nop
     nop

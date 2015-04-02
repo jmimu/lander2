@@ -257,7 +257,7 @@ SetupLevel5:
     ld (speedX),hl
     ld hl,$0
     ld (speedY),hl
-    ld hl,$4800
+    ld hl,$4800-$1400
     ld (posX),hl
     ld hl,$6800-1
     ld (posY),hl
