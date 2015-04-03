@@ -81,9 +81,9 @@ HScrollManager:
     ld (XScrollVDP),a
     ;VDP hz scrolling
     out ($bf),a
-    nop
-    nop
-    nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
     ld a,%10001000
     out ($bf),a
     
@@ -137,20 +137,20 @@ HScrollManager:
     ; by outputting $4000 ORed with $3800+bc
     ld a,c
     out ($bf),a
-    nop
-    nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
     ld a,$38|$40
     add a,b
     out ($bf),a
-    nop
-    nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
     ; 2. Output tilemap data
     
     ld hl,(NextMapDataStart)
     ld a,(hl)    ; Get data byte
     out ($be),a
-    nop
-    nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
     inc hl
     ld a,(hl)    ; Get data byte
     out ($be),a
@@ -232,9 +232,9 @@ VScrollManager:
     ld (YScrollVDP),a
     ;VDP vertical scrolling
     out ($bf),a
-    nop
-    nop
-    nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
     ld a,%10001001
     out ($bf),a
     
@@ -287,13 +287,13 @@ VScrollManager:
     ; by outputting $4000 ORed with $3800+hl
     ld a,l
     out ($bf),a
-    nop
-    nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
     ld a,$38|$40
     add a,h
     out ($bf),a
-    nop
-    nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
     ; 2. Output tilemap data
     ld hl,(NextMapDataStart)
     ld bc,64  ; Counter for number of bytes to write
@@ -347,9 +347,9 @@ VScrollManager:
     ld (YScrollVDP),a
     ;VDP vertical scrolling
     out ($bf),a
-    nop
-    nop
-    nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
     ld a,%10001001
     out ($bf),a
     
@@ -401,13 +401,13 @@ VScrollManager:
     ; by outputting $4000 ORed with $3800+hl
     ld a,l
     out ($bf),a
-    nop
-    nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
     ld a,$38|$40
     add a,h
     out ($bf),a
-    nop
-    nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
     ; 2. Output tilemap data
     ld hl,(NextMapDataStart)
     ld bc,64  ; Counter for number of bytes to write
@@ -498,6 +498,10 @@ SetDifficulty:
     
     ld a,8
     ld (YLava_add_speed),a
+
+    ;skip tutorial
+    ld a,3
+    ld (current_level),a
     
     jp SetDifficulty_end
   +:
@@ -520,6 +524,10 @@ SetDifficulty:
     
     ld a,12
     ld (YLava_add_speed),a
+
+    ;skip tutorial
+    ld a,3
+    ld (current_level),a
     
     jp SetDifficulty_end
   +:
@@ -1365,8 +1373,8 @@ TestCollision:;use tilemap collision data
       ; by outputting $0000 ORed with $3800+bc
       ld a,b
       out ($bf),a
-      nop
-      nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
       ld a,$38
       add a,c
       out ($bf),a
@@ -1564,8 +1572,8 @@ TestLanding:;use tilemap collision data
       ; by outputting $0000 ORed with $3800+bc
       ld a,b
       out ($bf),a
-      nop
-      nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
       ld a,$38
       add a,c
       out ($bf),a

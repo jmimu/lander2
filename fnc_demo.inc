@@ -249,10 +249,10 @@ InitializeJmimu:
       ; by outputting $c000 ORed with $0001
       ld a,$01
       out ($bf),a
-      nop
-      nop
-      nop
-      nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
       ld a,$c0
       out ($bf),a
       ; 2. Output colour data
@@ -265,10 +265,10 @@ InitializeJmimu:
       ; by outputting $c000 ORed with $0001
       ld a,$11
       out ($bf),a
-      nop
-      nop
-      nop
-      nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
       ld a,$c0
       out ($bf),a
       ; 2. Output colour data
@@ -640,10 +640,10 @@ Demo_UpdateTiles:
     ld bc,$20*(forest_scroll_1st_tile_from_forest_start+forest_1st_tile);has to be written in that order
     ld a,c
     out ($bf),a
-    nop
-    nop
-    nop
-    nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
     ld a,$40
     or b
     out ($bf),a
@@ -787,9 +787,9 @@ Demo_WaitForVBlank:
     ;no scroll at screen top
     xor a
     out ($bf),a
-    nop
-    nop
-    nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
     ld a,%10001000
     out ($bf),a
     
@@ -802,10 +802,10 @@ Demo_WaitForVBlank:
       ld hl,(Xscroll)
       ld a,h
       out ($bf),a
-      nop
-      nop
-      nop
-      nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
       ld a,%10001000
       out ($bf),a
       
@@ -820,10 +820,10 @@ Demo_WaitForVBlank:
       add hl,hl
       ld a,h
       out ($bf),a
-      nop
-      nop
-      nop
-      nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
       ld a,%10001000
       out ($bf),a
       
@@ -840,10 +840,10 @@ Demo_WaitForVBlank:
       add hl,hl
       ld a,h
       out ($bf),a
-      nop
-      nop
-      nop
-      nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
       ld a,%10001000
       out ($bf),a
       +:

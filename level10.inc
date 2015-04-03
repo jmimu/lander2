@@ -499,14 +499,14 @@ WaitForVBlankLava:
       ; by outputting $c000 ORed with $0002 (number of the color to change)
       ld a,$02
       out ($bf),a
-      nop
-      nop
-      nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
       ld a,$c0
       out ($bf),a
-      nop
-      nop
-      nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
       ld a,$20
       out ($be),a
       jr -
@@ -521,45 +521,45 @@ WaitForVBlankLava:
       ; by outputting $c000 ORed with $0002 (number of the color to change)
       ld a,$02
       out ($bf),a
-      nop
-      nop
-      nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
       ld a,$c0
       out ($bf),a
-      nop
-      nop
-      nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
       ld a,$03
       out ($be),a
-      nop
-      nop
-      nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
       ;change color 8
       ld a,$08
       out ($bf),a
-      nop
-      nop
-      nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
       ld a,$c0
       out ($bf),a
-      nop
-      nop
-      nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
       ld a,$03
       out ($be),a
-      nop
-      nop
-      nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
       ;change color 9
       ld a,$09
       out ($bf),a
-      nop
-      nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
       ld a,$c0
       out ($bf),a
-      nop
-      nop
-      nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
       ld a,$03
       out ($be),a
       jr -
@@ -574,46 +574,46 @@ WaitForVBlankLava:
       ; by outputting $c000 ORed with $0002 (number of the color to change)
       ld a,$02
       out ($bf),a
-      nop
-      nop
-      nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
       ld a,$c0
       out ($bf),a
-      nop
-      nop
-      nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
       ld a,$01
       out ($be),a
-      nop
-      nop
-      nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
       ;change color 8
       ld a,$08
       out ($bf),a
-      nop
-      nop
-      nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
       ld a,$c0
       out ($bf),a
-      nop
-      nop
-      nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
       ld a,$01
       out ($be),a
-      nop
-      nop
-      nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
       ;change color 9
       ld a,$09
       out ($bf),a
-      nop
-      nop
-      nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
       ld a,$c0
       out ($bf),a
-      nop
-      nop
-      nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
       ld a,$01
       out ($be),a
       jp -
@@ -635,46 +635,46 @@ WaitForVBlankLava:
       ; by outputting $c000 ORed with $0002 (number of the color to change)
       ld a,$02
       out ($bf),a
-      nop
-      nop
-      nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
       ld a,$c0
       out ($bf),a
-      nop
-      nop
-      nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
       ld a,$10
       out ($be),a
-      nop
-      nop
-      nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
       ;change color 8
       ld a,$08
       out ($bf),a
-      nop
-      nop
-      nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
       ld a,$c0
       out ($bf),a
-      nop
-      nop
-      nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
       ld a,$3a
       out ($be),a
-      nop
-      nop
-      nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
       ;change color 9
       ld a,$09
       out ($bf),a
-      nop
-      nop
-      nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
       ld a,$c0
       out ($bf),a
-      nop
-      nop
-      nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
       ld a,%00000101
       out ($be),a
       
@@ -702,9 +702,9 @@ DoStartLava:
     sub 2
     ;VDP hz scrolling
     out ($bf),a
-    nop
-    nop
-    nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
     ld a,%10001000
     out ($bf),a
     

@@ -167,25 +167,23 @@ PrintInt8: ;print an int in octal...
     di
     
     ;write digits
-    ld c,3
+    ld d,3
   -:
         ;==============================================================
         ; Write text to name table
         ;==============================================================
         ; 1. Set VRAM write address to name table index 0
         ; by outputting $4000 ORed with $3800+hl*2
-        ld a,$00
+        xor a
         add a,l ;number of byte: hl
         out ($bf),a
-        nop
-        nop
-        nop
-        nop
+        .db 0,0 ;double nop
+        .db 0,0 ;double nop
+        .db 0,0 ;double nop
         ld a,$38|$40
         add a,h ;number of byte: hl
         out ($bf),a
-        nop
-        nop
+        .db 0,0 ;double nop
         
         ; 2. Output tilemap data   
         ld a,e
@@ -193,6 +191,12 @@ PrintInt8: ;print an int in octal...
         ld b,a
         ld a,digits_tile_number ;tile to write : digits_tile_number+value
         add a,b
+        out ($be),a
+        .db 0,0 ;double nop
+        .db 0,0 ;double nop
+        .db 0,0 ;double nop
+        .db 0,0 ;double nop
+        xor a ;one zero
         out ($be),a
         
         ;ld a,e
@@ -203,7 +207,24 @@ PrintInt8: ;print an int in octal...
         
         dec hl ; wel'll draw next tile (go left)
         dec hl ; wel'll draw next tile (go left)
+       
+        ;chek if out of VDP line (usefull when H scroll)
         dec c
+        ld a,c
+        cp 255
+        jr nz,+
+          ;has to go back to screen line start
+          push bc
+          push hl
+          ld hl,+64
+          ld b,h
+          ld c,l
+          pop hl
+          add hl,bc
+          pop bc
+       +:
+
+        dec d
         jr nz,-
     
     ei
@@ -253,18 +274,17 @@ PrintText:
       ;==============================================================
       ; 1. Set VRAM write address to name table index 0
       ; by outputting $4000 ORed with $3800+hl*2
-      ld a,$00
+      xor a
       add a,l ;number of byte: hl
       out ($bf),a
-      nop
-      nop
-      nop
-      nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
       ld a,$38|$40
       add a,h ;number of byte: hl
       out ($bf),a
-      nop
-      nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
       
       ; 2. Output tilemap data   
       ld a,(de);the char
@@ -273,18 +293,18 @@ PrintText:
       
       sub diff_tile_ascii
       out ($be),a
-      nop
-      nop
-      nop
-      nop
-      nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
       xor a ;one zero
       out ($be),a
       inc de;move pointer in data
       inc hl;move pointer on screen
       inc hl;move pointer on screen
       
-      ;chek if out of VDP line (useful when H scroll)
+      ;chek if out of VDP line (usefull when H scroll)
       inc c
       ld a,c
       cp 32

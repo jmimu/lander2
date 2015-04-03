@@ -150,9 +150,9 @@ WaitForVBlankWind:
     ;no scroll at screen top
     xor a
     out ($bf),a
-    nop
-    nop
-    nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
     ld a,%10001000
     out ($bf),a
     
@@ -165,9 +165,9 @@ WaitForVBlankWind:
       ld hl,(Xscroll)
       ld a,h
       out ($bf),a
-      nop
-      nop
-      nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
       ld a,%10001000
       out ($bf),a
       
@@ -177,9 +177,9 @@ WaitForVBlankWind:
       jr nz,+
       xor a
       out ($bf),a
-      nop
-      nop
-      nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
+      .db 0,0 ;double nop
       ld a,%10001000
       out ($bf),a
 

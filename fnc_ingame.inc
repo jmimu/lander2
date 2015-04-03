@@ -400,22 +400,45 @@ DoLostNoLife:
   +:
     ld l,a
     
-    ;draw score text
     ld c,7;col (tiles) in c
+    ;hz part
+    ld a,(XScrollVDP)
+    neg
+    srl a
+    srl a
+    srl a
+    add a,c;add XScrollVDP/8 to line number
+    ld c,a
+    
+    ;draw score text
+    ;ld c,7;col (tiles) in c
     ld de,TextScoreStart;text pointer in de
     ld a,1;have to write slowly
     ;ld l,13;line (tiles) in l
     call PrintText
     ;draw score number text
-    ld bc,(score)
-    ld e,b;value (8bit) in e
-    ld c,22;col (tiles) in c
+    ld de,(score)
+    ld e,d;value (8bit) in e
+    ld a,c
+    add a,15
+    cp 32
+    jr c,+
+      sub 32
+   +:
+    ld c,a
+    ;ld c,22;col (tiles) in c
     ;ld l,13;line (tiles) in l
     call PrintInt8
     ;draw score number text
-    ld bc,(score)
-    ld e,c;value (8bit) in e
-    ld c,25;col (tiles) in c
+    ld de,(score);value (8bit) in e
+    ld a,c
+    add a,3
+    cp 32
+    jr c,+
+      sub 32
+   +:
+    ld c,a
+    ;ld c,25;col (tiles) in c
     ;ld l,13;line (tiles) in l
     call PrintInt8
     
@@ -429,22 +452,45 @@ DoLostNoLife:
   +:
     ld l,a
     
-    ;draw hiscore text
     ld c,7;col (tiles) in c
+    ;hz part
+    ld a,(XScrollVDP)
+    neg
+    srl a
+    srl a
+    srl a
+    add a,c;add XScrollVDP/8 to line number
+    ld c,a
+    
+    ;draw hiscore text
+    ;ld c,7;col (tiles) in c
     ld de,TextHIScoreStart;text pointer in de
     ld a,1;have to write slowly
     ;ld l,15;line (tiles) in l
     call PrintText
     ;draw score number text
-    ld bc,(hiscore)
-    ld e,b;value (8bit) in e
-    ld c,22;col (tiles) in c
+    ld de,(hiscore)
+    ld e,d;value (8bit) in e
+    ld a,c
+    add a,15
+    cp 32
+    jr c,+
+      sub 32
+   +:
+    ld c,a
+    ;ld c,22;col (tiles) in c
     ;ld l,15;line (tiles) in l
     call PrintInt8
     ;draw score number text
-    ld bc,(hiscore)
-    ld e,c;value (8bit) in e
-    ld c,25;col (tiles) in c
+    ld de,(hiscore);value (8bit) in e
+    ld a,c
+    add a,3
+    cp 32
+    jr c,+
+      sub 32
+   +:
+    ld c,a
+    ;ld c,25;col (tiles) in c
     ;ld l,15;line (tiles) in l
     call PrintInt8
 
@@ -727,10 +773,10 @@ UpdatePalette:
     ; by outputting $c000 ORed with number of the color to change
     ld a,$0F
     out ($bf),a
-    nop
-    nop
-    nop
-    nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
     ld a,$c0
     out ($bf),a
     ; 2. Output colour data
@@ -739,18 +785,18 @@ UpdatePalette:
     and %00110000 ;use only bright colors (let only blue byte change)
     or  %00001111 ; R and G are at max
     out ($be),a
-    nop
-    nop
-    nop
-    nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
     
     ;update fire color 1
     ld a,$1A
     out ($bf),a
-    nop
-    nop
-    nop
-    nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
     ld a,$c0
     out ($bf),a
     ; 2. Output colour data
@@ -759,16 +805,16 @@ UpdatePalette:
     and %00110101 ;use only bright colors (let only blue byte change)
     or  %00001010 ; R and G are at max
     out ($be),a
-    nop
-    nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
     
     ;update fire color 2
     ld a,$1B
     out ($bf),a
-    nop
-    nop
-    nop
-    nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
     ld a,$c0
     out ($bf),a
     ; 2. Output colour data
@@ -817,16 +863,16 @@ UpdatePalette:
     ; by outputting $c000 ORed with number of the color to change
     ld a,11 ;change color 11
     out ($bf),a
-    nop
-    nop
-    nop
-    nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
     ld a,$c0
     out ($bf),a
-    nop
-    nop
-    nop
-    nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
     ; 2. Output colour data
     ld a,(hl)
     out ($be),a
@@ -841,14 +887,14 @@ UpdatePalette:
   +:
     ld a,12 ;change color 12
     out ($bf),a
-    nop
-    nop
-    nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
     ld a,$c0
     out ($bf),a
-    nop
-    nop
-    nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
     ; 2. Output colour data
     ld a,(hl)
     out ($be),a
@@ -863,14 +909,14 @@ UpdatePalette:
   +:
     ld a,13 ;change color 13
     out ($bf),a
-    nop
-    nop
-    nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
     ld a,$c0
     out ($bf),a
-    nop
-    nop
-    nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
     ; 2. Output colour data
     ld a,(hl)
     out ($be),a    
@@ -885,14 +931,14 @@ UpdatePalette:
   +:
     ld a,14 ;change color 14
     out ($bf),a
-    nop
-    nop
-    nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
     ld a,$c0
     out ($bf),a
-    nop
-    nop
-    nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
+    .db 0,0 ;double nop
     ; 2. Output colour data
     ld a,(hl)
     out ($be),a   

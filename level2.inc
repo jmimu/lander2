@@ -135,6 +135,13 @@ SetupLevel2:
     ld a,1
     ld (first_frame_on_end_status),a
     
+    ;show level message
+    ld de,TutoText11;text pointer in de
+    ld c,2;col (tiles) in c
+    ld l,22;line (tiles) in l
+    ld a,1;have to write slowly
+    call PrintText
+    
     ld a,1;on tutorial, skip 3,2,1
     ld (gameStatus),a
 ret
@@ -259,23 +266,19 @@ TutorialFunction:;replace WaitForVBlankSimple for tutorial
   jr nz,+
     ld de,TutoText7;text pointer in de
   +:
-  cp $0C
+  cp $0E
   jr nz,+
     ld de,TutoText8;text pointer in de
   +:
-  cp $0C
+  cp $10
   jr nz,+
     ld de,TutoText9;text pointer in de
   +:
-  cp $0C
+  cp $12
   jr nz,+
     ld de,TutoText10;text pointer in de
   +:
-  cp $0C
-  jr nz,+
-    ld de,TutoText11;text pointer in de
-  +:
-  cp $0E
+  cp $14
   jr nz,+
     ld hl,$0100
     ld (TutoCnt),hl
@@ -309,7 +312,7 @@ TutoText8:
 TutoText9:                      
 .db "AND TRY TO LAND SLOWLY     ",0
 TutoText10:                     
-.db "ON BLANKING AREAS          ",0
+.db "ON BLINKING AREAS          ",0
 TutoText11:                     
 .db "PRESS 1+2 TO QUIT TUTORIAL ",0
 

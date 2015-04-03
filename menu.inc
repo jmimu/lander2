@@ -456,7 +456,7 @@ Menu_OnButtonLeft:
   ret
 
 Menu_Text_COPYRIGHT:
- .db "---  2015  jmimu - v1.0  ---",0
+ .db "---  2015  jmimu - v0.B  ---",0
  
 Menu_Text_1:
  .db "DIFFICULTY LEVEL:",0

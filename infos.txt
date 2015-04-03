@@ -1,4 +1,8 @@
-still graph bugs
+From v0.9 to 0.B:
+ - graph bugs fix
+ - add score when game over and before each level
+ - fix and improve tutorial
+
 show decimal scores?
 test one octave deeper?
 
