@@ -36,7 +36,7 @@ initVDP:
 	ld a,$85
 	out (c),a	;sets sprite table to its default location, $3f00 (/$7f00)
 	
-	ld a, $0 ; why maxim's VdpData puts $ff ?
+	ld a, $3 ; 3 to work on SMS1
 	out (c),a
         ld a,$86
 	out (c),a   ;instructs the VDP to use the first 256 tiles in VRAM (i.e. the first 8k of VRAM, generally what

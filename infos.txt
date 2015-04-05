@@ -1,3 +1,6 @@
+From v0.B to 0.C:
+ - fix VDP initialization for SMS 1
+
 From v0.9 to 0.B:
  - graph bugs fix
  - add score when game over and before each level

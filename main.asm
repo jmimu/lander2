@@ -120,7 +120,7 @@
 ;==============================================================
 ; SDSC tag and SMS rom header
 ;==============================================================
-.sdsctag 1.2,"Lander2","Lander2 v0.B","jmimu"
+.sdsctag 1.2,"Lander2","Lander2 v0.C","jmimu"
 
 .bank 0 slot 0
 .org $0000

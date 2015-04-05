@@ -1,4 +1,4 @@
-Lander2 v0.9
+Lander2 v0.C
 
 Copyright (C) 2014-2015  jmimu (jmimu@free.fr)
 https://github.com/jmimu/lander2
