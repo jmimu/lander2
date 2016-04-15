@@ -321,7 +321,6 @@ DrawGameElements:
       add a,8
       ld l,a
       dec c
-      dec d
       ld a,c
       jr -
    +:

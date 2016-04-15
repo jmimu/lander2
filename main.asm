@@ -52,6 +52,8 @@
 .define bike_tile_number $3C
 .define bike_pedal_tile_number $4E
 .define bike_pedal_anim_steps $4
+.define bike_head_normal $40
+.define bike_head_up $58
 
 ;game
 .define digits_tile_number $10 ;position of "0" in vram
@@ -261,6 +263,7 @@ IsButtonPressed:
 .ends
 
 
+.include "level1.inc"
 
 
 .org $7ff0
@@ -268,7 +271,6 @@ IsButtonPressed:
 ROM_header:
 .org $8000
 
-.include "level1.inc"
 
 .include "level2.inc"
 

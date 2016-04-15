@@ -766,9 +766,10 @@ showLevel:
     ld e,c;value (8bit) in e
     ld c,24;col (tiles) in c
     call PrintInt8
-  
+    
     
     call SetLastSprite
+    call UpdateSAT
 
     
     ; Turn screen on
@@ -1006,6 +1007,8 @@ WaitForVBlankSimple:
 
       xor a
       ld (new_frame),a
+      
+      call UpdateSAT
       
     pop af
   ret

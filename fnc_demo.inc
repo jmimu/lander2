@@ -855,6 +855,9 @@ Demo_WaitForVBlank:
 
       xor a
       ld (new_frame),a      
+      
+      call UpdateSAT
+      
     pop af    
     ret   
 
@@ -888,7 +891,17 @@ Demo_PSGMOD_Play:
 
 
 
+BikeMetaSprite_y:
+ .db 0,0,0,0
+ .db 8,8,8,8,8,8
+ .db 16,16,16,16,16,16
 
+BikeMetaSprite_xn:
+ .db 0,bike_tile_number,8,bike_tile_number+1,16,bike_tile_number+2,24,bike_tile_number+3;,40,bike_tile_number+4,48,bike_tile_number+5
+ .db 0,bike_tile_number+6,8,bike_tile_number+7,16,bike_tile_number+8,24,bike_tile_number+9,32,bike_tile_number+10,48,bike_tile_number+11
+ .db 0,bike_tile_number+12,8,bike_tile_number+13,16,bike_tile_number+14,24,bike_tile_number+15,32,bike_tile_number+16,48,bike_tile_number+17
+
+ 
 ;--------------------------------------------------------------------
 Demo_SpriteSetBike:
   ;x in h
@@ -896,204 +909,304 @@ Demo_SpriteSetBike:
   ;sprite index in e
   
   ld bc,(pedal_anim_step);pedal anim step in b
-
-  ld d,bike_tile_number
-
-  ;vdp set addr
-  ld a, e
-  out ($bf), a
-  ld a, $7f
-  out ($bf), a
-
-  ;fill all the y's
-  ;y+0 y+0 y+0 y+0 y+0 y+0
-  ;y+8 y+8 y+8 y+8 y+8 y+8 y+8
-  ;y+16 y+16 y+16 y+16 y+16 y+16 y+16
-  ld a, l
-  out ($be), a
-  out ($be), a
-  out ($be), a
-  out ($be), a
-  out ($be), a
-  out ($be), a
-  add a, $08
-  out ($be), a
-  out ($be), a
-  out ($be), a
-  out ($be), a
-  out ($be), a
-  out ($be), a
-  out ($be), a
-  add a, $08
-  out ($be), a
-  out ($be), a
-  out ($be), a
-  out ($be), a
-  out ($be), a
-  out ($be), a
-  out ($be), a
   
-  ld l,b
+  xor a
+  call GetSATbufAddr
+  ld bc,(posY);b=y
+  ld c,6*3
+  ld de, BikeMetaSprite_y
+ -:
+    ld a,(de)
+    add a,b
+    ld (hl),a
+    inc de
+    inc hl
+    dec c
+    jr nz,-
   
-  ;vdp set addr
-  ld a, e
-  add a, a
-  or $80
-  out ($bf), a
-  ld a, $7f
-  out ($bf), a
-
-  ;x+0 n+0   x+8 n+1   x+16 n+2   x+24 n+3   x+40 n+4   x+48 n+5
-  ;x+0 n+6   x+8 n+7   x+16 n+8   x+24 n+9   x+32 n+10   x+40 n+bike_pedal_tile_number   x+48 n+11
-  ;x+0 n+12   x+8 n+13   x+16 n+14   x+24 n+15   x+32 n+16   x+40 n+bike_pedal_tile_number+1   x+48 n+17
-  ;x in a
-  ;n in b
+  ld a,128
+  call GetSATbufAddr
+  ld bc,(posX);b=x
+  ld c,6*3
+  ld de, BikeMetaSprite_xn
+ -:
+    ld a,(de)
+    add a,b
+    ld (hl),a
+    inc de
+    inc hl
+    ld a,(de)
+    ld (hl),a
+    inc de
+    inc hl
+    dec c
+    jr nz,-
   
-  ld c,$be
-  ;line1
-  ld a, h
-  out (c), a
-  ld b, d
-  out (c), b
+  ld a,6*3-2
+  ld (number_of_sprites),a
   
-  add a,8
-  inc b
-  out (c), a
-  out (c), b
-  
-  add a,8
-  inc b
-  out (c), a
-  out (c), b
-  
-  add a,8
-  inc b
-  out (c), a
-  out (c), b
-  
-;head part, changes with animation
- push af
- push hl
-    ;if demo speed is >$fe, change head
-    ld hl,(demo_step)
-    ld a,(hl)
-    cp $fe
-    jr c,+
-      ld a,b
-      add a,24 ;add 24 to tile number
-      ld b,a
+  ;head
+  ;x in h
+  ;y in l
+  ;n in d
+  ld d,bike_head_normal
+  ;if demo speed is >$fe, change head
+  ld hl,(demo_step)
+  ld a,(hl)
+  cp $fe
+  jr c,+
+      ld d,bike_head_up
   +:
- pop hl
- pop af
- 
-  add a,16
-  inc b
-  out (c), a
-  out (c), b
   
-  add a,8
-  inc b
-  out (c), a
-  out (c), b
+  ld bc,(posX)
+  ld h,b;x in h
+  ld bc,(posY)
+  ld l,b;y in l
+  ld a,40
+  add a,h
+  ld h,a
+  call SpriteSet8x8
+  ld a,8
+  add a,h
+  ld h,a
+  inc d
+  call SpriteSet8x8
   
-;go back to normal if head changed
- push af
- push hl
-    ;if demo speed is >$fe, change head
-    ld hl,(demo_step)
-    ld a,(hl)
-    cp $fe
-    jr c,+
-      ld a,b
-      add a,-24 ;add 24 to tile number
-      ld b,a
-
-  +:
- pop hl
- pop af
   
-  ;line2
+  ;add animated part:
+  ld hl,(pedal_anim_step)
   ld a,h
-  inc b
-  out (c), a
-  out (c), b
-  
-  add a,8
-  inc b
-  out (c), a
-  out (c), b
-  
-  add a,8
-  inc b
-  out (c), a
-  out (c), b
-  
-  add a,8
-  inc b
-  out (c), a
-  out (c), b
-  
-  add a,8
-  inc b
-  out (c), a
-  out (c), b
-  
-  add a,8
-  push af
-  ld a,l
   add a,a
   add a,bike_pedal_tile_number
-  ld e,a  ;tile number = bike_pedal_tile_number + anim_step*2
-  pop af
-  out (c), a
-  out (c), e
+  ld d,a  ;tile number = bike_pedal_tile_number + anim_step*2
   
-  add a,8
-  inc b
-  out (c), a
-  out (c), b
+  ;x in h
+  ;y in l
+  ;n in d
+  ld bc,(posX)
+  ld h,b;x in h
+  ld bc,(posY)
+  ld l,b;y in l
+  ld a,40
+  add a,h
+  ld h,a
+  ld a,8
+  add a,l
+  ld l,a
+  call SpriteSet8x8
   
-  ;line3
-  ld a,h
-  inc b
-  out (c), a
-  out (c), b
+  inc d
+  ld bc,(posX)
+  ld h,b;x in h
+  ld bc,(posY)
+  ld l,b;y in l
+  ld a,40
+  add a,h
+  ld h,a
+  ld a,16
+  add a,l
+  ld l,a
+  call SpriteSet8x8
   
-  add a,8
-  inc b
-  out (c), a
-  out (c), b
-  
-  add a,8
-  inc b
-  out (c), a
-  out (c), b
-  
-  add a,8
-  inc b
-  out (c), a
-  out (c), b
-  
-  add a,8
-  inc b
-  out (c), a
-  out (c), b
-  
-  add a,8
-  push af
-  ld a,l
-  add a,a
-  add a,bike_pedal_tile_number
-  inc a
-  ld e,a  ;tile number = bike_pedal_tile_number + anim_step*2 +1
-  pop af
-  out (c), a
-  out (c), e
-  
-  add a,8
-  inc b
-  out (c), a
-  out (c), b
- 
-ret
+  ret
+
+;  ld d,bike_tile_number
+;
+;  ;vdp set addr
+;  ld a, e
+;  out ($bf), a
+;  ld a, $7f
+;  out ($bf), a
+;
+;  ;fill all the y's
+;  ;y+0 y+0 y+0 y+0 y+0 y+0
+;  ;y+8 y+8 y+8 y+8 y+8 y+8 y+8
+;  ;y+16 y+16 y+16 y+16 y+16 y+16 y+16
+;  ld a, l
+;  out ($be), a
+;  out ($be), a
+;  out ($be), a
+;  out ($be), a
+;  out ($be), a
+;  out ($be), a
+;  add a, $08
+;  out ($be), a
+;  out ($be), a
+;  out ($be), a
+;  out ($be), a
+;  out ($be), a
+;  out ($be), a
+;  out ($be), a
+;  add a, $08
+;  out ($be), a
+;  out ($be), a
+;  out ($be), a
+;  out ($be), a
+;  out ($be), a
+;  out ($be), a
+;  out ($be), a
+;  
+;  ld l,b
+;  
+;  ;vdp set addr
+;  ld a, e
+;  add a, a
+;  or $80
+;  out ($bf), a
+;  ld a, $7f
+;  out ($bf), a
+;
+;  ;x+0 n+0   x+8 n+1   x+16 n+2   x+24 n+3   x+40 n+4   x+48 n+5
+;  ;x+0 n+6   x+8 n+7   x+16 n+8   x+24 n+9   x+32 n+10   x+40 n+bike_pedal_tile_number   x+48 n+11
+;  ;x+0 n+12   x+8 n+13   x+16 n+14   x+24 n+15   x+32 n+16   x+40 n+bike_pedal_tile_number+1   x+48 n+17
+;  ;x in a
+;  ;n in b
+;  
+;  ld c,$be
+;  ;line1
+;  ld a, h
+;  out (c), a
+;  ld b, d
+;  out (c), b
+;  
+;  add a,8
+;  inc b
+;  out (c), a
+;  out (c), b
+;  
+;  add a,8
+;  inc b
+;  out (c), a
+;  out (c), b
+;  
+;  add a,8
+;  inc b
+;  out (c), a
+;  out (c), b
+;  
+;;head part, changes with animation
+; push af
+; push hl
+;    ;if demo speed is >$fe, change head
+;    ld hl,(demo_step)
+;    ld a,(hl)
+;    cp $fe
+;    jr c,+
+;      ld a,b
+;      add a,24 ;add 24 to tile number
+;      ld b,a
+;  +:
+; pop hl
+; pop af
+; 
+;  add a,16
+;  inc b
+;  out (c), a
+;  out (c), b
+;  
+;  add a,8
+;  inc b
+;  out (c), a
+;  out (c), b
+;  
+;;go back to normal if head changed
+; push af
+; push hl
+;    ;if demo speed is >$fe, change head
+;    ld hl,(demo_step)
+;    ld a,(hl)
+;    cp $fe
+;    jr c,+
+;      ld a,b
+;      add a,-24 ;add 24 to tile number
+;      ld b,a
+;
+;  +:
+; pop hl
+; pop af
+;  
+;  ;line2
+;  ld a,h
+;  inc b
+;  out (c), a
+;  out (c), b
+;  
+;  add a,8
+;  inc b
+;  out (c), a
+;  out (c), b
+;  
+;  add a,8
+;  inc b
+;  out (c), a
+;  out (c), b
+;  
+;  add a,8
+;  inc b
+;  out (c), a
+;  out (c), b
+;  
+;  add a,8
+;  inc b
+;  out (c), a
+;  out (c), b
+;  
+;  add a,8
+;  push af
+;  ld a,l
+;  add a,a
+;  add a,bike_pedal_tile_number
+;  ld e,a  ;tile number = bike_pedal_tile_number + anim_step*2
+;  pop af
+;  out (c), a
+;  out (c), e
+;  
+;  add a,8
+;  inc b
+;  out (c), a
+;  out (c), b
+;  
+;  ;line3
+;  ld a,h
+;  inc b
+;  out (c), a
+;  out (c), b
+;  
+;  add a,8
+;  inc b
+;  out (c), a
+;  out (c), b
+;  
+;  add a,8
+;  inc b
+;  out (c), a
+;  out (c), b
+;  
+;  add a,8
+;  inc b
+;  out (c), a
+;  out (c), b
+;  
+;  add a,8
+;  inc b
+;  out (c), a
+;  out (c), b
+;  
+;  add a,8
+;  push af
+;  ld a,l
+;  add a,a
+;  add a,bike_pedal_tile_number
+;  inc a
+;  ld e,a  ;tile number = bike_pedal_tile_number + anim_step*2 +1
+;  pop af
+;  out (c), a
+;  out (c), e
+;  
+;  add a,8
+;  inc b
+;  out (c), a
+;  out (c), b
+; 
+;ret
 

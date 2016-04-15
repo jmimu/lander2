@@ -681,6 +681,8 @@ WaitForVBlankLava:
   WaitForVBlankLava_end:
     pop bc
     pop af
+    
+    call UpdateSAT
   
   ret
 

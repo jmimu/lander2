@@ -190,7 +190,9 @@ WaitForVBlankWind:
       jr z,-
 
       xor a
-      ld (new_frame),a      
+      ld (new_frame),a
+      
+      call UpdateSAT
       
     pop hl
     pop af
